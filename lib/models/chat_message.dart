@@ -27,6 +27,9 @@ class ChatHistory {
 
   List<ChatMessage> get messages => List.unmodifiable(_messages);
 
+  List<ChatMessage> get latestMessages =>
+      List.unmodifiable(_messages.reversed.take(5).toList());
+
   void addMessage(ChatMessage message) {
     _messages.add(message);
     _saveHistory();

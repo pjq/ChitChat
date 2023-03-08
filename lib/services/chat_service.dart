@@ -7,7 +7,7 @@ class ChatService {
 
   ChatService({required this.apiKey});
 
-  Future<Map<String, dynamic>> getCompletion(String prompt) async {
+  Future<Map<String, dynamic>> getCompletion(String content,String prompt) async {
     LogUtils.info("getCompletion");
     final response = await http.post(
       Uri.parse('https://api.openai.com/v1/chat/completions'),
@@ -18,7 +18,7 @@ class ChatService {
       body: jsonEncode(
         {
           "model": "gpt-3.5-turbo",
-          "messages": [{"role": "user", "content": prompt}]
+          "messages": [{"role": "user", "content": content}]
         }
       ),
     );

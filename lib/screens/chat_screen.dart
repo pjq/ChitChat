@@ -49,8 +49,8 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
 
     try {
-      final response = await _chatService!.getCompletion(
-          '${_settings!.promptString}\n${_getChatHistory()}\n${message.content}\n');
+      final response = await _chatService!
+          .getCompletion(message.content, _settings!.promptString);
       final completion = response['choices'][0]['message']['content'];
       LogUtils.error(completion);
 
@@ -60,7 +60,6 @@ class _ChatScreenState extends State<ChatScreen> {
         _messages.add(message);
         _history?.addMessage(message);
       });
-
     } catch (e) {
       LogUtils.error(e.toString());
       setState(() {
@@ -74,13 +73,10 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  String _getChatHistory() {
-    final history = _messages
-        .where((message) => message.role == 'user')
-        .map((message) => message.content.trim())
-        .join('\n');
+  List<ChatMessage>? _get5ChatHistory() {
+    final recentHistory = _history?.latestMessages;
 
-    return _settings!.continueConversationEnable ? history : '';
+    return _settings!.continueConversationEnable ? recentHistory: [];
   }
 
   Widget _buildLoadingIndicator() {
