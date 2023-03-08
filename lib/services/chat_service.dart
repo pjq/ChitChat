@@ -9,20 +9,31 @@ class ChatService {
   ChatService({required this.apiKey});
 
   Future<Map<String, dynamic>> getCompletion(
-      String content,
-      String prompt,
-      double temperatureValue,
-      List<ChatMessage>? latestChat,
-      ) async {
+    String content,
+    String prompt,
+    double temperatureValue,
+    List<ChatMessage>? latestChat,
+  ) async {
     LogUtils.info("getCompletion");
 
     // Build the list of chat messages to include in the request body
     final chatMessages = latestChat?.map((message) {
-      return {"role": message.isUser ? "user" : "assistant", "content": message.content};
-    }).toList() ?? [];
+          return {
+            "role": message.isUser ? "user" : "assistant",
+            "content": message.content
+          };
+        }).toList() ??
+        [];
 
     // Add the user's message to the list of chat messages
     chatMessages.add({"role": "user", "content": content});
+
+    final body = jsonEncode({
+      "model": "gpt-3.5-turbo",
+      "temperature": temperatureValue,
+      "messages": chatMessages,
+    });
+    LogUtils.info(body);
 
     final response = await http.post(
       Uri.parse('https://api.openai.com/v1/chat/completions'),
@@ -30,13 +41,7 @@ class ChatService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $apiKey',
       },
-      body: jsonEncode(
-        {
-          "model": "gpt-3.5-turbo",
-          "temperatureValue": temperatureValue,
-          "messages": chatMessages,
-        },
-      ),
+      body: body,
     );
 
     LogUtils.info(response.body);
@@ -46,5 +51,4 @@ class ChatService {
       throw Exception('Failed to load response');
     }
   }
-
 }
