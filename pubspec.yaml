@@ -36,6 +36,16 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
+  # Added chatGPT SDK using this link - https://pub.dev/packages/chat_gpt_sdk
+  chat_gpt_sdk: ^1.0.2+3
+
+  # Added http package for Api Calls using this link - https://pub.dev/packages/http
+  http: ^0.13.5
+
+  # Added velocity package to make Flutter development easier and more joyful by using this link -
+  # https://pub.dev/packages/velocity_x
+  velocity_x: ^3.6.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.pjq.chatgpt.chatgpt_flutter">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
    <application
         android:label="chatgpt_flutter"
         android:name="${applicationName}"
