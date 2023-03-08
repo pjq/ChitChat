@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chatgpt_flutter/screens/chat_screen.dart';
 import 'package:chatgpt_flutter/screens/settings_screen.dart';
+import 'package:chatgpt_flutter/screens/splash_screen.dart';
 import 'package:chatgpt_flutter/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,7 +30,29 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => ChatScreen(settings: settings),
         '/settings': (context) => SettingsScreen(prefs: settings.prefs),
+        '/splash': (context) => SplashScreen(),
       },
+      // home: SplashScreen(),
+      // // Display the splash screen initially
+      // onGenerateRoute: (RouteSettings settings) {
+      //   if (settings.name == '/') {
+      //     return MaterialPageRoute(
+      //       builder: (context) => SplashScreen(),
+      //       settings: RouteSettings(name: '/splash'),
+      //     );
+      //   } else if (settings.name == '/splash') {
+      //     Future.delayed(
+      //       const Duration(seconds: 2),
+      //       () => Navigator.pushReplacementNamed(context, '/'),
+      //     );
+      //   } else if (settings.name == '/') {
+      //     return MaterialPageRoute(
+      //       builder: (context) => ChatScreen(),
+      //       settings: settings,
+      //     );
+      //   }
+      //   return null;
+      // },
     );
   }
 }
