@@ -25,11 +25,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((prefs) {
-      _settings = Settings(prefs: prefs);
-      _chatService = ChatService(apiKey: _settings!.openaiApiKey);
-      _history = ChatHistory(prefs: prefs);
-      _messages.addAll(_history!.messages);
+    setState(() {
+      SharedPreferences.getInstance().then((prefs) {
+        _settings = Settings(prefs: prefs);
+        _chatService = ChatService(apiKey: _settings!.openaiApiKey);
+        _history = ChatHistory(prefs: prefs);
+        _messages.addAll(_history!.messages);
+      });
     });
   }
 
