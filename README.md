@@ -1,6 +1,12 @@
-# chatgpt_flutter
+# ChatGPT App 
+A ChatGPT Flutter project.
+We want to do some reach about the ChatGPT Capability, and what will be in the future
 
-A ChatGPT Mobile Flutter project.
+It will support
+- Android
+- iOS
+- Web
+- etc
 
 ## Getting Started
 
