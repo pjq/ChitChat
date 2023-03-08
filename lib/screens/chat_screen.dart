@@ -2,9 +2,7 @@ import 'dart:convert';
 
 import 'package:chatgpt_flutter/LogUtils.dart';
 import 'package:flutter/material.dart';
-import 'package:chatgpt_flutter/constants.dart';
 import 'package:chatgpt_flutter/settings.dart';
-import 'package:chatgpt_flutter/models/chat_message.dart';
 import 'package:chatgpt_flutter/models/chat_message.dart';
 import 'package:chatgpt_flutter/services/chat_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,60 +110,77 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('OpenAI Chat'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              Navigator.pushNamed(context, '/settings');
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          ListView.builder(
-            itemCount: _messages.length,
-            itemBuilder: (context, index) {
-              final message = _messages[index];
-              return _buildChatMessage(message);
-            },
-          ),
-          if (_isLoading) _buildLoadingIndicator(),
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
+    return GestureDetector(
+      onTap: () {
+        final currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Chat'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator.pushNamed(context, '/settings');
+              }
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Column(
             children: [
               Expanded(
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    hintText: 'Type a message',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 5,
-                    ),
-                  ),
-                  textInputAction: TextInputAction.send,
-                  onSubmitted: _sendMessage,
+                child: ListView.builder(
+                  itemCount: _messages.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final ChatMessage message = _messages[index];
+                    return ListTile(
+                      title: Text(
+                        message.content.replaceAll("\n", ""),
+                        textAlign: message.isUser ? TextAlign.right : TextAlign.left,
+                      ),
+                      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+                    );
+                  },
                 ),
               ),
-              SizedBox(width: 10),
-              IconButton(
-                icon: Icon(Icons.send),
-                onPressed: () => _sendMessage(_controller.text),
+              BottomAppBar(
+                child: Container(
+                  height: 60,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            hintText: 'Type a message',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 5,
+                            ),
+                          ),
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: _sendMessage,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      IconButton(
+                        icon: Icon(Icons.send),
+                        onPressed: () => _sendMessage(_controller.text),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

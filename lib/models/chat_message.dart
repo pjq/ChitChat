@@ -11,6 +11,8 @@ class ChatMessage {
       : role = json['role'],
         content = json['content'];
 
+  bool get isUser => role == "user";
+
   Map<String, dynamic> toJson() => {
     'role': role,
     'content': content,
