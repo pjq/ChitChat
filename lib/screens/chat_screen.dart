@@ -75,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
         _isLoading = false;
         final messageReceived = ChatMessage(role: 'assistant', content: completion);
         _messages.add(messageReceived);
-        _history?.addMessage(messageSend);
+        // _history?.addMessage(messageSend);
         _history?.addMessage(messageReceived);
       });
     } catch (e) {
@@ -198,6 +198,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         icon: Icon(Icons.send),
                         onPressed: () => _sendMessage(_controller.text),
                       ),
+                      if (_isLoading)
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        ),
                     ],
                   ),
                 ),
