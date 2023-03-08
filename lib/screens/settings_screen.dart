@@ -21,26 +21,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _apiKeyController =
-        TextEditingController(text: widget.prefs.getString(Constants.apiKeyKey));
-    _promptStringController =
-        TextEditingController(text: widget.prefs.getString(Constants.promptStringKey));
+    // If the temperature value has not been set, set it to 1.0
+    if (widget.prefs.getDouble(Constants.temperatureValueKey) == 0.0) {
+      widget.prefs.setDouble(Constants.temperatureValueKey, 1.0);
+    }
+
+    _apiKeyController = TextEditingController(
+        text: widget.prefs.getString(Constants.apiKeyKey));
+    _promptStringController = TextEditingController(
+        text: widget.prefs.getString(Constants.promptStringKey));
     _temperatureValueController = TextEditingController(
-        text: widget.prefs.getDouble(Constants.temperatureValueKey).toString());
+      text: widget.prefs.getDouble(Constants.temperatureValueKey) == null
+          ? "1.0"
+          : widget.prefs.getDouble(Constants.temperatureValueKey).toString(),
+    );
     _continueConversationEnable =
         widget.prefs.getBool(Constants.continueConversationEnableKey) ??
             Constants.defaultContinueConversationEnable;
-    _localCacheEnable =
-        widget.prefs.getBool(Constants.localCacheEnableKey) ??
-            Constants.defaultLocalCacheEnable;
+    _localCacheEnable = widget.prefs.getBool(Constants.localCacheEnableKey) ??
+        Constants.defaultLocalCacheEnable;
   }
 
   void _saveSettings() {
     widget.prefs.setString(Constants.apiKeyKey, _apiKeyController.text);
-    widget.prefs.setString(Constants.promptStringKey, _promptStringController.text);
-    widget.prefs.setDouble(
-        Constants.temperatureValueKey, double.parse(_temperatureValueController.text));
-    widget.prefs.setBool(Constants.continueConversationEnableKey, _continueConversationEnable);
+    widget.prefs
+        .setString(Constants.promptStringKey, _promptStringController.text);
+    widget.prefs.setDouble(Constants.temperatureValueKey,
+        double.parse(_temperatureValueController.text));
+    widget.prefs.setBool(
+        Constants.continueConversationEnableKey, _continueConversationEnable);
     widget.prefs.setBool(Constants.localCacheEnableKey, _localCacheEnable);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -86,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 16),
               _buildTextField(
                 controller: _temperatureValueController,
-                label: 'Temperature Value',
+                label: 'Temperature Value(0-1.0)',
               ),
               const SizedBox(height: 16),
               CheckboxListTile(

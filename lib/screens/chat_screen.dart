@@ -34,6 +34,25 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendMessage(String text) async {
+    if (_settings!.openaiApiKey.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('API key not set'),
+          content: Text('Please set the OpenAI API key in the settings.'),
+          actions: [
+            TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/settings');
+                }),
+          ],
+        ),
+      );
+      return;
+    }
+
     if (text.isEmpty) {
       return;
     }
@@ -48,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       final response = await _chatService!
-          .getCompletion(message.content, _settings!.promptString);
+          .getCompletion(message.content, _settings!.promptString, _settings!.temperatureValue, _get5ChatHistory());
       final completion = response['choices'][0]['message']['content'];
       LogUtils.error(completion);
 
@@ -139,7 +158,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     final ChatMessage message = _messages[index];
                     return ListTile(
                       title: Text(
-                        message.content.replaceAll("\n", ""),
+                        message.content.replaceAll("\n\n", "\n"),
                         textAlign: message.isUser ? TextAlign.right : TextAlign.left,
                       ),
                       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
