@@ -61,21 +61,22 @@ class _ChatScreenState extends State<ChatScreen> {
       _isLoading = true;
     });
 
-    final message = ChatMessage(role: 'user', content: text);
-    _messages.add(message);
+    final messageSend = ChatMessage(role: 'user', content: text);
+    _messages.add(messageSend);
     _controller.clear();
 
     try {
       final response = await _chatService!
-          .getCompletion(message.content, _settings!.promptString, _settings!.temperatureValue, _get5ChatHistory());
+          .getCompletion(messageSend.content, _settings!.promptString, _settings!.temperatureValue, _get5ChatHistory());
       final completion = response['choices'][0]['message']['content'];
       LogUtils.error(completion);
 
       setState(() {
         _isLoading = false;
-        final message = ChatMessage(role: 'assistant', content: completion);
-        _messages.add(message);
-        _history?.addMessage(message);
+        final messageReceived = ChatMessage(role: 'assistant', content: completion);
+        _messages.add(messageReceived);
+        _history?.addMessage(messageSend);
+        _history?.addMessage(messageReceived);
       });
     } catch (e) {
       LogUtils.error(e.toString());
