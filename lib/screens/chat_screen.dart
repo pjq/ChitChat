@@ -77,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
         _isLoading = false;
         final messageReceived = ChatMessage(role: 'assistant', content: completion);
         _messages.add(messageReceived);
-        // _history?.addMessage(messageSend);
+        _history?.addMessage(messageSend);
         _history?.addMessage(messageReceived);
       });
     } catch (e) {

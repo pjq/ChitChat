@@ -38,7 +38,7 @@ class ChatHistory {
   }
 
   static List<ChatMessage> _loadHistory(SharedPreferences prefs) {
-    final String? json = prefs.getString('chat_history2');
+    final String? json = prefs.getString('chat_history3');
     if (json == null) {
       return [];
     }
@@ -55,6 +55,6 @@ class ChatHistory {
     final List<Map<String, dynamic>> data =
     _messages.map((message) => message.toJson()).toList(growable: false);
     final String json = jsonEncode(data);
-    _prefs.setString('chat_history2', json);
+    _prefs.setString('chat_history3', json);
   }
 }
