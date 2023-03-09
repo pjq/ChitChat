@@ -1,3 +1,5 @@
+## March 10, 2023
+- Build the Copy/Share/Translation actions
 ## March 9, 2023
 - Build the Chat History persistence
 - Support continuous conversation mode
