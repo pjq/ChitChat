@@ -3,6 +3,7 @@ import 'package:chatgpt_flutter/screens/chat_screen.dart';
 import 'package:chatgpt_flutter/screens/settings_screen.dart';
 import 'package:chatgpt_flutter/screens/splash_screen.dart';
 import 'package:chatgpt_flutter/settings.dart';
+import 'package:chatgpt_flutter/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -19,12 +20,14 @@ class MyApp extends StatelessWidget {
 
   const MyApp({Key? key, required this.settings}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'OpenAI Chat',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: Constants.fontFamilies.join(', '), // Use the new font families
       ),
       initialRoute: '/',
       routes: {

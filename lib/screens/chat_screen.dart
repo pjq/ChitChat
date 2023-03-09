@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chatgpt_flutter/LogUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:chatgpt_flutter/settings.dart';
+import 'package:chatgpt_flutter/constants.dart';
 import 'package:chatgpt_flutter/models/chat_message.dart';
 import 'package:chatgpt_flutter/services/chat_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -163,6 +164,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       title: Text(
                         message.content.replaceAll("\n\n", "\n"),
                         textAlign: message.isUser ? TextAlign.right : TextAlign.left,
+                        style: const TextStyle(
+                          fontFamily: 'Noto Sans CJK', // Add the font family here
+                        ),
                       ),
                       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
                     );

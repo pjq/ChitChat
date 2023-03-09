@@ -9,4 +9,11 @@ class Constants {
   static const double defaultTemperatureValue = 1.0;
   static const bool defaultContinueConversationEnable = false;
   static const bool defaultLocalCacheEnable = true;
+
+  static const List<String> fontFamilies = [
+    'Noto Sans',
+    'Arial',
+    'sans-serif',
+  ];
+
 }

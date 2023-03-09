@@ -44,9 +44,12 @@ class ChatService {
       body: body,
     );
 
-    LogUtils.info(response.body);
+    Utf8Decoder utf8decoder = Utf8Decoder();
+    String responseString = utf8decoder.convert(response.bodyBytes);
+
+    LogUtils.info(responseString);
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(responseString);
     } else {
       throw Exception('Failed to load response');
     }

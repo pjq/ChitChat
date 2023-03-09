@@ -56,6 +56,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: Text('Settings saved'),
       ),
     );
+
+    Navigator.pop(context);
   }
 
   Widget _buildTextField({
