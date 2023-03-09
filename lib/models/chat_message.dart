@@ -49,7 +49,11 @@ class ChatHistory {
     final List<ChatMessage> messages =
         data.map((item) => ChatMessage.fromJson(item)).toList(growable: false);
 
-    return messages;
+    final List<ChatMessage> newList = [];
+    newList.addAll(messages);
+
+    return newList;
+    // return messages;
   }
 
   void _saveHistory() {
