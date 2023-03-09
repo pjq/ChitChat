@@ -29,8 +29,13 @@ class ChatHistory {
 
   List<ChatMessage> get messages => _messages;
 
-  List<ChatMessage> get latestMessages =>
-      _messages.sublist(_messages.length - 3).toList();
+  List<ChatMessage> get latestMessages {
+    if (_messages.length < 3) {
+      return _messages;
+    } else {
+      return _messages.sublist(_messages.length - 3);
+    }
+  }
 
   void addMessage(ChatMessage message) {
     _messages.add(message);
