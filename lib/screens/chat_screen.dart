@@ -344,6 +344,11 @@ void _showMessageActions(BuildContext context, ChatMessage message) {
               onTap: () {
                 Clipboard.setData(ClipboardData(text: message.content));
                 Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Copied to clipboard'),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -355,7 +360,7 @@ void _showMessageActions(BuildContext context, ChatMessage message) {
               },
             ),
             ListTile(
-              leading: Icon(Icons.share),
+              leading: Icon(Icons.translate),
               title: Text('Translation'),
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
