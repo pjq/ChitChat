@@ -2,6 +2,7 @@
 - Build the Chat History persistence
 - Support continuous conversation mode
 - Support Chinese Display
+- Add the retry logic
 ## Initial, March 8, 2023
 - Initialize the application development
 - Build the ChatScreen, Settings

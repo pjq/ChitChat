@@ -6,10 +6,12 @@ import 'package:chatgpt_flutter/settings.dart';
 import 'package:chatgpt_flutter/constants.dart';
 import 'package:chatgpt_flutter/models/chat_message.dart';
 import 'package:chatgpt_flutter/services/chat_service.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:about/about.dart';
 import 'package:chatgpt_flutter/pubspec.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -140,7 +142,8 @@ class _ChatScreenState extends State<ChatScreen> {
         'version': Pubspec.version,
         'year': DateTime.now().year.toString(),
       },
-      applicationLegalese: 'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
+      applicationLegalese:
+          'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
       applicationDescription: Text(Pubspec.description),
       children: const <Widget>[
         MarkdownPageListTile(
@@ -327,6 +330,49 @@ class ChatMessageWidget4 extends StatelessWidget {
   }
 }
 
+void _showMessageActions(BuildContext context, ChatMessage message) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.content_copy),
+              title: Text('Copy'),
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: message.content));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.share),
+              title: Text('Share'),
+              onTap: () {
+                Share.share(message.content);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.share),
+              title: Text('Translation'),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Not implemented yet'),
+                  ),
+                );
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 class ChatMessageWidgetSimple extends StatelessWidget {
   final ChatMessage message;
 
@@ -339,6 +385,7 @@ class ChatMessageWidgetSimple extends StatelessWidget {
         message.content.replaceAll("\n\n", "\n"),
         textAlign: message.isUser ? TextAlign.right : TextAlign.left,
       ),
+      onTap: () => _showMessageActions(context, message),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
     );
   }
@@ -360,6 +407,7 @@ class ChatMessageWidget extends StatelessWidget {
           color: message.isUser ? Colors.blue[100] : Colors.grey[200],
           borderRadius: BorderRadius.circular(10),
         ),
+        height: message.isUser ? 55 : 100,
         child: message.isUser
             ? ListTile(
                 title: Text(
@@ -372,6 +420,7 @@ class ChatMessageWidget extends StatelessWidget {
                 data: message.content,
                 styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
               ),
+
       ),
     );
   }

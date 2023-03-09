@@ -47,6 +47,7 @@ dependencies:
   velocity_x: ^3.6.0
   flutter_markdown: ^0.6.2
   about: ^2.1.1
+  share_plus: ^6.3.1
 
 dev_dependencies:
   flutter_test:
