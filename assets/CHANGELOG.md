@@ -1,0 +1,8 @@
+## March 9, 2023
+- Build the Chat History persistence
+- Support continuous conversation mode
+- Support Chinese Display
+## Initial, March 8, 2023
+- Initialize the application development
+- Build the ChatScreen, Settings
+- Can chat with GPT model gpt-3.5-turbo

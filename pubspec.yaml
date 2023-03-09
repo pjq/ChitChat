@@ -45,6 +45,8 @@ dependencies:
   # Added velocity package to make Flutter development easier and more joyful by using this link -
   # https://pub.dev/packages/velocity_x
   velocity_x: ^3.6.0
+  flutter_markdown: ^0.6.2
+  about: ^2.1.1
 
 dev_dependencies:
   flutter_test:
@@ -69,7 +71,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+      - assets/
+      - android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

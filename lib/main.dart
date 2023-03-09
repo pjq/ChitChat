@@ -1,3 +1,4 @@
+import 'package:chatgpt_flutter/screens/about_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chatgpt_flutter/screens/chat_screen.dart';
 import 'package:chatgpt_flutter/screens/settings_screen.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => ChatScreen(settings: settings),
         '/settings': (context) => SettingsScreen(prefs: settings.prefs),
         '/splash': (context) => SplashScreen(),
+        '/about': (context) => const AboutScreen(),
       },
       // home: SplashScreen(),
       // // Display the splash screen initially

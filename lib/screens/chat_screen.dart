@@ -7,6 +7,9 @@ import 'package:chatgpt_flutter/constants.dart';
 import 'package:chatgpt_flutter/models/chat_message.dart';
 import 'package:chatgpt_flutter/services/chat_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:about/about.dart';
+import 'package:chatgpt_flutter/pubspec.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -69,14 +72,18 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
 
     try {
-      final response = await _chatService!
-          .getCompletion(messageSend.content, _settings!.promptString, _settings!.temperatureValue, _get5ChatHistory());
+      final response = await _chatService!.getCompletion(
+          messageSend.content,
+          _settings!.promptString,
+          _settings!.temperatureValue,
+          _get5ChatHistory());
       final completion = response['choices'][0]['message']['content'];
       LogUtils.error(completion);
 
       setState(() {
         _isLoading = false;
-        final messageReceived = ChatMessage(role: 'assistant', content: completion);
+        final messageReceived =
+            ChatMessage(role: 'assistant', content: completion);
         _messages.add(messageReceived);
         _history?.addMessage(messageSend);
         _history?.addMessage(messageReceived);
@@ -86,18 +93,30 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to send message'),
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Failed to send message'),
+      //   ),
+      // );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Failed to send message'),
+            TextButton(
+              child: Text('Retry'),
+              onPressed: () => _sendMessage(messageSend.content),
+            ),
+          ],
         ),
-      );
+      ));
     }
   }
 
   List<ChatMessage>? _get5ChatHistory() {
     final recentHistory = _history?.latestMessages;
 
-    return _settings!.continueConversationEnable ? recentHistory: [];
+    return _settings!.continueConversationEnable ? recentHistory : [];
   }
 
   Widget _buildLoadingIndicator() {
@@ -109,6 +128,36 @@ class _ChatScreenState extends State<ChatScreen> {
         height: 20,
         child: CircularProgressIndicator(
           strokeWidth: 2,
+        ),
+      ),
+    );
+  }
+
+  void _showAbout() {
+    showAboutPage(
+      context: context,
+      values: {
+        'version': Pubspec.version,
+        'year': DateTime.now().year.toString(),
+      },
+      applicationLegalese: 'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
+      applicationDescription: Text(Pubspec.description),
+      children: const <Widget>[
+        MarkdownPageListTile(
+          icon: Icon(Icons.list),
+          title: Text('Changelog'),
+          filename: 'assets/CHANGELOG.md',
+        ),
+        LicensesPageListTile(
+          icon: Icon(Icons.favorite),
+        ),
+      ],
+      applicationIcon: const SizedBox(
+        width: 100,
+        height: 100,
+        child: Image(
+          image: AssetImage(
+              'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png'),
         ),
       ),
     );
@@ -145,11 +194,15 @@ class _ChatScreenState extends State<ChatScreen> {
           title: Text('Chat'),
           actions: [
             IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: (){
-                Navigator.pushNamed(context, '/settings');
-              }
-            ),
+                icon: Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/settings');
+                }),
+            IconButton(
+                icon: Icon(Icons.info),
+                onPressed: () {
+                  _showAbout();
+                }),
           ],
         ),
         body: SafeArea(
@@ -160,16 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemCount: _messages.length,
                   itemBuilder: (BuildContext context, int index) {
                     final ChatMessage message = _messages[index];
-                    return ListTile(
-                      title: Text(
-                        message.content.replaceAll("\n\n", "\n"),
-                        textAlign: message.isUser ? TextAlign.right : TextAlign.left,
-                        style: const TextStyle(
-                          fontFamily: 'Noto Sans CJK', // Add the font family here
-                        ),
-                      ),
-                      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-                    );
+                    return ChatMessageWidgetSimple(message: message);
                   },
                 ),
               ),
@@ -219,6 +263,115 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ChatMessageWidget2 extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatMessageWidget2({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Markdown(
+        data: message.content,
+        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+      ),
+      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+    );
+  }
+}
+
+class ChatMessageWidget3 extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatMessageWidget3({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        color: message.role == 'user' ? Colors.blue : Colors.grey[200],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Markdown(
+        data: message.content,
+        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+        padding: EdgeInsets.zero,
+      ),
+    );
+  }
+}
+
+class ChatMessageWidget4 extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatMessageWidget4({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Expanded(
+        child: Markdown(
+          data: message.content,
+          styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+        ),
+      ),
+      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+    );
+  }
+}
+
+class ChatMessageWidgetSimple extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatMessageWidgetSimple({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        message.content.replaceAll("\n\n", "\n"),
+        textAlign: message.isUser ? TextAlign.right : TextAlign.left,
+      ),
+      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+    );
+  }
+}
+
+class ChatMessageWidget extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatMessageWidget({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Container(
+        width: double.infinity,
+        // Sets the width to be as large as the parent allows
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        decoration: BoxDecoration(
+          color: message.isUser ? Colors.blue[100] : Colors.grey[200],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: message.isUser
+            ? ListTile(
+                title: Text(
+                  message.content.replaceAll("\n\n", "\n"),
+                  textAlign: message.isUser ? TextAlign.right : TextAlign.left,
+                ),
+                tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+              )
+            : Markdown(
+                data: message.content,
+                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+              ),
       ),
     );
   }
