@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chitchat/screens/about_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/screens/chat_screen.dart';
@@ -6,9 +8,12 @@ import 'package:chitchat/screens/splash_screen.dart';
 import 'package:chitchat/settings.dart';
 import 'package:chitchat/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_proxy/http_proxy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpProxy httpProxy = await HttpProxy.createHttpProxy();
+  HttpOverrides.global = httpProxy;
 
   final prefs = await SharedPreferences.getInstance();
   final settings = Settings(prefs: prefs);
@@ -21,14 +26,14 @@ class MyApp extends StatelessWidget {
 
   const MyApp({Key? key, required this.settings}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'OpenAI Chat',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        fontFamily: Constants.fontFamilies.join(', '), // Use the new font families
+        fontFamily:
+            Constants.fontFamilies.join(', '), // Use the new font families
       ),
       initialRoute: '/',
       routes: {
