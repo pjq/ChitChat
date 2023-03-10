@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:chitchat/LogUtils.dart';
 import 'package:chitchat/models/chat_message.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 
 class ChatService {
   final String apiKey;
@@ -13,6 +14,7 @@ class ChatService {
     String prompt,
     double temperatureValue,
     List<ChatMessage>? latestChat,
+    String proxy,
   ) async {
     LogUtils.info("getCompletion");
 
@@ -35,20 +37,25 @@ class ChatService {
     });
     LogUtils.info(body);
 
-    final response = await http.post(
-      Uri.parse('https://api.openai.com/v1/chat/completions'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey',
-      },
-      body: body,
-    );
+    HttpClient client = HttpClient();
+    LogUtils.info(proxy);
+    if (proxy.isNotEmpty) {
+      client.findProxy = (url) {
+        return HttpClient.findProxyFromEnvironment(url,
+            environment: {"http_proxy": proxy, "https_proxy": proxy});
+      };
+    }
 
-    Utf8Decoder utf8decoder = Utf8Decoder();
-    String responseString = utf8decoder.convert(response.bodyBytes);
+    final request = await client
+        .postUrl(Uri.parse('https://api.openai.com/v1/chat/completions'));
+    request.headers.contentType = ContentType.json;
+    request.headers.set('Authorization', 'Bearer $apiKey');
+    request.write(body);
+    final response = await request.close();
 
-    LogUtils.info(responseString);
-    if (response.statusCode == 200) {
+    if (response.statusCode == HttpStatus.ok) {
+      final String responseString =
+          await response.transform(utf8.decoder).join();
       return jsonDecode(responseString);
     } else {
       throw Exception('Failed to load response');

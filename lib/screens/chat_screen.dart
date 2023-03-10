@@ -78,7 +78,8 @@ class _ChatScreenState extends State<ChatScreen> {
           messageSend.content,
           _settings!.promptString,
           _settings!.temperatureValue,
-          _get5ChatHistory());
+          _get5ChatHistory(),
+          _settings!.proxyUrl);
       final completion = response['choices'][0]['message']['content'];
       LogUtils.error(completion);
 
@@ -425,7 +426,6 @@ class ChatMessageWidget extends StatelessWidget {
                 data: message.content,
                 styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
               ),
-
       ),
     );
   }

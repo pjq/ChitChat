@@ -126,7 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 16),
               _buildTextField(
                 controller: _proxyUrlController, // add text field for proxy URL
-                label: 'Proxy URL',
+                label: 'Proxy(host:port)',
               ),
               const SizedBox(height: 16),
               ElevatedButton(

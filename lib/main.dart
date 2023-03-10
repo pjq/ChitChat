@@ -12,8 +12,6 @@ import 'package:http_proxy/http_proxy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HttpProxy httpProxy = await HttpProxy.createHttpProxy();
-  HttpOverrides.global = httpProxy;
 
   final prefs = await SharedPreferences.getInstance();
   final settings = Settings(prefs: prefs);
