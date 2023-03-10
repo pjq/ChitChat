@@ -1,5 +1,7 @@
 ## March 10, 2023
-- Build the Copy/Share/Translation actions
+- Build the Translation actions
+## March 10, 2023
+- Build the Copy/Share actions
 - Support Proxy Settings
 - Support baseURL Settings
 ## March 9, 2023
