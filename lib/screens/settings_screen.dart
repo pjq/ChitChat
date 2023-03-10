@@ -69,6 +69,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     Navigator.pop(context);
   }
+  void _clearChatHistory() {
+    // Clear the chat history from the shared preferences
+    widget.prefs.remove(Constants.cacheHistoryKey);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Conversation records erased, you may restart the App.'),
+      ),
+    );
+  }
 
   Widget _buildTextField({
     required TextEditingController controller,
@@ -127,6 +137,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _localCacheEnable = value!;
                   });
                 },
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _clearChatHistory,
+                child: Text('Clear Chat History'),
               ),
               const SizedBox(height: 16),
               _buildTextField(

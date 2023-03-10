@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:chitchat/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatMessage {
@@ -42,10 +43,9 @@ class ChatHistory {
     _saveHistory();
   }
 
-  static const String cacheHistoryKey = "chat_history";
 
   static List<ChatMessage> _loadHistory(SharedPreferences prefs) {
-    final String? json = prefs.getString(cacheHistoryKey);
+    final String? json = prefs.getString(Constants.cacheHistoryKey);
     if (json == null) {
       return [];
     }
@@ -65,6 +65,6 @@ class ChatHistory {
     final List<Map<String, dynamic>> data =
         _messages.map((message) => message.toJson()).toList(growable: false);
     final String json = jsonEncode(data);
-    _prefs.setString(cacheHistoryKey, json);
+    _prefs.setString(Constants.cacheHistoryKey, json);
   }
 }
