@@ -389,11 +389,15 @@ class ChatMessageWidgetSimple extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(
+      title: SelectableText(
         message.content.replaceAll("\n\n", "\n"),
         textAlign: message.isUser ? TextAlign.right : TextAlign.left,
+        onSelectionChanged: (text, _) {
+          _showMessageActions(
+              context, ChatMessage(role: "user", content: text.toString()));
+        },
       ),
-      onTap: () => _showMessageActions(context, message),
+      onLongPress: () => _showMessageActions(context, message),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
     );
   }

@@ -42,7 +42,7 @@ class ChatHistory {
     _saveHistory();
   }
 
-  static const String cacheHistoryKey = "chat_history3";
+  static const String cacheHistoryKey = "chat_history";
 
   static List<ChatMessage> _loadHistory(SharedPreferences prefs) {
     final String? json = prefs.getString(cacheHistoryKey);
