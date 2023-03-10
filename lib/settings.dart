@@ -34,4 +34,11 @@ class Settings {
   set continueConversationEnable(bool value) {
     prefs.setBool(Constants.continueConversationEnableKey, value);
   }
+
+  // new property for proxy settings
+  String get proxyUrl => prefs.getString(Constants.proxyUrlKey) ?? '';
+
+  set proxyUrl(String value) {
+    prefs.setString(Constants.proxyUrlKey, value);
+  }
 }

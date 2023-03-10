@@ -15,6 +15,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _apiKeyController;
   late TextEditingController _promptStringController;
   late TextEditingController _temperatureValueController;
+  late TextEditingController _proxyUrlController; // new controller for proxy URL
   late bool _continueConversationEnable;
   late bool _localCacheEnable;
 
@@ -40,6 +41,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Constants.defaultContinueConversationEnable;
     _localCacheEnable = widget.prefs.getBool(Constants.localCacheEnableKey) ??
         Constants.defaultLocalCacheEnable;
+
+    _proxyUrlController = TextEditingController(
+        text: widget.prefs.getString(Constants.proxyUrlKey)); // initialize proxy URL controller
   }
 
   void _saveSettings() {
@@ -56,6 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: Text('Settings saved'),
       ),
     );
+    widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text); // save proxy URL to preferences
 
     Navigator.pop(context);
   }
@@ -117,6 +122,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _localCacheEnable = value!;
                   });
                 },
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _proxyUrlController, // add text field for proxy URL
+                label: 'Proxy URL',
               ),
               const SizedBox(height: 16),
               ElevatedButton(

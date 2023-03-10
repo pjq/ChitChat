@@ -16,4 +16,6 @@ class Constants {
     'sans-serif',
   ];
 
+  static String proxyUrlKey="proxy_url";
+
 }

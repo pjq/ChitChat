@@ -11,4 +11,4 @@ PRODUCT_NAME = chitchat
 PRODUCT_BUNDLE_IDENTIFIER = me.pjq.chitchat
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2023 me.pjq.chitchat. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 me.pjq. All rights reserved.
