@@ -20,6 +20,6 @@ class Constants {
   static const String baseUrlKey = 'base_url';
 
   static String translationPrompt = "Play a role as translator, if the text is Chinese, then translate to English, if English, then Chinese: ";
-  static String rephrasePrompt = "Play a role as language expert,rephrase the text: ";
+  static String rephrasePrompt = "Play a role as language expert, use the same language to rephrase the text: ";
 
 }
