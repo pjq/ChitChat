@@ -19,5 +19,7 @@ class Constants {
   static String proxyUrlKey="proxy_url";
   static const String baseUrlKey = 'base_url';
 
+  static String translationPrompt = "Play a role as translator, if the text is Chinese, then translate to English, if English, then Chinese: ";
+
 
 }

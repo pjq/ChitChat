@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:chitchat/LogUtils.dart';
+import 'package:chitchat/constants.dart';
 import 'package:chitchat/models/chat_message.dart';
+import 'package:chitchat/settings.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 
@@ -9,7 +11,44 @@ class ChatService {
 
   ChatService({required this.apiKey});
 
-  Future<Map<String, dynamic>> getCompletion(
+  Future<String> getTranslation(
+    String content,
+    Settings? _settings,
+  ) async {
+    final response = await getCompletionRaw(
+      Constants.translationPrompt + content,
+      _settings!.promptString,
+      _settings!.temperatureValue,
+      [],
+      _settings!.proxyUrl,
+      _settings!.baseUrl,
+    );
+    final completion = response['choices'][0]['message']['content'];
+    LogUtils.info(completion);
+
+    return completion;
+  }
+
+  Future<String> getCompletion(
+    String content,
+    List<ChatMessage>? latestChat,
+    Settings? _settings,
+  ) async {
+    final response = await getCompletionRaw(
+      content,
+      _settings!.promptString,
+      _settings!.temperatureValue,
+      latestChat,
+      _settings!.proxyUrl,
+      _settings!.baseUrl,
+    );
+    final completion = response['choices'][0]['message']['content'];
+    LogUtils.info(completion);
+
+    return completion;
+  }
+
+  Future<Map<String, dynamic>> getCompletionRaw(
     String content,
     String prompt,
     double temperatureValue,
@@ -53,8 +92,7 @@ class ChatService {
     }
     LogUtils.info(url);
 
-    final request = await client
-        .postUrl(Uri.parse('$url/v1/chat/completions'));
+    final request = await client.postUrl(Uri.parse('$url/v1/chat/completions'));
     request.headers.contentType = ContentType.json;
     request.headers.set('Authorization', 'Bearer $apiKey');
     request.write(body);

@@ -20,7 +20,7 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> implements IChatService {
   final TextEditingController _controller = TextEditingController();
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
@@ -41,22 +41,43 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  Future<String> _callAPI(String content,) async {
+    final completion = await _chatService!.getCompletion(
+      content,
+      _get5ChatHistory(),
+      _settings,
+    );
+
+    return completion;
+  }
+
+  @override
+  Future<String> translate(String content,) async {
+    final completion = await _chatService!.getTranslation(
+      content,
+      _settings,
+    );
+
+    return completion;
+  }
+
   void _sendMessage(String text) async {
     if (_settings!.openaiApiKey.isEmpty) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text('API key not set'),
-          content: Text('Please set the OpenAI API key in the settings.'),
-          actions: [
-            TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/settings');
-                }),
-          ],
-        ),
+        builder: (context) =>
+            AlertDialog(
+              title: Text('OpenAI API key not set'),
+              content: Text('Please set the OpenAI API key in the settings.'),
+              actions: [
+                TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/settings');
+                    }),
+              ],
+            ),
       );
       return;
     }
@@ -74,21 +95,12 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
 
     try {
-      final response = await _chatService!.getCompletion(
-        messageSend.content,
-        _settings!.promptString,
-        _settings!.temperatureValue,
-        _get5ChatHistory(),
-        _settings!.proxyUrl,
-        _settings!.baseUrl,
-      );
-      final completion = response['choices'][0]['message']['content'];
-      LogUtils.error(completion);
+      final completion = await _callAPI(messageSend.content);
 
       setState(() {
         _isLoading = false;
         final messageReceived =
-            ChatMessage(role: 'assistant', content: completion);
+        ChatMessage(role: 'assistant', content: completion);
         _messages.add(messageReceived);
         _history?.addMessage(messageSend);
         _history?.addMessage(messageReceived);
@@ -124,29 +136,18 @@ class _ChatScreenState extends State<ChatScreen> {
     return _settings!.continueConversationEnable ? recentHistory : [];
   }
 
-  Widget _buildLoadingIndicator() {
-    return Positioned(
-      bottom: 10,
-      right: 10,
-      child: SizedBox(
-        width: 20,
-        height: 20,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-        ),
-      ),
-    );
-  }
-
   void _showAbout() {
     showAboutPage(
       context: context,
       values: {
         'version': Pubspec.version,
-        'year': DateTime.now().year.toString(),
+        'year': DateTime
+            .now()
+            .year
+            .toString(),
       },
       applicationLegalese:
-          'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
+      'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
       applicationDescription: Text(Pubspec.description),
       children: const <Widget>[
         MarkdownPageListTile(
@@ -197,7 +198,7 @@ class _ChatScreenState extends State<ChatScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Chat'),
+          title: Text('ChitChat'),
           actions: [
             IconButton(
                 icon: Icon(Icons.settings),
@@ -219,7 +220,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemCount: _messages.length,
                   itemBuilder: (BuildContext context, int index) {
                     final ChatMessage message = _messages[index];
-                    return ChatMessageWidgetSimple(message: message);
+                    return ChatMessageWidgetSimple(
+                      message: message, chatService: this,);
                   },
                 ),
               ),
@@ -270,6 +272,55 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  @override
+  void showMessageActions(BuildContext context, ChatMessage message) async {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.content_copy),
+                title: Text('Copy'),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: message.content));
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Copied to clipboard'),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.share),
+                title: Text('Share'),
+                onTap: () {
+                  Share.share(message.content);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.translate),
+                title: Text('Translation'),
+                onTap: () {
+                  translate(message.content).then((translatedText) {
+                    setState(() {
+                      _messages.add(ChatMessage(role: "assistant", content: translatedText));
+                    });
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -333,58 +384,13 @@ class ChatMessageWidget4 extends StatelessWidget {
   }
 }
 
-void _showMessageActions(BuildContext context, ChatMessage message) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.content_copy),
-              title: Text('Copy'),
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: message.content));
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Copied to clipboard'),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.share),
-              title: Text('Share'),
-              onTap: () {
-                Share.share(message.content);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.translate),
-              title: Text('Translation'),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Not implemented yet'),
-                  ),
-                );
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
 
 class ChatMessageWidgetSimple extends StatelessWidget {
   final ChatMessage message;
+  final IChatService chatService;
 
-  const ChatMessageWidgetSimple({required this.message});
+  const ChatMessageWidgetSimple(
+      {required this.message, required this.chatService});
 
   @override
   Widget build(BuildContext context) {
@@ -392,12 +398,12 @@ class ChatMessageWidgetSimple extends StatelessWidget {
       title: SelectableText(
         message.content.replaceAll("\n\n", "\n"),
         textAlign: message.isUser ? TextAlign.right : TextAlign.left,
-        onSelectionChanged: (text, _) {
-          _showMessageActions(
-              context, ChatMessage(role: "user", content: text.toString()));
-        },
+        // onSelectionChanged: (text, _) {
+        //   _showMessageActions(
+        //       context, ChatMessage(role: "user", content: text.toString()));
+        // },
       ),
-      onLongPress: () => _showMessageActions(context, message),
+      onLongPress: () => chatService.showMessageActions(context, message),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
     );
   }
@@ -422,17 +428,23 @@ class ChatMessageWidget extends StatelessWidget {
         height: message.isUser ? 55 : 100,
         child: message.isUser
             ? ListTile(
-                title: Text(
-                  message.content.replaceAll("\n\n", "\n"),
-                  textAlign: message.isUser ? TextAlign.right : TextAlign.left,
-                ),
-                tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-              )
+          title: Text(
+            message.content.replaceAll("\n\n", "\n"),
+            textAlign: message.isUser ? TextAlign.right : TextAlign.left,
+          ),
+          tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+        )
             : Markdown(
-                data: message.content,
-                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-              ),
+          data: message.content,
+          styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+        ),
       ),
     );
   }
+}
+
+abstract class IChatService {
+  Future<String> translate(String content);
+
+  void showMessageActions(BuildContext context, ChatMessage message);
 }
