@@ -31,10 +31,10 @@ class ChatHistory {
   List<ChatMessage> get messages => _messages;
 
   List<ChatMessage> get latestMessages {
-    if (_messages.length < 3) {
+    if (_messages.length < 4) {
       return _messages;
     } else {
-      return _messages.sublist(_messages.length - 3);
+      return _messages.sublist(_messages.length - 4);
     }
   }
 
@@ -42,7 +42,6 @@ class ChatHistory {
     _messages.add(message);
     _saveHistory();
   }
-
 
   static List<ChatMessage> _loadHistory(SharedPreferences prefs) {
     final String? json = prefs.getString(Constants.cacheHistoryKey);
@@ -66,5 +65,10 @@ class ChatHistory {
         _messages.map((message) => message.toJson()).toList(growable: false);
     final String json = jsonEncode(data);
     _prefs.setString(Constants.cacheHistoryKey, json);
+  }
+
+  void _clearHistory() {
+    _messages.clear();
+    _saveHistory();
   }
 }

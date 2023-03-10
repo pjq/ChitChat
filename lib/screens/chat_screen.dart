@@ -218,6 +218,19 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 onPressed: () {
                   _showAbout();
                 }),
+            IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  setState(() {
+                    _messages.clear();
+                    _history?.messages.clear();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Conversation records erased'),
+                      ),
+                    );
+                  });
+                }),
           ],
         ),
         body: SafeArea(
