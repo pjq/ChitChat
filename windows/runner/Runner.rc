@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "me.pjq.chatgpt" "\0"
-            VALUE "FileDescription", "chatgpt_flutter" "\0"
+            VALUE "CompanyName", "me.pjq.chitchat" "\0"
+            VALUE "FileDescription", "chitchat" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "chatgpt_flutter" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 me.pjq.chatgpt. All rights reserved." "\0"
-            VALUE "OriginalFilename", "chatgpt_flutter.exe" "\0"
-            VALUE "ProductName", "chatgpt_flutter" "\0"
+            VALUE "InternalName", "chitchat" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 me.pjq.chitchat. All rights reserved." "\0"
+            VALUE "OriginalFilename", "chitchat.exe" "\0"
+            VALUE "ProductName", "chitchat" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

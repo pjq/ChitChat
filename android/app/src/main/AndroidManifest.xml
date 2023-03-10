@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
    <application
-        android:label="chatgpt_flutter"
+        android:label="chitchat"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
