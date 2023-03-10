@@ -3,7 +3,7 @@
 import 'package:about/about.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:chatgpt_flutter/pubspec.dart';
+import 'package:chitchat/pubspec.dart';
 
 
 class AboutScreen extends StatelessWidget {

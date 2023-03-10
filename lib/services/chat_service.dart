@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:chatgpt_flutter/LogUtils.dart';
-import 'package:chatgpt_flutter/models/chat_message.dart';
+import 'package:chitchat/LogUtils.dart';
+import 'package:chitchat/models/chat_message.dart';
 import 'package:http/http.dart' as http;
 
 class ChatService {

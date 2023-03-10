@@ -1,10 +1,10 @@
-import 'package:chatgpt_flutter/screens/about_screen.dart';
+import 'package:chitchat/screens/about_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:chatgpt_flutter/screens/chat_screen.dart';
-import 'package:chatgpt_flutter/screens/settings_screen.dart';
-import 'package:chatgpt_flutter/screens/splash_screen.dart';
-import 'package:chatgpt_flutter/settings.dart';
-import 'package:chatgpt_flutter/constants.dart';
+import 'package:chitchat/screens/chat_screen.dart';
+import 'package:chitchat/screens/settings_screen.dart';
+import 'package:chitchat/screens/splash_screen.dart';
+import 'package:chitchat/settings.dart';
+import 'package:chitchat/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:chatgpt_flutter/screens/chat_screen.dart';
-import 'package:chatgpt_flutter/screens/settings_screen.dart';
+import 'package:chitchat/screens/chat_screen.dart';
+import 'package:chitchat/screens/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

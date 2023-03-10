@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:chatgpt_flutter/LogUtils.dart';
+import 'package:chitchat/LogUtils.dart';
 import 'package:flutter/material.dart';
-import 'package:chatgpt_flutter/settings.dart';
-import 'package:chatgpt_flutter/constants.dart';
-import 'package:chatgpt_flutter/models/chat_message.dart';
-import 'package:chatgpt_flutter/services/chat_service.dart';
+import 'package:chitchat/settings.dart';
+import 'package:chitchat/constants.dart';
+import 'package:chitchat/models/chat_message.dart';
+import 'package:chitchat/services/chat_service.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:about/about.dart';
-import 'package:chatgpt_flutter/pubspec.dart';
+import 'package:chitchat/pubspec.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ChatScreen extends StatefulWidget {
