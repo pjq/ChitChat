@@ -1,5 +1,7 @@
 ## March 10, 2023
 - Build the Copy/Share/Translation actions
+- Support Proxy Settings
+- Support baseURL Settings
 ## March 9, 2023
 - Build the Chat History persistence
 - Support continuous conversation mode

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'OpenAI Chat',
+      title: 'ChitChat',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily:
