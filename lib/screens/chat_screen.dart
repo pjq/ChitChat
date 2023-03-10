@@ -75,11 +75,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       final response = await _chatService!.getCompletion(
-          messageSend.content,
-          _settings!.promptString,
-          _settings!.temperatureValue,
-          _get5ChatHistory(),
-          _settings!.proxyUrl);
+        messageSend.content,
+        _settings!.promptString,
+        _settings!.temperatureValue,
+        _get5ChatHistory(),
+        _settings!.proxyUrl,
+        _settings!.baseUrl,
+      );
       final completion = response['choices'][0]['message']['content'];
       LogUtils.error(completion);
 

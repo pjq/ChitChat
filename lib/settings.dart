@@ -41,4 +41,11 @@ class Settings {
   set proxyUrl(String value) {
     prefs.setString(Constants.proxyUrlKey, value);
   }
+
+  String get baseUrl => prefs.getString(Constants.baseUrlKey) ?? 'https://api.openai.com';
+
+  set baseUrl(String value) {
+    prefs.setString(Constants.baseUrlKey, value);
+  }
+
 }

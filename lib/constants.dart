@@ -17,5 +17,7 @@ class Constants {
   ];
 
   static String proxyUrlKey="proxy_url";
+  static const String baseUrlKey = 'base_url';
+
 
 }

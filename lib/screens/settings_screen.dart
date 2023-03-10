@@ -16,6 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _promptStringController;
   late TextEditingController _temperatureValueController;
   late TextEditingController _proxyUrlController; // new controller for proxy URL
+  late TextEditingController _baseUrlController; //
   late bool _continueConversationEnable;
   late bool _localCacheEnable;
 
@@ -43,7 +44,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Constants.defaultLocalCacheEnable;
 
     _proxyUrlController = TextEditingController(
-        text: widget.prefs.getString(Constants.proxyUrlKey)); // initialize proxy URL controller
+        text: widget.prefs.getString(Constants.proxyUrlKey));
+
+    _baseUrlController = TextEditingController(
+        text: widget.prefs.getString(Constants.baseUrlKey));
   }
 
   void _saveSettings() {
@@ -60,7 +64,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: Text('Settings saved'),
       ),
     );
-    widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text); // save proxy URL to preferences
+    widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
+    widget.prefs.setString(Constants.baseUrlKey, _baseUrlController.text);
 
     Navigator.pop(context);
   }
@@ -127,6 +132,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildTextField(
                 controller: _proxyUrlController, // add text field for proxy URL
                 label: 'Proxy(host:port)',
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _baseUrlController, // add text field for proxy URL
+                label: 'OpenAI Base URL',
               ),
               const SizedBox(height: 16),
               ElevatedButton(

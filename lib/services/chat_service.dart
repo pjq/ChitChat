@@ -15,6 +15,7 @@ class ChatService {
     double temperatureValue,
     List<ChatMessage>? latestChat,
     String proxy,
+    String baseUrl,
   ) async {
     LogUtils.info("getCompletion");
 
@@ -46,8 +47,14 @@ class ChatService {
       };
     }
 
+    String url = "https://api.openai.com";
+    if (baseUrl.isNotEmpty) {
+      url = baseUrl;
+    }
+    LogUtils.info(url);
+
     final request = await client
-        .postUrl(Uri.parse('https://api.openai.com/v1/chat/completions'));
+        .postUrl(Uri.parse('$url/v1/chat/completions'));
     request.headers.contentType = ContentType.json;
     request.headers.set('Authorization', 'Bearer $apiKey');
     request.write(body);
