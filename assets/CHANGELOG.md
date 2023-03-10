@@ -1,5 +1,6 @@
 ## March 10, 2023
 - Build the Translation actions
+- Build the Rephrase actions
 ## March 10, 2023
 - Build the Copy/Share actions
 - Support Proxy Settings
