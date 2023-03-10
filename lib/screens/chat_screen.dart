@@ -52,11 +52,19 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   @override
-  Future<String> translate(String content,) async {
+  Future<String> translate(String content, String translationPrompt) async {
+    setState(() {
+      _isLoading = true;
+    });
     final completion = await _chatService!.getTranslation(
       content,
+      translationPrompt,
       _settings,
     );
+
+    setState(() {
+      _isLoading = false;
+    });
 
     return completion;
   }
@@ -68,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         builder: (context) =>
             AlertDialog(
               title: Text('OpenAI API key not set'),
-              content: Text('Please set the OpenAI API key in the settings.'),
+              content: Text('Kindly configure the OpenAI API key in the settings'),
               actions: [
                 TextButton(
                     child: Text('OK'),
@@ -309,7 +317,19 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 leading: Icon(Icons.translate),
                 title: Text('Translation'),
                 onTap: () {
-                  translate(message.content).then((translatedText) {
+                  translate(message.content, Constants.translationPrompt).then((translatedText) {
+                    setState(() {
+                      _messages.add(ChatMessage(role: "assistant", content: translatedText));
+                    });
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.translate),
+                title: Text('Rephrase'),
+                onTap: () {
+                  translate(message.content, Constants.rephrasePrompt).then((translatedText) {
                     setState(() {
                       _messages.add(ChatMessage(role: "assistant", content: translatedText));
                     });
@@ -395,7 +415,7 @@ class ChatMessageWidgetSimple extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: SelectableText(
+      title: Text(
         message.content.replaceAll("\n\n", "\n"),
         textAlign: message.isUser ? TextAlign.right : TextAlign.left,
         // onSelectionChanged: (text, _) {
@@ -403,7 +423,7 @@ class ChatMessageWidgetSimple extends StatelessWidget {
         //       context, ChatMessage(role: "user", content: text.toString()));
         // },
       ),
-      onLongPress: () => chatService.showMessageActions(context, message),
+      onTap: () => chatService.showMessageActions(context, message),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
     );
   }
@@ -444,7 +464,7 @@ class ChatMessageWidget extends StatelessWidget {
 }
 
 abstract class IChatService {
-  Future<String> translate(String content);
+  Future<String> translate(String content, String translationPrompt);
 
   void showMessageActions(BuildContext context, ChatMessage message);
 }

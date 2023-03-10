@@ -13,10 +13,11 @@ class ChatService {
 
   Future<String> getTranslation(
     String content,
+    String translationPrompt,
     Settings? _settings,
   ) async {
     final response = await getCompletionRaw(
-      Constants.translationPrompt + content,
+      translationPrompt + content,
       _settings!.promptString,
       _settings!.temperatureValue,
       [],
