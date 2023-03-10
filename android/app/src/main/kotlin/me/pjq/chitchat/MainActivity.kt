@@ -1,4 +1,4 @@
-package me.pjq.chatgpt.chatgpt_flutter
+package me.pjq.chitchat
 
 import io.flutter.embedding.android.FlutterActivity
 
