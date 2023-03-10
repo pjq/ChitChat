@@ -326,7 +326,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.translate),
+                leading: Icon(Icons.book),
                 title: Text('Rephrase'),
                 onTap: () {
                   translate(message.content, Constants.rephrasePrompt).then((translatedText) {
