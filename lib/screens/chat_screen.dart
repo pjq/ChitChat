@@ -27,16 +27,34 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   ChatService? _chatService;
   Settings? _settings;
   ChatHistory? _history;
+  final _chatListController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    LogUtils.info("init state");
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    LogUtils.info("didChangeDependencies");
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      SharedPreferences.getInstance().then((prefs) {
-        _settings = Settings(prefs: prefs);
-        _chatService = ChatService(apiKey: _settings!.openaiApiKey);
-        _history = ChatHistory(prefs: prefs);
-        _messages.addAll(_history!.messages);
+      _settings = Settings(prefs: prefs);
+      _chatService = ChatService(apiKey: _settings!.openaiApiKey);
+      _history = ChatHistory(prefs: prefs);
+      _messages.addAll(_history!.messages);
+      LogUtils.info("history size: ${_messages.length}");
+
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _chatListController.animateTo(
+          _chatListController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 2000),
+          curve: Curves.easeOut,
+        );
       });
     });
   }
@@ -96,6 +114,12 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     setState(() {
       _isLoading = true;
+
+      _chatListController.animateTo(
+        _chatListController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 2000),
+        curve: Curves.easeOut,
+      );
     });
 
     final messageSend = ChatMessage(role: 'user', content: text);
@@ -113,6 +137,12 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         _history?.addMessage(messageSend);
         _history?.addMessage(messageReceived);
       });
+
+      _chatListController.animateTo(
+        _chatListController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 2000),
+        curve: Curves.easeOut,
+      );
     } catch (e) {
       LogUtils.error(e.toString());
       setState(() {
@@ -238,6 +268,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             children: [
               Expanded(
                 child: ListView.builder(
+                  controller: _chatListController,
                   itemCount: _messages.length,
                   itemBuilder: (BuildContext context, int index) {
                     final ChatMessage message = _messages[index];
