@@ -1,0 +1,75 @@
+# This is a basic workflow to help you get started with Actions
+name: CD Internal-Lane
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    tags:
+      - "internal-v*.*.*" # on every version tag will build a new android artifact example: v3.1.2+6
+jobs:
+  build:
+    name: Build Artifacts and Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: "1.17.5"
+
+      - name: Decode android/neumodore_key.jks
+        run: echo "${{ secrets.KEYSTORE_JKS_PROD }}" | base64 --decode > android/keystore.jks
+
+      - name: Decode android/key.properties
+        run: echo "${{ secrets.KEY_PROPERTIES_PROD }}" | base64 --decode > android/key.properties
+
+      - uses: olegtarasov/get-tag@v2 # that generate $GIT_TAG_NAME env
+        id: tagName
+        with:
+          tagRegex: 'internal-v([0-9]+.[0-9]+.[0-9]+\+[0-9]+)' # Optional. Returns specified group text as tag name. Full tag string is returned if regex is not defined.
+          tagRegexGroup: 1 # Optional. Default is 1.
+
+      - name: Replace YAML version with tag version
+        run: |
+          sed -i 's/99.99.99+99/'$GIT_TAG_NAME'/g' pubspec.yaml|
+          echo "Tag used version:"$GIT_TAG_NAME
+      - name: Pub Get Packages
+        run: flutter pub get
+
+      - name: Build APPBUNDLE
+        run: flutter build appbundle --release
+
+      - name: Create Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/bundle/release/*.aab"
+          token: ${{ secrets.PERSONAL_RELEASE_TOKEN }}
+
+      - name: Save APPBUNDLE to Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: APPBUNDLE
+          path: build/app/outputs/bundle/release/app-release.aab
+  release_internal:
+    name: Release Artifacts to internal track
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Get APPBUNDLE from Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: APPBUNDLE
+      - name: Release APPBUNDLE to internal track
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICE_JSONKEY }}
+          packageName: me.pjq.chitchat
+          releaseFile: app-release.aab
+          track: internal
+          whatsNewDirectory: distribution/whatsnew
