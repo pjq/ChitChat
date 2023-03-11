@@ -1,0 +1,79 @@
+name: 'CI'
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [labeled, opened, synchronize, reopened]
+
+jobs:
+  tests:
+    name: Test and analyze flutter code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout flutter_ci_example
+        uses: actions/checkout@v3
+        with:
+          path: my_directory
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.7.7'
+          channel: 'stable'
+
+      - name: Run format, analyze, test
+        working-directory: ./
+        run: |
+#          flutter format --set-exit-if-changed .
+#          flutter analyze --fatal-warnings
+#          flutter test --coverage
+           echo "do nothing for now"
+  build:
+    name: Build app
+    needs: [tests]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-11]
+    steps:
+      - name: Checkout flutter_flutter_ci_example
+        uses: actions/checkout@v3
+
+      - name: Configure Flutter environment
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.7.7'
+          channel: 'stable'
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            build/
+            android/.gradle/
+          key: ${{ runner.os }}-flutter_ci_example-${{ hashFiles('**/*.gradle*', 'pubspec.lock') }}
+
+      - name: Build Android app
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          echo "Building Android..."
+          pwd
+          flutter pub get
+          flutter build apk --no-pub
+#          flutter build appbundle --no-pub
+      - name: Build iOS app
+        if: ${{ matrix.os == 'macos-12' }}
+        run: |
+          flutter pub get
+          echo "Building macos..."
+          flutter build macos --release
+          echo "Building iOS..."
+          echo "Not implemented yet."
+#
+#      - name: 'Upload Builds'
+#        uses: actions/upload-artifact@v2
+#        if: ${{ matrix.os == 'ubuntu-latest' }}
+#        with:
+#          name: builds
+#          path: |
+#            build/app/outputs/flutter-apk/app-release.apk
+#            build/app/outputs/bundle/release/app-release.aab
+#          retention-days: 5
