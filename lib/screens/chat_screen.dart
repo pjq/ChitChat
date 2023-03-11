@@ -33,6 +33,24 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   void initState() {
     super.initState();
     LogUtils.info("init state");
+
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        _settings = Settings(prefs: prefs);
+        _chatService = ChatService(apiKey: _settings!.openaiApiKey);
+        _history = ChatHistory(prefs: prefs);
+        _messages.addAll(_history!.messages);
+        LogUtils.info("history size: ${_messages.length}");
+
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          _chatListController.animateTo(
+            _chatListController.position.maxScrollExtent,
+            duration: Duration(milliseconds: Constants.scrollDuration),
+            curve: Curves.easeOutSine,
+          );
+        });
+      });
+    });
   }
 
   @override
@@ -40,26 +58,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     super.didChangeDependencies();
 
     LogUtils.info("didChangeDependencies");
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _settings = Settings(prefs: prefs);
-      _chatService = ChatService(apiKey: _settings!.openaiApiKey);
-      _history = ChatHistory(prefs: prefs);
-      _messages.addAll(_history!.messages);
-      LogUtils.info("history size: ${_messages.length}");
-
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        _chatListController.animateTo(
-          _chatListController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 2000),
-          curve: Curves.easeOut,
-        );
-      });
-    });
   }
 
-  Future<String> _callAPI(String content,) async {
+  Future<String> _callAPI(
+    String content,
+  ) async {
     final completion = await _chatService!.getCompletion(
       content,
       _get5ChatHistory(),
@@ -91,19 +94,18 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     if (_settings!.openaiApiKey.isEmpty) {
       showDialog(
         context: context,
-        builder: (context) =>
-            AlertDialog(
-              title: Text('OpenAI API key not set'),
-              content: Text('Kindly configure the OpenAI API key in the settings'),
-              actions: [
-                TextButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, '/settings');
-                    }),
-              ],
-            ),
+        builder: (context) => AlertDialog(
+          title: Text('OpenAI API key not set'),
+          content: Text('Kindly configure the OpenAI API key in the settings'),
+          actions: [
+            TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/settings');
+                }),
+          ],
+        ),
       );
       return;
     }
@@ -117,8 +119,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
       _chatListController.animateTo(
         _chatListController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 2000),
-        curve: Curves.easeOut,
+        duration: Duration(milliseconds: Constants.scrollDuration),
+        curve: Curves.easeOutSine,
       );
     });
 
@@ -132,7 +134,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       setState(() {
         _isLoading = false;
         final messageReceived =
-        ChatMessage(role: 'assistant', content: completion);
+            ChatMessage(role: 'assistant', content: completion);
         _messages.add(messageReceived);
         _history?.addMessage(messageSend);
         _history?.addMessage(messageReceived);
@@ -140,8 +142,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
       _chatListController.animateTo(
         _chatListController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 2000),
-        curve: Curves.easeOut,
+        duration: Duration(milliseconds: Constants.scrollDuration),
+        curve: Curves.easeOutSine,
       );
     } catch (e) {
       LogUtils.error(e.toString());
@@ -179,13 +181,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       context: context,
       values: {
         'version': Pubspec.version,
-        'year': DateTime
-            .now()
-            .year
-            .toString(),
+        'year': DateTime.now().year.toString(),
       },
       applicationLegalese:
-      'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
+          'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
       applicationDescription: Text(Pubspec.description),
       children: const <Widget>[
         MarkdownPageListTile(
@@ -273,7 +272,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                   itemBuilder: (BuildContext context, int index) {
                     final ChatMessage message = _messages[index];
                     return ChatMessageWidgetSimple(
-                      message: message, chatService: this,);
+                      message: message,
+                      chatService: this,
+                    );
                   },
                 ),
               ),
@@ -361,9 +362,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 leading: Icon(Icons.translate),
                 title: Text('Translation'),
                 onTap: () {
-                  translate(message.content, Constants.translationPrompt).then((translatedText) {
+                  translate(message.content, Constants.translationPrompt)
+                      .then((translatedText) {
                     setState(() {
-                      _messages.add(ChatMessage(role: "assistant", content: translatedText));
+                      _messages.add(ChatMessage(
+                          role: "assistant", content: translatedText));
                     });
                   });
                   Navigator.pop(context);
@@ -373,9 +376,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 leading: Icon(Icons.book),
                 title: Text('Rephrase'),
                 onTap: () {
-                  translate(message.content, Constants.rephrasePrompt).then((translatedText) {
+                  translate(message.content, Constants.rephrasePrompt)
+                      .then((translatedText) {
                     setState(() {
-                      _messages.add(ChatMessage(role: "assistant", content: translatedText));
+                      _messages.add(ChatMessage(
+                          role: "assistant", content: translatedText));
                     });
                   });
                   Navigator.pop(context);
@@ -448,7 +453,6 @@ class ChatMessageWidget4 extends StatelessWidget {
   }
 }
 
-
 class ChatMessageWidgetSimple extends StatelessWidget {
   final ChatMessage message;
   final IChatService chatService;
@@ -492,16 +496,16 @@ class ChatMessageWidget extends StatelessWidget {
         height: message.isUser ? 55 : 100,
         child: message.isUser
             ? ListTile(
-          title: Text(
-            message.content.replaceAll("\n\n", "\n"),
-            textAlign: message.isUser ? TextAlign.right : TextAlign.left,
-          ),
-          tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-        )
+                title: Text(
+                  message.content.replaceAll("\n\n", "\n"),
+                  textAlign: message.isUser ? TextAlign.right : TextAlign.left,
+                ),
+                tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+              )
             : Markdown(
-          data: message.content,
-          styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-        ),
+                data: message.content,
+                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+              ),
       ),
     );
   }
