@@ -42,12 +42,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         _messages.addAll(_history!.messages);
         LogUtils.info("history size: ${_messages.length}");
 
-        WidgetsBinding.instance!.addPostFrameCallback((_) {
-          _chatListController.animateTo(
-            _chatListController.position.maxScrollExtent,
-            duration: Duration(milliseconds: Constants.scrollDuration),
-            curve: Curves.easeOutSine,
-          );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _listViewScrollToBottom();
         });
       });
     });
@@ -116,13 +112,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     setState(() {
       _isLoading = true;
-
-      _chatListController.animateTo(
-        _chatListController.position.maxScrollExtent,
-        duration: Duration(milliseconds: Constants.scrollDuration),
-        curve: Curves.easeOutSine,
-      );
     });
+
+    _listViewScrollToBottom();
 
     final messageSend = ChatMessage(role: 'user', content: text);
     _messages.add(messageSend);
@@ -140,11 +132,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         _history?.addMessage(messageReceived);
       });
 
-      _chatListController.animateTo(
-        _chatListController.position.maxScrollExtent,
-        duration: Duration(milliseconds: Constants.scrollDuration),
-        curve: Curves.easeOutSine,
-      );
+      _listViewScrollToBottom();
     } catch (e) {
       LogUtils.error(e.toString());
       setState(() {
@@ -306,8 +294,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                       ),
                       SizedBox(width: 10),
                       IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () => _sendMessage(_controller.text),
+                        icon: Icon(Icons.send, color: _isLoading ? Colors.grey : null),
+                        onPressed: () => _isLoading ? null : _sendMessage(_controller.text),
                       ),
                       if (_isLoading)
                         SizedBox(
@@ -391,6 +379,16 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         );
       },
     );
+  }
+
+  void _listViewScrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _chatListController.animateTo(
+        _chatListController.position.maxScrollExtent,
+        duration: Duration(milliseconds: Constants.scrollDuration),
+        curve: Curves.easeOutSine,
+      );
+    });
   }
 }
 
