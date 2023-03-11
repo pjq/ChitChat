@@ -14,19 +14,23 @@ It is built with Flutter and supports platforms
 - Web
 - Mac OS X
 - Linux
+- Windows
 
 ### Features
 
 - Chat with GPT-3.5 Turbo model.
 - Chat history persistence.
+- Clean chat history.
 - Support for continuous conversation mode.
 - Support for Chinese character display.
-- Copy, share, and translate chat messages.
+- Copy, share, and translate, rephrase chat messages.
 - Retry logic in case of message send failure.
+- Proxy settings
+- OpenAI Base URL Support
 
 ### Getting Started
 
-To get started with ChatGPT, clone this repository to your local machine and open it in your
+To get started with ChitChat, clone this repository to your local machine and open it in your
 preferred IDE. Then, run the following command in the terminal to download the required
 dependencies:
 
@@ -85,5 +89,5 @@ samples, guidance on mobile development, and a full API reference.
 ### Screenshots
 
 ![Screenshot of Chat Screen](screenshots/chat.png)
-![Screenshot of Settings Screen](screenshots/setting.png)
+![Screenshot of Settings Screen](screenshots/settings.png)
 ![Screenshot of Actions Menu](screenshots/actions.png)
