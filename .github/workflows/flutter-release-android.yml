@@ -2,7 +2,7 @@ name: Android/Linux Release
 on:
   push:
     tags:
-      - '*'
+      - '*android'
 
 jobs:
   build:

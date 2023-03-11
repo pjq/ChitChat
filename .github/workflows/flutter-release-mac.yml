@@ -2,7 +2,7 @@ name: 'Mac Release'
 on:
   push:
     tags:
-      - '*'
+      - '*mac*'
 
 jobs:
   build:
@@ -15,10 +15,12 @@ jobs:
           architecture: x64
       - run: flutter config --enable-macos-desktop
       - run: flutter build macos
+      - name: Create the DMG file
+          - run: hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release/chitchat.app build/macos/Build/Products/Release/chitchat.dmg
       - name: Create Github Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/macos/Build/Products/Release/chitchat.app"
+          artifacts: "build/macos/Build/Products/Release/chitchat.dmg"
           token: ${{ secrets.PERSONAL_RELEASE_TOKEN }}
           bodyFile: "assets/CHANGELOG.md"
 #      - uses: actions/checkout@v2
