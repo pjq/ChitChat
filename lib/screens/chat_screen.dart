@@ -259,7 +259,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                   itemCount: _messages.length,
                   itemBuilder: (BuildContext context, int index) {
                     final ChatMessage message = _messages[index];
-                    return ChatMessageWidgetSimple(
+                    return ChatMessageWidgetMarkdown(
                       message: message,
                       chatService: this,
                     );
@@ -399,13 +399,11 @@ class ChatMessageWidget2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Markdown(
+    return MarkdownBody(
         data: message.content,
         styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-      ),
-      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-    );
+      );
+      // tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
   }
 }
 
@@ -475,6 +473,45 @@ class ChatMessageWidgetSimple extends StatelessWidget {
   }
 }
 
+class ChatMessageWidgetMarkdown extends StatelessWidget {
+  final ChatMessage message;
+  final IChatService chatService;
+
+  const ChatMessageWidgetMarkdown(
+      {required this.message, required this.chatService});
+
+  @override
+  Widget build(BuildContext context) {
+
+    ThemeData themeData = Theme.of(context);
+    MarkdownStyleSheet markdownStyleSheet = MarkdownStyleSheet.fromTheme(themeData);
+    // markdownStyleSheet.textAlign = message.isUser ?  WrapAlignment.end : WrapAlignment.start;
+    return ListTile(
+      title: MarkdownBody(
+        // data:message.content.replaceAll("\n\n", "\n"),
+        data:message.content,
+        // textAlign: message.isUser ? TextAlign.right : TextAlign.left,
+      ),
+      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+      onTap: () => chatService.showMessageActions(context, message),
+    );
+      //   :  MarkdownBody(
+      // data: message.content.replaceAll("\n\n", "\n"),
+      // styleSheet: markdownStyleSheet,
+      // // onTapText: ,
+      // onTapText: () => chatService.showMessageActions(context, message),
+
+      // align: message.isUser ? TextAlign.right : TextAlign.left,
+        // onSelectionChanged: (text, _) {
+        //   _showMessageActions(
+        //       context, ChatMessage(role: "user", content: text.toString()));
+        // },
+      // );
+      // onTap: () => chatService.showMessageActions(context, message),
+      // tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+  }
+}
+
 class ChatMessageWidget extends StatelessWidget {
   final ChatMessage message;
 
@@ -491,7 +528,7 @@ class ChatMessageWidget extends StatelessWidget {
           color: message.isUser ? Colors.blue[100] : Colors.grey[200],
           borderRadius: BorderRadius.circular(10),
         ),
-        height: message.isUser ? 55 : 100,
+        height: message.isUser ? 55 : 200,
         child: message.isUser
             ? ListTile(
                 title: Text(
@@ -501,6 +538,7 @@ class ChatMessageWidget extends StatelessWidget {
                 tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
               )
             : Markdown(
+                selectable: true,
                 data: message.content,
                 styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
               ),
