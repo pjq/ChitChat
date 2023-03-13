@@ -392,63 +392,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 }
 
-class ChatMessageWidget2 extends StatelessWidget {
-  final ChatMessage message;
-
-  const ChatMessageWidget2({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return MarkdownBody(
-        data: message.content,
-        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-      );
-      // tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-  }
-}
-
-class ChatMessageWidget3 extends StatelessWidget {
-  final ChatMessage message;
-
-  const ChatMessageWidget3({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      decoration: BoxDecoration(
-        color: message.role == 'user' ? Colors.blue : Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Markdown(
-        data: message.content,
-        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-        padding: EdgeInsets.zero,
-      ),
-    );
-  }
-}
-
-class ChatMessageWidget4 extends StatelessWidget {
-  final ChatMessage message;
-
-  const ChatMessageWidget4({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Expanded(
-        child: Markdown(
-          data: message.content,
-          styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-        ),
-      ),
-      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-    );
-  }
-}
-
 class ChatMessageWidgetSimple extends StatelessWidget {
   final ChatMessage message;
   final IChatService chatService;
@@ -488,27 +431,12 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     // markdownStyleSheet.textAlign = message.isUser ?  WrapAlignment.end : WrapAlignment.start;
     return ListTile(
       title: MarkdownBody(
-        // data:message.content.replaceAll("\n\n", "\n"),
         data:message.content,
-        // textAlign: message.isUser ? TextAlign.right : TextAlign.left,
       ),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
       onTap: () => chatService.showMessageActions(context, message),
+      // hoverColor: Colors.grey[100],
     );
-      //   :  MarkdownBody(
-      // data: message.content.replaceAll("\n\n", "\n"),
-      // styleSheet: markdownStyleSheet,
-      // // onTapText: ,
-      // onTapText: () => chatService.showMessageActions(context, message),
-
-      // align: message.isUser ? TextAlign.right : TextAlign.left,
-        // onSelectionChanged: (text, _) {
-        //   _showMessageActions(
-        //       context, ChatMessage(role: "user", content: text.toString()));
-        // },
-      // );
-      // onTap: () => chatService.showMessageActions(context, message),
-      // tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
   }
 }
 
@@ -542,6 +470,44 @@ class ChatMessageWidget extends StatelessWidget {
                 data: message.content,
                 styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
               ),
+      ),
+    );
+  }
+}
+
+class ChatMessageWidget2 extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatMessageWidget2({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return MarkdownBody(
+      data: message.content,
+      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+    );
+    // tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+  }
+}
+
+class ChatMessageWidget3 extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatMessageWidget3({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        color: message.role == 'user' ? Colors.blue : Colors.grey[200],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Markdown(
+        data: message.content,
+        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+        padding: EdgeInsets.zero,
       ),
     );
   }
