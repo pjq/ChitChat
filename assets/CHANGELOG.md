@@ -1,4 +1,6 @@
 ## March 13, 2023
+- Support delete message 
+## March 13, 2023
 - Support Markdown 
 ## March 10, 2023
 - Build the Translation actions
