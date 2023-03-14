@@ -86,6 +86,13 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     return completion;
   }
 
+  void delete(ChatMessage message) {
+    setState(() {
+      _messages.remove(message);
+      _history?.deleteMessage(message);
+    });
+  }
+
   void _sendMessage(String text) async {
     if (_settings!.openaiApiKey.isEmpty) {
       showDialog(
@@ -294,8 +301,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                       ),
                       SizedBox(width: 10),
                       IconButton(
-                        icon: Icon(Icons.send, color: _isLoading ? Colors.grey : null),
-                        onPressed: () => _isLoading ? null : _sendMessage(_controller.text),
+                        icon: Icon(Icons.send,
+                            color: _isLoading ? Colors.grey : null),
+                        onPressed: () =>
+                            _isLoading ? null : _sendMessage(_controller.text),
                       ),
                       if (_isLoading)
                         SizedBox(
@@ -374,6 +383,17 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                   Navigator.pop(context);
                 },
               ),
+              ListTile(
+                leading: Icon(Icons.remove),
+                title: Text('Delete'),
+                onTap: () {
+                  delete(message);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Message deleted'),
+                  ));
+                  Navigator.pop(context);
+                },
+              ),
             ],
           ),
         );
@@ -425,13 +445,13 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     ThemeData themeData = Theme.of(context);
-    MarkdownStyleSheet markdownStyleSheet = MarkdownStyleSheet.fromTheme(themeData);
+    MarkdownStyleSheet markdownStyleSheet =
+        MarkdownStyleSheet.fromTheme(themeData);
     // markdownStyleSheet.textAlign = message.isUser ?  WrapAlignment.end : WrapAlignment.start;
     return ListTile(
       title: MarkdownBody(
-        data:message.content,
+        data: message.content,
       ),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
       onTap: () => chatService.showMessageActions(context, message),

@@ -43,6 +43,11 @@ class ChatHistory {
     _saveHistory();
   }
 
+  void deleteMessage(ChatMessage message) {
+    _messages.remove(message);
+    _saveHistory();
+  }
+
   static List<ChatMessage> _loadHistory(SharedPreferences prefs) {
     final String? json = prefs.getString(Constants.cacheHistoryKey);
     if (json == null) {
