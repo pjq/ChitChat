@@ -126,7 +126,7 @@ class ChatService {
     ChatMessage chatMessage = ChatMessage(role: "assistant", content: "");
     await response.transform(utf8.decoder).listen((event) {
       //{"id":"chatcmpl-6ttclp0wSdVFsT9Usl0yvuwNkvLzJ","object":"chat.completion.chunk","created":1678779879,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":" today"},"index":0,"finish_reason":null}]}
-      LogUtils.info("${event}");
+      // LogUtils.info("${event}");
       event = lastTruncatedMessage + event;
       List<String> itemList = event.split("]}");
       lastTruncatedMessage = itemList.last;
