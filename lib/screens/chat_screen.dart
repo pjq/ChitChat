@@ -301,6 +301,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             children: [
               Expanded(
                 child: ListView.builder(
+                  padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                  // separatorBuilder: (BuildContext context, int index) =>
+                  //     Divider(thickness: 1.0,color: Colors.blueAccent ,),
                   controller: _chatListController,
                   itemCount: _messages.length,
                   itemBuilder: (BuildContext context, int index) {
@@ -443,7 +446,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _listViewScrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       _chatListController.animateTo(
         _chatListController.position.maxScrollExtent,
         duration: Duration(milliseconds: Constants.scrollDuration),
@@ -491,19 +494,18 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
         MarkdownStyleSheet.fromTheme(themeData);
     // markdownStyleSheet.textAlign = message.isUser ?  WrapAlignment.end : WrapAlignment.start;
     return ListTile(
-      title: MarkdownBody(
-        key: const Key("defaultmarkdownformatter"),
-        data: message.content,
-        styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
-        // builders: {
-        //   'code': CodeElementBuilder(),
-        // },
-      ),
-      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-      onTap: () => chatService.showMessageActions(context, message),
-
-      // hoverColor: Colors.grey[100],
-    );
+        title: MarkdownBody(
+          key: const Key("defaultmarkdownformatter"),
+          data: message.content,
+          styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
+          // builders: {
+          //   'code': CodeElementBuilder(),
+          // },
+        ),
+        tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+        onTap: () => chatService.showMessageActions(context, message),
+        // contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        );
   }
 }
 
