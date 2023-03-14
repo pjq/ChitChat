@@ -26,4 +26,6 @@ class Constants {
   //animation duration
   static int scrollDuration = 2000;
 
+  static bool useStream = true;
+
 }

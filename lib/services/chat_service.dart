@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'package:chitchat/LogUtils.dart';
 import 'package:chitchat/constants.dart';
@@ -26,10 +27,10 @@ class ChatService {
       _settings!.proxyUrl,
       _settings!.baseUrl,
     );
-    final completion = response['choices'][0]['message']['content'];
-    LogUtils.info(completion);
+    // final completion = response['choices'][0]['message']['content'];
+    LogUtils.info(response);
 
-    return completion;
+    return response;
   }
 
   Future<String> getCompletion(
@@ -45,13 +46,12 @@ class ChatService {
       _settings!.proxyUrl,
       _settings!.baseUrl,
     );
-    final completion = response['choices'][0]['message']['content'];
-    LogUtils.info(completion);
+    LogUtils.info(response);
 
-    return completion;
+    return response;
   }
 
-  Future<Map<String, dynamic>> getCompletionRaw(
+  Future<String> getCompletionRaw(
     String content,
     String prompt,
     double temperatureValue,
@@ -73,7 +73,7 @@ class ChatService {
     // Add the user's message to the list of chat messages
     chatMessages.add({"role": "user", "content": content});
 
-    bool useStream = false;
+    bool useStream = Constants.useStream;
 
     final body = jsonEncode({
       "model": "gpt-3.5-turbo",
@@ -104,44 +104,65 @@ class ChatService {
     request.write(body);
     final response = await request.close();
 
-    if (useStream) {
-      handleStream(response);
-    }
-
     if (response.statusCode == HttpStatus.ok) {
-      final String responseString =
-          await response.transform(utf8.decoder).join();
-      return jsonDecode(responseString);
+      if (useStream) {
+        return await handleStream(response);
+      } else {
+        final String responseString =
+            await response.transform(utf8.decoder).join();
+        final completion =
+            jsonDecode(responseString)['choices'][0]['message']['content'];
+        // return jsonDecode(responseString);
+        return completion;
+      }
     } else {
       throw Exception('Failed to load response');
     }
   }
 
-  void handleStream(HttpClientResponse response) {
+  Future<String> handleStream(HttpClientResponse response) async {
     LogUtils.info("handleStream");
     String lastTruncatedMessage = "";
-    response.transform(utf8.decoder).listen((event) {
+    ChatMessage chatMessage = ChatMessage(role: "assistant", content: "");
+    await response.transform(utf8.decoder).listen((event) {
       //{"id":"chatcmpl-6ttclp0wSdVFsT9Usl0yvuwNkvLzJ","object":"chat.completion.chunk","created":1678779879,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":" today"},"index":0,"finish_reason":null}]}
+      LogUtils.info("${event}");
       event = lastTruncatedMessage + event;
-      event.split("\n\n").forEach((element) {
-        if (element.contains("[DONE]")) {
+      List<String> itemList = event.split("]}");
+      lastTruncatedMessage = itemList.last;
+      itemList.sublist(0, itemList.length - 1).forEach((jsonItem) {
+        jsonItem = jsonItem.replaceAll("data:", "");
+        String formatedJson = "${jsonItem}]}";
+        final decodeEvent = jsonDecode(formatedJson);
+
+        final content = decodeEvent["choices"][0]["delta"]["content"];
+        final role = decodeEvent["choices"][0]["delta"]["role"];
+        final finish_reason = decodeEvent["choices"][0]["finish_reason"];
+        // LogUtils.info("content: ${content}, role: ${role}");
+        // data: {"id":"chatcmpl-6u0BWt3AaTJefyeglqZ7aYihqbZbL","object":"chat.completion.chunk","created":1678805098,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{},"index":0,"finish_reason":"stop"}]}
+        if (ChatMessage.STOP == finish_reason) {
+          // reach the stop item
+          chatMessage = ChatMessage(
+              role: ChatMessage.ROLE_ASSISTANT, content: ChatMessage.STOP);
+          messageController.add(chatMessage);
           return;
         }
-
-        final item = element.replaceAll("data:", "");
-        List<String> itemList = item.split("]}");
-        lastTruncatedMessage = itemList.last;
-        itemList.sublist(0, itemList.length - 1).forEach((jsonItem) {
-          String formatedJson = "${jsonItem}]}";
-          final decodeEvent = jsonDecode(formatedJson);
-          final content = decodeEvent["choices"][0]["delta"]["content"];
+        if (ChatMessage.ROLE_ASSISTANT == role) {
+          // it's the first data.
+          // LogUtils.info("role is assistant");
+        } else {
           if (null != content) {
             // The chunk message will be here
-            LogUtils.info("${content}");
-            messageController.sink.add(ChatMessage(role: "assistant", content: content));
+            // chatMessage.content = content;
+            chatMessage =
+                ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: content);
+            messageController.add(chatMessage);
           }
-        });
+        }
       });
     });
+
+    LogUtils.info("handleStream, END");
+    return "";
   }
 }

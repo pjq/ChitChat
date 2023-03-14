@@ -3,6 +3,11 @@ import 'package:chitchat/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatMessage {
+  static const String ROLE_USER = 'user';
+  static const String ROLE_ASSISTANT = 'assistant';
+  static const String DONE = '[DONE]';
+  static String STOP = "stop";
+
   String role;
   String content;
 
@@ -12,7 +17,9 @@ class ChatMessage {
       : role = json['role'],
         content = json['content'];
 
-  bool get isUser => role == "user";
+  bool get isUser => role == ROLE_USER;
+
+  bool get isStop=> content.contains(STOP);
 
   Map<String, dynamic> toJson() => {
         'role': role,

@@ -35,8 +35,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   final StreamController<ChatMessage> _messageController =
       StreamController<ChatMessage>.broadcast();
 
-  // Stream<ChatMessage> get messageStream => messageController.stream;
-
   @override
   void initState() {
     super.initState();
@@ -44,8 +42,15 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     _streamSubscription = _messageController.stream.listen((data) {
       setState(() {
-        LogUtils.info(data.toString());
-        _messages.add(data);
+        // LogUtils.info("recv: ${_isLoading}, ${data.content}");
+        //save to chat history
+        if (data.isStop) {
+          _history?.addMessage(_messages.elementAt(_messages.length - 2));
+          _history?.addMessage(_messages.last);
+        } else {
+          _messages.last.content += data.content;
+          _listViewScrollToBottom();
+        }
       });
     });
 
@@ -62,13 +67,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         });
       });
     });
-    //
-    // final streamBuilder = StreamBuilder<ChatMessage>(
-    //   stream: _chatService?.messageStream,
-    //   builder: (context, snapshot) {
-    //     _messages.last.content=snapshot.data.content;
-    //   },
-    // );
   }
 
   @override
@@ -152,9 +150,16 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     _listViewScrollToBottom();
 
-    final messageSend = ChatMessage(role: 'user', content: text);
+    final messageSend = ChatMessage(role: ChatMessage.ROLE_USER, content: text);
     _messages.add(messageSend);
     _controller.clear();
+
+    if (Constants.useStream) {
+      //add as a placeholder for the stream message.
+      final messageSend =
+          ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: "");
+      _messages.add(messageSend);
+    }
 
     try {
       final completion = await _callAPI(messageSend.content);
@@ -162,15 +167,20 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       setState(() {
         _isLoading = false;
         final messageReceived =
-            ChatMessage(role: 'assistant', content: completion);
-        _messages.add(messageReceived);
-        _history?.addMessage(messageSend);
-        _history?.addMessage(messageReceived);
+            ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: completion);
+        if (!Constants.useStream) {
+          _messages.add(messageReceived);
+          _history?.addMessage(messageSend);
+          _history?.addMessage(messageReceived);
+        }
       });
 
       _listViewScrollToBottom();
     } catch (e) {
       LogUtils.error(e.toString());
+      if (Constants.useStream) {
+        _messages.removeLast();
+      }
       setState(() {
         _isLoading = false;
       });
@@ -236,13 +246,13 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       margin: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
-        color: message.role == 'user' ? Colors.blue : Colors.grey[200],
+        color: message.isUser ? Colors.blue : Colors.grey[200],
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         message.content,
         style: TextStyle(
-          color: message.role == 'user' ? Colors.white : Colors.black,
+          color: message.isUser ? Colors.white : Colors.black,
         ),
       ),
     );
@@ -392,7 +402,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                       .then((translatedText) {
                     setState(() {
                       _messages.add(ChatMessage(
-                          role: "assistant", content: translatedText));
+                          role: ChatMessage.ROLE_ASSISTANT,
+                          content: translatedText));
                     });
                   });
                   Navigator.pop(context);
@@ -406,7 +417,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                       .then((translatedText) {
                     setState(() {
                       _messages.add(ChatMessage(
-                          role: "assistant", content: translatedText));
+                          role: ChatMessage.ROLE_ASSISTANT,
+                          content: translatedText));
                     });
                   });
                   Navigator.pop(context);
@@ -491,79 +503,6 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
       onTap: () => chatService.showMessageActions(context, message),
 
       // hoverColor: Colors.grey[100],
-    );
-  }
-}
-
-class ChatMessageWidget extends StatelessWidget {
-  final ChatMessage message;
-
-  const ChatMessageWidget({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Container(
-        width: double.infinity,
-        // Sets the width to be as large as the parent allows
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        decoration: BoxDecoration(
-          color: message.isUser ? Colors.blue[100] : Colors.grey[200],
-          borderRadius: BorderRadius.circular(10),
-        ),
-        height: message.isUser ? 55 : 200,
-        child: message.isUser
-            ? ListTile(
-                title: Text(
-                  message.content.replaceAll("\n\n", "\n"),
-                  textAlign: message.isUser ? TextAlign.right : TextAlign.left,
-                ),
-                tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-              )
-            : Markdown(
-                selectable: true,
-                data: message.content,
-                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-              ),
-      ),
-    );
-  }
-}
-
-class ChatMessageWidget2 extends StatelessWidget {
-  final ChatMessage message;
-
-  const ChatMessageWidget2({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return MarkdownBody(
-      data: message.content,
-      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-    );
-    // tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-  }
-}
-
-class ChatMessageWidget3 extends StatelessWidget {
-  final ChatMessage message;
-
-  const ChatMessageWidget3({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      decoration: BoxDecoration(
-        color: message.role == 'user' ? Colors.blue : Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Markdown(
-        data: message.content,
-        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-        padding: EdgeInsets.zero,
-      ),
     );
   }
 }
