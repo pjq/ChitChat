@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:chitchat/LogUtils.dart';
+import 'package:chitchat/screens/SyntaxHighlight.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/settings.dart';
 import 'package:chitchat/constants.dart';
@@ -29,15 +31,28 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   ChatHistory? _history;
   final _chatListController = ScrollController();
 
+  StreamSubscription? _streamSubscription;
+  final StreamController<ChatMessage> _messageController =
+      StreamController<ChatMessage>.broadcast();
+
+  // Stream<ChatMessage> get messageStream => messageController.stream;
+
   @override
   void initState() {
     super.initState();
     LogUtils.info("init state");
 
+    _streamSubscription = _messageController.stream.listen((data) {
+      setState(() {
+        LogUtils.info(data.toString());
+        _messages.add(data);
+      });
+    });
+
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
         _settings = Settings(prefs: prefs);
-        _chatService = ChatService(apiKey: _settings!.openaiApiKey);
+        _chatService = ChatService(_settings!.openaiApiKey, _messageController);
         _history = ChatHistory(prefs: prefs);
         _messages.addAll(_history!.messages);
         LogUtils.info("history size: ${_messages.length}");
@@ -47,6 +62,20 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         });
       });
     });
+    //
+    // final streamBuilder = StreamBuilder<ChatMessage>(
+    //   stream: _chatService?.messageStream,
+    //   builder: (context, snapshot) {
+    //     _messages.last.content=snapshot.data.content;
+    //   },
+    // );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _streamSubscription?.cancel();
+    _messageController?.close();
   }
 
   @override
@@ -451,10 +480,16 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     // markdownStyleSheet.textAlign = message.isUser ?  WrapAlignment.end : WrapAlignment.start;
     return ListTile(
       title: MarkdownBody(
+        key: const Key("defaultmarkdownformatter"),
         data: message.content,
+        styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
+        // builders: {
+        //   'code': CodeElementBuilder(),
+        // },
       ),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
       onTap: () => chatService.showMessageActions(context, message),
+
       // hoverColor: Colors.grey[100],
     );
   }
