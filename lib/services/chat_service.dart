@@ -70,6 +70,10 @@ class ChatService {
         }).toList() ??
         [];
 
+    //add the prompt set as system role
+    if (prompt.isNotEmpty) {
+      chatMessages.insert(0, {"role": "system", "content": prompt});
+    }
     // Add the user's message to the list of chat messages
     chatMessages.add({"role": "user", "content": content});
 

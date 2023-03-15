@@ -73,7 +73,7 @@ Contributions are welcome and appreciated. To contribute to ChatGPT, follow thes
 
 ChatGPT is licensed under the MIT license. See LICENSE for more information.
 
-### Release
+### Release command
 
 ```shell
 git tag 1.0.0-mac && git push origin 1.0.0-mac
