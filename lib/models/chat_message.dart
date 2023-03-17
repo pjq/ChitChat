@@ -19,7 +19,7 @@ class ChatMessage {
 
   bool get isUser => role == ROLE_USER;
 
-  bool get isStop=> content.contains(STOP);
+  bool get isStop => content.contains(STOP);
 
   Map<String, dynamic> toJson() => {
         'role': role,
@@ -37,7 +37,9 @@ class ChatHistory {
 
   List<ChatMessage> get messages => _messages;
 
-  List<ChatMessage> get latestMessages {
+  List<ChatMessage> getLatestMessages(String id) {
+    _messages.clear();
+    _messages.addAll(getMessagesForPromptChannel(id));
     if (_messages.length < 4) {
       return _messages;
     } else {
@@ -93,7 +95,7 @@ class ChatHistory {
 
     final List<dynamic> data = jsonDecode(json);
     final List<ChatMessage> messages =
-    data.map((item) => ChatMessage.fromJson(item)).toList(growable: false);
+        data.map((item) => ChatMessage.fromJson(item)).toList(growable: false);
 
     return messages;
   }
@@ -105,7 +107,8 @@ class ChatHistory {
   }
 
   // Modify the `deleteMessage` method to support a specific prompt channel.
-  void deleteMessageWithPromptChannel(ChatMessage message, String promptChannel) {
+  void deleteMessageWithPromptChannel(
+      ChatMessage message, String promptChannel) {
     _messages.remove(message);
     _saveHistoryWithPromptChannel(promptChannel);
   }
@@ -119,7 +122,7 @@ class ChatHistory {
   // Modify the `_saveHistory` method to support a specific prompt channel.
   void _saveHistoryWithPromptChannel(String promptChannel) {
     final List<Map<String, dynamic>> data =
-    _messages.map((message) => message.toJson()).toList(growable: false);
+        _messages.map((message) => message.toJson()).toList(growable: false);
     final String json = jsonEncode(data);
     _prefs.setString(promptChannel, json);
   }

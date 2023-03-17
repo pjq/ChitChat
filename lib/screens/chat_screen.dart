@@ -214,17 +214,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     }
   }
 
-  List<ChatMessage> get latestMessages {
-    if (_messages.length < 4) {
-      return _messages;
-    } else {
-      return _messages.sublist(_messages.length - 4);
-    }
-  }
-
   List<ChatMessage>? _get5ChatHistory() {
-    final recentHistory = latestMessages;
-    LogUtils.info("recentHistory length: ${recentHistory.length}");
+    final recentHistory = _history?.getLatestMessages(currentPrompt.id);
+    LogUtils.info("recentHistory length: ${recentHistory}");
 
     return _settings!.continueConversationEnable ? recentHistory : [];
   }
