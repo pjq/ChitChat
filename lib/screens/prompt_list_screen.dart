@@ -9,12 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:chitchat/constants.dart';
 
 class PromptListScreen extends StatefulWidget {
   final Function(Prompt) onSelectedPrompt;
   final PromptStorage promptStorage;
 
-  PromptListScreen({required this.onSelectedPrompt, required this.promptStorage});
+  PromptListScreen(
+      {required this.onSelectedPrompt, required this.promptStorage});
 
   @override
   _PromptListScreenState createState() => _PromptListScreenState();
@@ -30,7 +32,6 @@ class _PromptListScreenState extends State<PromptListScreen> {
     _prompts = _prompts.addAllT(widget.promptStorage.loadPrompts());
   }
 
-
   // Future<void> _savePrompts() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   List<Map<String, dynamic>> data =
@@ -40,17 +41,47 @@ class _PromptListScreenState extends State<PromptListScreen> {
   // }
 
   void _addPrompt() {
-    setState(() {
-      String newId = DateTime.now().toIso8601String();
-      _prompts.add(Prompt(
-        id: newId,
-        title: 'Prompt ${_prompts.length + 1}',
-        content: '',
-        category: 'Default',
-      ));
-      widget.promptStorage.savePrompts(_prompts);
-    });
+    String newId = DateTime.now().toIso8601String();
+    Prompt newPrompt = Prompt(
+      id: newId,
+      title: 'Prompt ${_prompts.length + 1}',
+      content: Constants.defaultPrompt,
+      category: 'Default',
+    );
+    // _prompts.add(newPrompt);
+    // widget.promptStorage.savePrompts(_prompts);
+    final result = showDialog<Prompt>(
+      context: context,
+      builder: (context) => _editPromptDialog(newPrompt),
+    );
+    // _editPromptDialog(newPrompt);
   }
+
+  // Future<void> _handleAddPrompt() async {
+  //   Prompt p = Prompt();
+  //   _prompts.add(Prompt(
+  //     id: newId,
+  //     title: 'Prompt ${_prompts.length + 1}',
+  //     content: '',
+  //     category: 'Default',
+  //   ));
+  //
+  //   _editPromptDialog();
+  //
+  //   if (result == true) {
+  //     setState(() {
+  //       widget.promptStorage.addPrompt(
+  //         Prompt(
+  //           id: newPromptId,
+  //           title: newPromptTitle,
+  //           content: newPromptContent,
+  //           category: newPromptCategory,
+  //           selected: false,
+  //         ),
+  //       );
+  //     });
+  //   }
+  // }
 
   void _editPrompt(int index, Prompt updatedPrompt) {
     setState(() {
@@ -70,6 +101,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(_prompts[index].title),
+            tileColor: _prompts[index].selected ? Colors.green[100] : null,
             onTap: () {
               widget.promptStorage.selectPrompt(_prompts, _prompts[index].id);
               widget.onSelectedPrompt(_prompts[index]);
@@ -154,6 +186,12 @@ class _PromptListScreenState extends State<PromptListScreen> {
       });
 
       widget.promptStorage.savePrompts(_prompts);
+    } else {
+      // if doesn't exist,save it.
+      widget.promptStorage.savePrompts(_prompts);
+      setState(() {
+        _prompts.add(updatedPrompt);
+      });
     }
   }
 }
