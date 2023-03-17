@@ -83,4 +83,38 @@ class ChatHistory {
     _messages.clear();
     _saveHistory();
   }
+
+  // Add a new method to get the chat history for a specific prompt channel.
+  List<ChatMessage> getMessagesForPromptChannel(String promptChannel) {
+    final String? json = _prefs.getString(promptChannel);
+    if (json == null) {
+      return [];
+    }
+
+    final List<dynamic> data = jsonDecode(json);
+    final List<ChatMessage> messages =
+    data.map((item) => ChatMessage.fromJson(item)).toList(growable: false);
+
+    return messages;
+  }
+
+  // Modify the `addMessage` method to support a specific prompt channel.
+  void addMessageWithPromptChannel(ChatMessage message, String promptChannel) {
+    _messages.add(message);
+    _saveHistoryWithPromptChannel(promptChannel);
+  }
+
+  // Modify the `deleteMessage` method to support a specific prompt channel.
+  void deleteMessageWithPromptChannel(ChatMessage message, String promptChannel) {
+    _messages.remove(message);
+    _saveHistoryWithPromptChannel(promptChannel);
+  }
+
+  // Modify the `_saveHistory` method to support a specific prompt channel.
+  void _saveHistoryWithPromptChannel(String promptChannel) {
+    final List<Map<String, dynamic>> data =
+    _messages.map((message) => message.toJson()).toList(growable: false);
+    final String json = jsonEncode(data);
+    _prefs.setString(promptChannel, json);
+  }
 }

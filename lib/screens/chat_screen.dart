@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:chitchat/LogUtils.dart';
+import 'package:chitchat/models/prompt.dart';
 import 'package:chitchat/screens/SyntaxHighlight.dart';
+import 'package:chitchat/screens/prompt_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/settings.dart';
 import 'package:chitchat/constants.dart';
@@ -29,6 +31,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   ChatService? _chatService;
   Settings? _settings;
   ChatHistory? _history;
+  final String defaultAppTitle = "ChitChat";
+  String appTitle = "";
+  late Prompt currentPrompt;
+  late PromptStorage promptStorage;
   final _chatListController = ScrollController();
 
   StreamSubscription? _streamSubscription;
@@ -39,6 +45,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   void initState() {
     super.initState();
     LogUtils.info("init state");
+    appTitle = defaultAppTitle;
 
     _streamSubscription = _messageController.stream.listen((data) {
       setState(() {
@@ -60,6 +67,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         _chatService = ChatService(_settings!.openaiApiKey, _messageController);
         _history = ChatHistory(prefs: prefs);
         _messages.addAll(_history!.messages);
+        promptStorage = PromptStorage(prefs: prefs);
+        currentPrompt = promptStorage.getSelectedPrompt();
+
         LogUtils.info("history size: ${_messages.length}");
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -241,6 +251,15 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     );
   }
 
+  // Add a new method to switch to a selected prompt channel.
+  void _switchToPromptChannel(Prompt promptChannel) {
+    setState(() {
+      _messages.clear();
+      _messages.addAll(_history!.getMessagesForPromptChannel(promptChannel.id));
+      _listViewScrollToBottom();
+    });
+  }
+
   Widget _buildChatMessage(ChatMessage message) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -269,7 +288,28 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('ChitChat'),
+          leading: IconButton(
+            icon: Icon(Icons.list),
+            onPressed: () async {
+              final selectedPrompt = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PromptListScreen(onSelectedPrompt: (prompt ) {
+                    if (prompt != null) {
+                      // Switch chat channel based on selected prompt
+                      LogUtils.info("selected: ${prompt.content}");
+                      setState(() {
+                        currentPrompt = prompt;
+                        _switchToPromptChannel(prompt);
+                        appTitle = defaultAppTitle + "(${prompt.title})";
+                      });
+                    }
+                  }, promptStorage: promptStorage,),
+                ),
+              );
+            },
+          ),
+          title: Text('${appTitle}'),
           actions: [
             IconButton(
                 icon: Icon(Icons.settings),

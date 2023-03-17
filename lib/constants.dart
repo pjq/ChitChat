@@ -28,4 +28,8 @@ class Constants {
 
   static bool useStream = true;
 
+  static String cachePromptKey ="prompt_list";
+
+  static var defaultPrompt = "You are the personal Assistant";
+
 }
