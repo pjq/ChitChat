@@ -1,3 +1,6 @@
+## March 17, 2023
+- Suppport Chat for different Channels
+- Support add/edit multiple prompts
 ## March 14, 2023
 - Support stream=true API call
 ## March 13, 2023
