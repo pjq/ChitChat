@@ -52,8 +52,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         // LogUtils.info("recv: ${_isLoading}, ${data.content}");
         //save to chat history
         if (data.isStop) {
-          _history?.addMessage(_messages.elementAt(_messages.length - 2));
-          _history?.addMessage(_messages.last);
+          _history?.addMessageWithPromptChannel(_messages.elementAt(_messages.length - 2), currentPrompt.id);
+          _history?.addMessageWithPromptChannel(_messages.last, currentPrompt.id);
         } else {
           _messages.last.content += data.content;
           _listViewScrollToBottom();
@@ -66,11 +66,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         _settings = Settings(prefs: prefs);
         _chatService = ChatService(_settings!.openaiApiKey, _messageController);
         _history = ChatHistory(prefs: prefs);
-        _messages.addAll(_history!.messages);
+        // _messages.addAll(_history!.messages);
         promptStorage = PromptStorage(prefs: prefs);
         currentPrompt = promptStorage.getSelectedPrompt();
-
-        LogUtils.info("history size: ${_messages.length}");
+        _switchToPromptChannel(currentPrompt);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _listViewScrollToBottom();
@@ -100,6 +99,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       content,
       _get5ChatHistory(),
       _settings,
+      promptStorage,
     );
 
     return completion;
@@ -126,7 +126,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   void delete(ChatMessage message) {
     setState(() {
       _messages.remove(message);
-      _history?.deleteMessage(message);
+      _history?.deleteMessageWithPromptChannel(message, currentPrompt.id);
     });
   }
 
@@ -180,8 +180,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: completion);
         if (!Constants.useStream) {
           _messages.add(messageReceived);
-          _history?.addMessage(messageSend);
-          _history?.addMessage(messageReceived);
+          _history?.addMessageWithPromptChannel(messageSend, currentPrompt.id);
+          _history?.addMessageWithPromptChannel(messageReceived, currentPrompt.id);
         }
       });
 
@@ -214,8 +214,17 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     }
   }
 
+  List<ChatMessage> get latestMessages {
+    if (_messages.length < 4) {
+      return _messages;
+    } else {
+      return _messages.sublist(_messages.length - 4);
+    }
+  }
+
   List<ChatMessage>? _get5ChatHistory() {
-    final recentHistory = _history?.latestMessages;
+    final recentHistory = latestMessages;
+    LogUtils.info("recentHistory length: ${recentHistory.length}");
 
     return _settings!.continueConversationEnable ? recentHistory : [];
   }
@@ -253,10 +262,14 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
   // Add a new method to switch to a selected prompt channel.
   void _switchToPromptChannel(Prompt promptChannel) {
+    currentPrompt = promptChannel;
     setState(() {
+      appTitle = defaultAppTitle + "(${currentPrompt.title})" ;
       _messages.clear();
-      _messages.addAll(_history!.getMessagesForPromptChannel(promptChannel.id));
+      _messages.addAll(_history!.getMessagesForPromptChannel(currentPrompt.id));
       _listViewScrollToBottom();
+      LogUtils.info("history size: ${_messages.length}");
+      LogUtils.info("currentPrompt: ${currentPrompt}");
     });
   }
 
@@ -297,11 +310,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                   builder: (context) => PromptListScreen(onSelectedPrompt: (prompt ) {
                     if (prompt != null) {
                       // Switch chat channel based on selected prompt
-                      LogUtils.info("selected: ${prompt.content}");
+                      LogUtils.info("selected: ${prompt}");
                       setState(() {
-                        currentPrompt = prompt;
                         _switchToPromptChannel(prompt);
-                        appTitle = defaultAppTitle + "(${prompt.title})";
                       });
                     }
                   }, promptStorage: promptStorage,),
@@ -326,7 +337,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 onPressed: () {
                   setState(() {
                     _messages.clear();
-                    _history?.messages.clear();
+                    _history?.deleteMessageForPromptChannel(currentPrompt.id);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Conversation records erased'),

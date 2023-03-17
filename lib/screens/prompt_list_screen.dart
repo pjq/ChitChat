@@ -71,6 +71,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
           return ListTile(
             title: Text(_prompts[index].title),
             onTap: () {
+              widget.promptStorage.selectPrompt(_prompts, _prompts[index].id);
               widget.onSelectedPrompt(_prompts[index]);
               Navigator.pop(context);
             },

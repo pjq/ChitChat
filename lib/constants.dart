@@ -24,7 +24,7 @@ class Constants {
   static String rephrasePrompt = "Play a role as language expert,keep the same language and rephrase the text: ";
 
   //animation duration
-  static int scrollDuration = 1000;
+  static int scrollDuration = 500;
 
   static bool useStream = true;
 

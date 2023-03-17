@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:chitchat/LogUtils.dart';
 import 'package:chitchat/constants.dart';
 import 'package:chitchat/models/chat_message.dart';
+import 'package:chitchat/models/prompt.dart';
 import 'package:chitchat/settings.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -33,14 +34,11 @@ class ChatService {
     return response;
   }
 
-  Future<String> getCompletion(
-    String content,
-    List<ChatMessage>? latestChat,
-    Settings? _settings,
-  ) async {
+  Future<String> getCompletion(String content, List<ChatMessage>? latestChat,
+      Settings? _settings, PromptStorage? promptStorage) async {
     final response = await getCompletionRaw(
       content,
-      _settings!.promptString,
+      promptStorage?.getSelectedPrompt().content ?? _settings!.promptString,
       _settings!.temperatureValue,
       latestChat,
       _settings!.proxyUrl,

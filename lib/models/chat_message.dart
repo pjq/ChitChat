@@ -110,6 +110,12 @@ class ChatHistory {
     _saveHistoryWithPromptChannel(promptChannel);
   }
 
+  // Modify the `deleteMessage` method to support a specific prompt channel.
+  void deleteMessageForPromptChannel(String promptChannel) {
+    _messages.clear();
+    _saveHistoryWithPromptChannel(promptChannel);
+  }
+
   // Modify the `_saveHistory` method to support a specific prompt channel.
   void _saveHistoryWithPromptChannel(String promptChannel) {
     final List<Map<String, dynamic>> data =

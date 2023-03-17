@@ -40,6 +40,11 @@ class Prompt {
     'selected': selected,
   };
 
+  @override
+  String toString() {
+    return 'Prompt{id: $id, title: $title, content: $content, category: $category, selected: $selected}';
+  }
+
   // Future<void> _loadPrompts() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? json = prefs.getString('promptList');
@@ -71,6 +76,18 @@ class PromptStorage {
     data.map((item) => Prompt.fromJson(item)).toList(growable: false);
 
     return prompts;
+  }
+
+  void selectPrompt(List<Prompt> prompts, String id) {
+    prompts.forEach((prompt) {
+      if (prompt.id == id) {
+        prompt.selected = true;
+      } else {
+        prompt.selected = false;
+      }
+    });
+
+    savePrompts(prompts);
   }
 
   void savePrompts(List<Prompt> prompts) {
