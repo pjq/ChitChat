@@ -20,8 +20,9 @@ class Constants {
   static String proxyUrlKey="proxy_url";
   static const String baseUrlKey = 'base_url';
 
-  static String translationPrompt = "Play a role as translator, if the text is Chinese, then translate to English, if English, then Chinese: ";
-  static String rephrasePrompt = "Play a role as language expert,keep the same language and rephrase the text: ";
+  static String translationPrompt = "Play a role as translator, if the text is Chinese, then translate to English, if English, then translate to Chinese, nothing else, do not write explanations: ";
+  // static String translationPrompt = "I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, . I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations: ";
+  static String rephrasePrompt = "Play a role as language expert,rephrase the folllowing content with original language, while keeping its meaning,  nothing else, do not write explanations: ";
 
   //animation duration
   static int scrollDuration = 500;
