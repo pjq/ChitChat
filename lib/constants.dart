@@ -30,6 +30,6 @@ class Constants {
 
   static String cachePromptKey ="prompt_list";
 
-  static var defaultPrompt = "You are the personal Assistant";
+  static var defaultPrompt = "You are my personal Assistant";
 
 }

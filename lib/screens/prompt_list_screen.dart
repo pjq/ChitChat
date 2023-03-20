@@ -94,7 +94,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Prompt List'),
+        title: Text('Assistants'),
       ),
       body: ListView.builder(
         itemCount: _prompts.length,
@@ -161,7 +161,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
         ),
         TextButton(
           onPressed: () {
-            currentPrompt.selected = true;
+            // currentPrompt.selected = true;
             Prompt updatedPrompt = Prompt(
               id: currentPrompt.id,
               title: _titleController.text,
