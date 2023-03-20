@@ -16,6 +16,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:about/about.dart';
 import 'package:chitchat/pubspec.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -52,8 +53,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         // LogUtils.info("recv: ${_isLoading}, ${data.content}");
         //save to chat history
         if (data.isStop) {
-          _history?.addMessageWithPromptChannel(_messages.elementAt(_messages.length - 2), currentPrompt.id);
-          _history?.addMessageWithPromptChannel(_messages.last, currentPrompt.id);
+          _history?.addMessageWithPromptChannel(
+              _messages.elementAt(_messages.length - 2), currentPrompt.id);
+          _history?.addMessageWithPromptChannel(
+              _messages.last, currentPrompt.id);
         } else {
           _messages.last.content += data.content;
           _listViewScrollToBottom();
@@ -181,7 +184,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         if (!Constants.useStream) {
           _messages.add(messageReceived);
           _history?.addMessageWithPromptChannel(messageSend, currentPrompt.id);
-          _history?.addMessageWithPromptChannel(messageReceived, currentPrompt.id);
+          _history?.addMessageWithPromptChannel(
+              messageReceived, currentPrompt.id);
         }
       });
 
@@ -256,7 +260,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   void _switchToPromptChannel(Prompt promptChannel) {
     currentPrompt = promptChannel;
     setState(() {
-      appTitle = defaultAppTitle + "(${currentPrompt.title})" ;
+      appTitle = defaultAppTitle + "(${currentPrompt.title})";
       _messages.clear();
       _messages.addAll(_history!.getMessagesForPromptChannel(currentPrompt.id));
       _listViewScrollToBottom();
@@ -299,15 +303,18 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
               final selectedPrompt = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PromptListScreen(onSelectedPrompt: (prompt ) {
-                    if (prompt != null) {
-                      // Switch chat channel based on selected prompt
-                      LogUtils.info("selected: ${prompt}");
-                      setState(() {
-                        _switchToPromptChannel(prompt);
-                      });
-                    }
-                  }, promptStorage: promptStorage,),
+                  builder: (context) => PromptListScreen(
+                    onSelectedPrompt: (prompt) {
+                      if (prompt != null) {
+                        // Switch chat channel based on selected prompt
+                        LogUtils.info("selected: ${prompt}");
+                        setState(() {
+                          _switchToPromptChannel(prompt);
+                        });
+                      }
+                    },
+                    promptStorage: promptStorage,
+                  ),
                 ),
               );
             },
@@ -340,70 +347,89 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
           ],
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-                  // separatorBuilder: (BuildContext context, int index) =>
-                  //     Divider(thickness: 1.0,color: Colors.blueAccent ,),
-                  controller: _chatListController,
-                  itemCount: _messages.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final ChatMessage message = _messages[index];
-                    return ChatMessageWidgetMarkdown(
-                      message: message,
-                      chatService: this,
-                    );
-                  },
-                ),
-              ),
-              BottomAppBar(
-                child: Container(
-                  height: 60,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          decoration: InputDecoration(
-                            hintText: 'Type a message',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 5,
-                            ),
-                          ),
-                          textInputAction: TextInputAction.send,
-                          onSubmitted: _sendMessage,
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      IconButton(
-                        icon: Icon(Icons.send,
-                            color: _isLoading ? Colors.grey : null),
-                        onPressed: () =>
-                            _isLoading ? null : _sendMessage(_controller.text),
-                      ),
-                      if (_isLoading)
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        ),
-                    ],
+          child: KeyboardVisibilityBuilder(
+            builder: (context, isKeyboardVisible) {
+              if (isKeyboardVisible) {
+                _listViewScrollToBottom();
+              }
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                      // separatorBuilder: (BuildContext context, int index) =>
+                      //     Divider(thickness: 1.0,color: Colors.blueAccent ,),
+                      controller: _chatListController,
+                      itemCount: _messages.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final ChatMessage message = _messages[index];
+                        return ChatMessageWidgetMarkdown(
+                          message: message,
+                          chatService: this,
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ),
-            ],
+                  BottomAppBar(
+                    child: Container(
+                      // height: 60,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _controller,
+                              decoration: InputDecoration(
+                                hintText: 'Type a message',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[200],
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                              ),
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 10,
+                              minLines: 1,
+                              // Allows for multiline input
+                              textInputAction: TextInputAction.newline,
+                              // Allows for newline on "Enter"
+                              onSubmitted: (value) {
+                                if (value.trim().isNotEmpty) {
+                                  _sendMessage(value);
+                                }
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          IconButton(
+                            icon: Icon(Icons.send,
+                                color: _isLoading ? Colors.grey : null),
+                            onPressed: () => _isLoading
+                                ? null
+                                : _sendMessage(_controller.text),
+                          ),
+                          if (_isLoading)
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -537,18 +563,19 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
         MarkdownStyleSheet.fromTheme(themeData);
     // markdownStyleSheet.textAlign = message.isUser ?  WrapAlignment.end : WrapAlignment.start;
     return ListTile(
-        title: MarkdownBody(
-          key: const Key("defaultmarkdownformatter"),
-          data: message.content,
-          styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
-          // builders: {
-          //   'code': CodeElementBuilder(),
-          // },
-        ),
-        tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-        onTap: () => chatService.showMessageActions(context, message),
-        // contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        );
+      title: MarkdownBody(
+        key: const Key("defaultmarkdownformatter"),
+        data: message.content,
+        styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
+
+        // builders: {
+        //   'code': CodeElementBuilder(),
+        // },
+      ),
+      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
+      onTap: () => chatService.showMessageActions(context, message),
+      // contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+    );
   }
 }
 
