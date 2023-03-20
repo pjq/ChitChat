@@ -1,3 +1,5 @@
+## March 20, 2023
+- Support input/paste multiple lines
 ## March 17, 2023
 - Suppport Chat for different Channels
 - Support add/edit multiple prompts

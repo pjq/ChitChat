@@ -23,6 +23,6 @@ jobs:
         with:
           artifacts: "build/macos/Build/Products/Release/chitchat.dmg"
           token: ${{ secrets.PERSONAL_RELEASE_TOKEN }}
-          bodyFile: "assets/CHANGELOG.md"
+          bodyFile: "assets/RELEASELOG.md"
 #      - uses: actions/checkout@v2
 #      - uses: ncipollo/release-action@v1
