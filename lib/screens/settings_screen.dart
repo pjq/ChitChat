@@ -1,6 +1,11 @@
+import 'package:chitchat/global_data.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'dart:convert';
+
+import 'package:velocity_x/velocity_x.dart';
 
 class SettingsScreen extends StatefulWidget {
   final SharedPreferences prefs;
@@ -15,11 +20,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _apiKeyController;
   late TextEditingController _promptStringController;
   late TextEditingController _temperatureValueController;
-  late TextEditingController _proxyUrlController; // new controller for proxy URL
+  late TextEditingController
+      _proxyUrlController; // new controller for proxy URL
   late TextEditingController _baseUrlController; //
   late bool _continueConversationEnable;
   late bool _localCacheEnable;
   late bool _ttsEnable;
+
+  late String? _ttsSelectedLanguage;
+  late LocaleName? _sttSelectedLanguage;
 
   @override
   void initState() {
@@ -51,6 +60,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     _baseUrlController = TextEditingController(
         text: widget.prefs.getString(Constants.baseUrlKey));
+
+    setState(() {
+      _ttsSelectedLanguage =
+          widget.prefs.getString(Constants.ttsSelectedLanguageKey);
+
+      if (GlobalData().sttLocaleNames.isNotEmpty) {
+        String? savedSttSelectedLanguage =
+            widget.prefs.getString(Constants.sttSelectedLanguageKey);
+        _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
+              (element) => savedSttSelectedLanguage == element.localeId,
+              orElse: () =>
+                  GlobalData().sttLocaleNames[0], // Set a default value
+            );
+
+        // print("selected: " + _sttSelectedLanguage!.localeId);
+      }
+    });
   }
 
   void _saveSettings() {
@@ -71,8 +97,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
     widget.prefs.setString(Constants.baseUrlKey, _baseUrlController.text);
 
+    widget.prefs.setString(
+        Constants.ttsSelectedLanguageKey, _ttsSelectedLanguage ?? "");
+
+    if (null != _sttSelectedLanguage) {
+      widget.prefs.setString(
+          Constants.sttSelectedLanguageKey, _sttSelectedLanguage!.name);
+    }
+
     Navigator.pop(context);
   }
+
   void _clearChatHistory() {
     // Clear the chat history from the shared preferences
     widget.prefs.remove(Constants.cacheHistoryKey);
@@ -154,6 +189,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   });
                 },
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('TTS Language'),
+                          _buildTtsLanguageDropdown(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('STT Language'),
+                          _buildSttLanguageDropdown(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _clearChatHistory,
@@ -178,6 +242,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTtsLanguageDropdown() {
+    if (GlobalData().ttsLanguages.isEmpty) {
+      return Text('No TTS languages available');
+    }
+
+    return DropdownButton<String>(
+      value: _ttsSelectedLanguage ?? GlobalData().ttsLanguages[0],
+      items: GlobalData().ttsLanguages.toSet().map((dynamic value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _ttsSelectedLanguage = newValue!;
+          widget.prefs.setString(
+              Constants.ttsSelectedLanguageKey, _ttsSelectedLanguage ?? "");
+        });
+      },
+    );
+  }
+
+  Widget _buildSttLanguageDropdown() {
+    if (GlobalData().sttLocaleNames.isEmpty) {
+      return Text('No STT languages available');
+    }
+
+    return DropdownButton<LocaleName>(
+      value: _sttSelectedLanguage ?? GlobalData().sttLocaleNames[0],
+      items: GlobalData().sttLocaleNames.toSet().map((LocaleName value) {
+        return DropdownMenuItem<LocaleName>(
+          value: value,
+          child: Text(value.name),
+        );
+      }).toList(),
+      onChanged: (LocaleName? newValue) {
+        setState(() {
+          _sttSelectedLanguage = newValue!;
+          print("selected: " + _sttSelectedLanguage!.localeId);
+
+          if (null != _sttSelectedLanguage) {
+            widget.prefs.setString(Constants.sttSelectedLanguageKey,
+                _sttSelectedLanguage!.localeId);
+          }
+        });
+      },
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:chitchat/LogUtils.dart';
+import 'package:chitchat/global_data.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:chitchat/screens/SyntaxHighlight.dart';
 import 'package:chitchat/screens/prompt_list_screen.dart';
@@ -20,6 +21,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -47,7 +49,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   bool _isSpeechToTextAvailable = false;
   String _lastRecognizedWords = "";
   String _currentLocaleId = '';
-  List<LocaleName> _localeNames = [];
+  List<LocaleName> sttLocaleNames = [];
+  List<dynamic> ttsLanguages = [];
 
   StreamSubscription? _streamSubscription;
   final StreamController<ChatMessage> _messageController =
@@ -133,36 +136,68 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     });
 
     print("Speech recognition available ${_isSpeechToTextAvailable}");
-    _localeNames = await _speechToText.locales();
-    _localeNames.forEach((element) {
-      print(element.name + ", " + element.localeId);
-    });
-
-    var systemLocale = await _speechToText.systemLocale();
-    _currentLocaleId = systemLocale?.localeId ?? '';
-    print(_currentLocaleId);
-
+    // Get the list of languages installed on the supporting platform so they
+    // can be displayed in the UI for selection by the user.
     if (_isSpeechToTextAvailable) {
-      // Get the list of languages installed on the supporting platform so they
-      // can be displayed in the UI for selection by the user.
-      _localeNames = await _speechToText.locales();
-      print(_localeNames);
+      sttLocaleNames = await _speechToText.locales();
+      sttLocaleNames.forEach((element) {
+        print("sttLocaleNames: " + element.name + ", " + element.localeId);
+      });
 
       var systemLocale = await _speechToText.systemLocale();
       _currentLocaleId = systemLocale?.localeId ?? '';
+      print("_currentLocaleId: " + _currentLocaleId);
     }
 
-    List<dynamic> languages = await flutterTts.getLanguages;
+    ttsLanguages = await flutterTts.getLanguages;
     print("tts langs:");
-    print(languages);
+    ttsLanguages.forEach((element) {
+      print("ttsLanguages: " + element);
+    });
     // [nn, bg, kea, mg, mr, zu, ko, hsb, ak, kde, lv, seh, dz, mgo, ia, kkj, sd-Arab, pa-Guru, mer, pcm, sah, mni, br, sk, ml, ast, yue-Hans, cs, sv, el, pa, rn, rwk, tg, hu, ks-Arab, af, twq, bm, smn, dsb, sd-Deva, khq, ku, tr, cgg, ksf, cy, yi, fr, sq, de, agq, sa, ebu, zh-Hans, lg, sat-Olck, ff, mn, sd, teo, eu, wo, shi-Tfng, xog, so, ru, az, su-Latn, fa, kab, ms, nus, nd, ug, kk, az-Cyrl, hi, tk, hy, shi-Latn, vai, vi, dyo, mi, mt, ksb, lb, luo, mni-Beng, yav, ne, eo, kam, su, ro, ee, pl, my, ka, ur, mgh, shi, uz-Arab, kl, se, chr, doi, zh, yue-Hant, saq, az-Latn, ta, lag, luy, bo, as, bez, it, kln, uk, kw, mai, vai-Latn, mzn, ii, tt, ksh, ln, naq, pt, tzm, gl, sr-Cyrl, ff-Adlm, fur, om, to, ga, qu, et, asa, mua, jv, id, ps, sn, rof, ff-Latn, km, zgh, be, fil, gv, uz-Cyrl, dua, es, jgo, fo, gsw, hr, lt, guz, mfe, ccp, ja, lkt, ceb, is, or, si, brx, en, ca, te, ks, ha, sl, sbp, nyn, jmc, yue, fi, mk, sat, bs-Cyrl, uz, pa-Arab, sr-Latn, bs, sw, fy, nmg, rm, th, bn, ar, vai-Vaii, haw, kn, dje, bas, nnh, sg, uz-La
-    await flutterTts.isLanguageAvailable("en-US")
-        ? flutterTts.setLanguage("en-US")
-        : flutterTts.setLanguage("en");
+    // await flutterTts.isLanguageAvailable("en-US")
+    //     ? flutterTts.setLanguage("en-US")
+    //     : flutterTts.setLanguage("en");
     flutterTts.setVolume(1.0);
     // await flutterTts.setSpeechRate(0.5);
     // await flutterTts.setVolume(1.0);
     // await flutterTts.setPitch(1.0);
+
+    GlobalData().ttsLanguages.addAll(ttsLanguages.toSet().toList());
+    GlobalData().sttLocaleNames.addAll(sttLocaleNames.toSet().toList());
+  }
+
+  void updateTTSAndSTT() {
+    if (GlobalData().ttsLanguages.isNotEmpty) {
+      String ttsSelectedLanguage =
+          _settings?.prefs.getString(Constants.ttsSelectedLanguageKey) ??
+              GlobalData().ttsLanguages[0];
+      flutterTts.setLanguage(Constants.ttsSelectedLanguageKey);
+    }
+
+    String? savedsttSelectedLanguage =
+        _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
+    LocaleName _sttSelectedLanguage = GlobalData()
+        .sttLocaleNames
+        .where((element) => savedsttSelectedLanguage == element.localeId)
+        .firstOrNull();
+
+    if (GlobalData().sttLocaleNames.isNotEmpty) {
+      String? savedSttSelectedLanguage =
+          _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
+
+      if (savedSttSelectedLanguage == null) {
+        // if not set before, just use the current localeId.
+        _settings?.prefs
+            .setString(Constants.sttSelectedLanguageKey, _currentLocaleId);
+      }
+
+      _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
+            (element) => savedSttSelectedLanguage == element.localeId,
+            orElse: () => GlobalData().sttLocaleNames[0], // Set a default value
+          );
+      print("selected: " + _sttSelectedLanguage!.localeId);
+    }
   }
 
   void showToast(String text) {

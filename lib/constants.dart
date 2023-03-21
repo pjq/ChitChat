@@ -8,6 +8,9 @@ class Constants {
   static const String ttsEnableKey = 'tts_enable';
   static const String cacheHistoryKey = "chat_history";
 
+  static const String ttsSelectedLanguageKey = 'ttsSelectedLanguage';
+  static const String sttSelectedLanguageKey = 'sttSelectedLanguage';
+
   static const double defaultTemperatureValue = 1.0;
   static const bool defaultContinueConversationEnable = false;
   static const bool defaultLocalCacheEnable = true;
