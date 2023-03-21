@@ -1,5 +1,23 @@
 {
   "app_name": "ChitChat",
   "assistant": "Assistant",
-  "type_a_message": "Type a message"
+  "type_a_message": "Type a message",
+   "settings": "Settings",
+   "settings_saved": "Settings saved",
+    "openAIApiKey": "OpenAI API Key",
+    "promptString": "Prompt String",
+    "temperatureValue": "Temperature Value(0-1.0)",
+    "continueConversation": "Continue Conversation",
+    "localCache": "Local Cache",
+    "enableTts": "Enable TTS(Text to Speech)",
+    "ttsLanguage": "TTS Language",
+    "sttLanguage": "STT Language",
+    "clearChatHistory": "Clear Chat History",
+    "proxyUrl": "Proxy(host:port)",
+    "openAIBaseUrl": "OpenAI Base URL",
+    "save": "Save",
+    "settingsSaved": "Settings saved",
+    "conversationRecordsErased": "Conversation records erased, you may restart the App.",
+    "noTtsLanguagesAvailable": "No TTS languages available",
+    "noSttLanguagesAvailable": "No STT languages available"
 }

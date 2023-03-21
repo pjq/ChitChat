@@ -1,5 +1,23 @@
 {
   "app_name": "ChitChat",
-  "assistant": "Assistant",
-  "type_a_message": "请输入消息"
+  "assistant": "助手",
+  "type_a_message": "输入消息",
+  "settings": "设置",
+  "settings_saved": "设置已保存",
+  "openAIApiKey": "OpenAI API 密钥",
+  "promptString": "提示字符串",
+  "temperatureValue": "温度值 (0-1.0)",
+  "continueConversation": "继续对话",
+  "localCache": "本地缓存",
+  "enableTts": "启用 TTS (文字转语音)",
+  "ttsLanguage": "TTS 语言",
+  "sttLanguage": "STT 语言",
+  "clearChatHistory": "清除聊天记录",
+  "proxyUrl": "代理（主机：端口）",
+  "openAIBaseUrl": "OpenAI 基本 URL",
+  "save": "保存",
+  "settingsSaved": "设置已保存",
+  "conversationRecordsErased": "对话记录已擦除，您可以重新启动应用。",
+  "noTtsLanguagesAvailable": "没有可用的 TTS 语言",
+  "noSttLanguagesAvailable": "没有可用的 STT 语言"
 }

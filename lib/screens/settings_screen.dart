@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:chitchat/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   final SharedPreferences prefs;
@@ -26,10 +27,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   late String? _ttsSelectedLanguage;
   late LocaleName? _sttSelectedLanguage;
+  late AppLocalizations loc;
 
   @override
   void initState() {
     super.initState();
+
+
+
     // If the temperature value has not been set, set it to 1.0
     if (widget.prefs.getDouble(Constants.temperatureValueKey) == 0.0) {
       widget.prefs.setDouble(Constants.temperatureValueKey, 1.0);
@@ -88,7 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget.prefs.setBool(Constants.ttsEnableKey, _ttsEnable);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Settings saved'),
+        content: Text(loc.settings_saved),
       ),
     );
     widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
@@ -111,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Conversation records erased, you may restart the App.'),
+        content: Text(loc.conversationRecordsErased),
       ),
     );
   }
@@ -133,9 +138,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    loc = AppLocalizations.of(context); // Add this line
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text(loc.settings),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -145,22 +151,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               _buildTextField(
                 controller: _apiKeyController,
-                label: 'OpenAI API Key',
+                label: loc.openAIApiKey,
               ),
               const SizedBox(height: 16),
               _buildTextField(
                 enable: false,
                 controller: _promptStringController,
-                label: 'Prompt String',
+                label: loc.promptString,
               ),
               const SizedBox(height: 16),
               _buildTextField(
                 controller: _temperatureValueController,
-                label: 'Temperature Value(0-1.0)',
+                label: loc.temperatureValue,
               ),
               const SizedBox(height: 16),
               CheckboxListTile(
-                title: Text('Continue Conversation'),
+                title: Text(loc.continueConversation),
                 value: _continueConversationEnable,
                 onChanged: (value) {
                   setState(() {
@@ -169,7 +175,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               CheckboxListTile(
-                title: Text('Local Cache'),
+                title: Text(loc.localCache),
                 value: _localCacheEnable,
                 onChanged: (value) {
                   setState(() {
@@ -178,7 +184,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               CheckboxListTile(
-                title: Text('Enable TTS(Text to Speech)'),
+                title: Text(loc.enableTts),
                 value: _ttsEnable,
                 onChanged: (value) {
                   setState(() {
@@ -195,7 +201,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('TTS Language'),
+                          Text(loc.ttsLanguage),
                           _buildTtsLanguageDropdown(),
                         ],
                       ),
@@ -207,7 +213,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('STT Language'),
+                          Text(loc.sttLanguage),
                           _buildSttLanguageDropdown(),
                         ],
                       ),
@@ -218,22 +224,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _clearChatHistory,
-                child: Text('Clear Chat History'),
+                child: Text(loc.clearChatHistory),
               ),
               const SizedBox(height: 16),
               _buildTextField(
                 controller: _proxyUrlController, // add text field for proxy URL
-                label: 'Proxy(host:port)',
+                label: loc.proxyUrl,
               ),
               const SizedBox(height: 16),
               _buildTextField(
                 controller: _baseUrlController, // add text field for proxy URL
-                label: 'OpenAI Base URL',
+                label: loc.openAIBaseUrl,
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _saveSettings,
-                child: Text('Save'),
+                child: Text(loc.save),
               ),
             ],
           ),
@@ -244,7 +250,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildTtsLanguageDropdown() {
     if (GlobalData().ttsLanguages.isEmpty) {
-      return Text('No TTS languages available');
+      return Text(loc.noTtsLanguagesAvailable);
     }
 
     return DropdownButton<String>(
@@ -267,7 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildSttLanguageDropdown() {
     if (GlobalData().sttLocaleNames.isEmpty) {
-      return Text('No STT languages available');
+      return Text(loc.noSttLanguagesAvailable);
     }
 
     return DropdownButton<LocaleName>(

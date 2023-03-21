@@ -1,0 +1,23 @@
+{
+  "app_name": "ChitChat",
+  "assistant": "助手",
+  "type_a_message": "輸入訊息",
+  "settings": "設定",
+  "settings_saved": "設定已儲存",
+  "openAIApiKey": "OpenAI API 金鑰",
+  "promptString": "提示字串",
+  "temperatureValue": "溫度值 (0-1.0)",
+  "continueConversation": "繼續對話",
+  "localCache": "本地快取",
+  "enableTts": "啟用 TTS (文字轉語音)",
+  "ttsLanguage": "TTS 語言",
+  "sttLanguage": "STT 語言",
+  "clearChatHistory": "清除聊天記錄",
+  "proxyUrl": "代理（主機：端口）",
+  "openAIBaseUrl": "OpenAI 基本 URL",
+  "save": "儲存",
+  "settingsSaved": "設定已儲存",
+  "conversationRecordsErased": "對話記錄已擦除，您可以重新啟動應用程式。",
+  "noTtsLanguagesAvailable": "沒有可用的 TTS 語言",
+  "noSttLanguagesAvailable": "沒有可用的 STT 語言"
+}
