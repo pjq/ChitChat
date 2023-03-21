@@ -17,6 +17,11 @@ import 'package:about/about.dart';
 import 'package:chitchat/pubspec.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -38,6 +43,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   late PromptStorage promptStorage;
   final _chatListController = ScrollController();
 
+  final FlutterTts flutterTts = FlutterTts();
+  final SpeechToText _speechToText = SpeechToText();
+  bool _isListening = false;
+  bool _isSpeechToTextAvailable = false;
+
   StreamSubscription? _streamSubscription;
   final StreamController<ChatMessage> _messageController =
       StreamController<ChatMessage>.broadcast();
@@ -57,6 +67,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
               _messages.elementAt(_messages.length - 2), currentPrompt.id);
           _history?.addMessageWithPromptChannel(
               _messages.last, currentPrompt.id);
+          _speak(_messages.last.content);
         } else {
           _messages.last.content += data.content;
           _listViewScrollToBottom();
@@ -79,7 +90,79 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         });
       });
     });
+
+    _initializeSpeechRecognition();
   }
+
+  Future<void> _initializeSpeechRecognition() async {
+    bool available = await _speechToText.initialize(
+      onError: (SpeechRecognitionError error) {
+        print("Error: ${error.errorMsg}");
+        setState(() {
+          _isListening = false;
+        });
+        showToast(error.errorMsg);
+      },
+      onStatus: (String status) {
+        print("Status: $status");
+      },
+    );
+
+    if (!available) {
+      print("Speech recognition not available");
+    }
+
+    setState(() {
+      _isSpeechToTextAvailable = available;
+    });
+
+
+    List<dynamic> languages = await flutterTts.getLanguages;
+    print(languages);
+    // [nn, bg, kea, mg, mr, zu, ko, hsb, ak, kde, lv, seh, dz, mgo, ia, kkj, sd-Arab, pa-Guru, mer, pcm, sah, mni, br, sk, ml, ast, yue-Hans, cs, sv, el, pa, rn, rwk, tg, hu, ks-Arab, af, twq, bm, smn, dsb, sd-Deva, khq, ku, tr, cgg, ksf, cy, yi, fr, sq, de, agq, sa, ebu, zh-Hans, lg, sat-Olck, ff, mn, sd, teo, eu, wo, shi-Tfng, xog, so, ru, az, su-Latn, fa, kab, ms, nus, nd, ug, kk, az-Cyrl, hi, tk, hy, shi-Latn, vai, vi, dyo, mi, mt, ksb, lb, luo, mni-Beng, yav, ne, eo, kam, su, ro, ee, pl, my, ka, ur, mgh, shi, uz-Arab, kl, se, chr, doi, zh, yue-Hant, saq, az-Latn, ta, lag, luy, bo, as, bez, it, kln, uk, kw, mai, vai-Latn, mzn, ii, tt, ksh, ln, naq, pt, tzm, gl, sr-Cyrl, ff-Adlm, fur, om, to, ga, qu, et, asa, mua, jv, id, ps, sn, rof, ff-Latn, km, zgh, be, fil, gv, uz-Cyrl, dua, es, jgo, fo, gsw, hr, lt, guz, mfe, ccp, ja, lkt, ceb, is, or, si, brx, en, ca, te, ks, ha, sl, sbp, nyn, jmc, yue, fi, mk, sat, bs-Cyrl, uz, pa-Arab, sr-Latn, bs, sw, fy, nmg, rm, th, bn, ar, vai-Vaii, haw, kn, dje, bas, nnh, sg, uz-La
+    await flutterTts.setLanguage("en");
+    await flutterTts.setSpeechRate(1.0);
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setPitch(1.0);
+    await flutterTts.isLanguageAvailable("en-US");
+  }
+
+  void showToast(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        duration:Duration(milliseconds: 1000),
+      ),
+    );
+  }
+
+  void _toggleListening() async {
+    if (_isListening) {
+      _speechToText.stop();
+      setState(() {
+        _isListening = false;
+      });
+    } else {
+      await _speechToText.listen(
+        onResult: (SpeechRecognitionResult result) {
+          setState(() {
+            // _controller.text = result.recognizedWords;
+            _sendMessage(result.recognizedWords);
+          });
+        },
+      );
+
+      setState(() {
+        _isListening = true;
+      });
+    }
+  }
+
+  void _speak(String text) async {
+    print("speak start");
+    await flutterTts.speak(text);
+  }
+
 
   @override
   void dispose() {
@@ -415,6 +498,14 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                                 ? null
                                 : _sendMessage(_controller.text),
                           ),
+                          if (_isSpeechToTextAvailable)
+                            IconButton(
+                              icon: Icon(
+                                _isListening ? Icons.mic_off : Icons.mic,
+                              ),
+                              onPressed: _toggleListening,
+                            ),
+
                           if (_isLoading)
                             SizedBox(
                               width: 20,

@@ -53,6 +53,8 @@ dependencies:
   flutter_highlighter: ^0.1.1
   google_fonts: ^4.0.3
   flutter_keyboard_visibility: ^5.4.0
+  flutter_tts: ^3.6.3
+  speech_to_text: ^6.1.1
 
 dev_dependencies:
   flutter_test:
