@@ -8,7 +8,10 @@ import 'package:chitchat/screens/splash_screen.dart';
 import 'package:chitchat/settings.dart';
 import 'package:chitchat/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http_proxy/http_proxy.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'generated/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +31,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ChitChat',
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily:

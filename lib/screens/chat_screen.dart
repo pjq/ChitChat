@@ -22,6 +22,8 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -37,7 +39,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   ChatService? _chatService;
   Settings? _settings;
   ChatHistory? _history;
-  final String defaultAppTitle = "ChitChat";
+  String defaultAppTitle = "ChitChat";
   String appTitle = "";
   late Prompt currentPrompt;
   late PromptStorage promptStorage;
@@ -60,6 +62,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   void initState() {
     super.initState();
     LogUtils.info("init state");
+    // defaultAppTitle = AppLocalizations.of(context)!.app_name;
     appTitle = defaultAppTitle;
 
     _streamSubscription = _messageController.stream.listen((data) {
@@ -544,7 +547,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                             child: TextField(
                               controller: _controller,
                               decoration: InputDecoration(
-                                hintText: 'Type a message',
+                                hintText: AppLocalizations.of(context)!.type_a_message,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide.none,
