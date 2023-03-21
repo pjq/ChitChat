@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:chitchat/LogUtils.dart';
 import 'package:chitchat/models/prompt.dart';
@@ -21,7 +20,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
-
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -47,6 +45,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   final SpeechToText _speechToText = SpeechToText();
   bool _isListening = false;
   bool _isSpeechToTextAvailable = false;
+  String _lastRecognizedWords = "";
+  String _currentLocaleId = '';
+  List<LocaleName> _localeNames = [];
 
   StreamSubscription? _streamSubscription;
   final StreamController<ChatMessage> _messageController =
@@ -105,33 +106,65 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       },
       onStatus: (String status) {
         print("Status: $status");
+
+        if (status == "avalilable") {
+          //   print("Speech recognition available ${_isSpeechToTextAvailable}");
+          //
+          //   if (_isSpeechToTextAvailable) {
+          //     // Get the list of languages installed on the supporting platform so they
+          //     // can be displayed in the UI for selection by the user.
+          //     _localeNames = _speechToText.locales();
+          //     print(_localeNames);
+          //
+          //     var systemLocale = _speechToText.systemLocale();
+          //     _currentLocaleId = systemLocale?.localeId ?? '';
+          //   }
+          //
+          setState(() {
+            _isSpeechToTextAvailable = true;
+          });
+        }
       },
     );
 
-    if (!available) {
-      print("Speech recognition not available");
+    print("Speech recognition available ${_isSpeechToTextAvailable}");
+    _localeNames = await _speechToText.locales();
+    print(_localeNames);
+
+    var systemLocale = await _speechToText.systemLocale();
+    _currentLocaleId = systemLocale?.localeId ?? '';
+    print(_currentLocaleId);
+
+    if (_isSpeechToTextAvailable) {
+      // Get the list of languages installed on the supporting platform so they
+      // can be displayed in the UI for selection by the user.
+      _localeNames = await _speechToText.locales();
+      print(_localeNames);
+
+      var systemLocale = await _speechToText.systemLocale();
+      _currentLocaleId = systemLocale?.localeId ?? '';
     }
 
     setState(() {
       _isSpeechToTextAvailable = available;
     });
 
-
     List<dynamic> languages = await flutterTts.getLanguages;
     print(languages);
     // [nn, bg, kea, mg, mr, zu, ko, hsb, ak, kde, lv, seh, dz, mgo, ia, kkj, sd-Arab, pa-Guru, mer, pcm, sah, mni, br, sk, ml, ast, yue-Hans, cs, sv, el, pa, rn, rwk, tg, hu, ks-Arab, af, twq, bm, smn, dsb, sd-Deva, khq, ku, tr, cgg, ksf, cy, yi, fr, sq, de, agq, sa, ebu, zh-Hans, lg, sat-Olck, ff, mn, sd, teo, eu, wo, shi-Tfng, xog, so, ru, az, su-Latn, fa, kab, ms, nus, nd, ug, kk, az-Cyrl, hi, tk, hy, shi-Latn, vai, vi, dyo, mi, mt, ksb, lb, luo, mni-Beng, yav, ne, eo, kam, su, ro, ee, pl, my, ka, ur, mgh, shi, uz-Arab, kl, se, chr, doi, zh, yue-Hant, saq, az-Latn, ta, lag, luy, bo, as, bez, it, kln, uk, kw, mai, vai-Latn, mzn, ii, tt, ksh, ln, naq, pt, tzm, gl, sr-Cyrl, ff-Adlm, fur, om, to, ga, qu, et, asa, mua, jv, id, ps, sn, rof, ff-Latn, km, zgh, be, fil, gv, uz-Cyrl, dua, es, jgo, fo, gsw, hr, lt, guz, mfe, ccp, ja, lkt, ceb, is, or, si, brx, en, ca, te, ks, ha, sl, sbp, nyn, jmc, yue, fi, mk, sat, bs-Cyrl, uz, pa-Arab, sr-Latn, bs, sw, fy, nmg, rm, th, bn, ar, vai-Vaii, haw, kn, dje, bas, nnh, sg, uz-La
-    await flutterTts.setLanguage("en");
-    await flutterTts.setSpeechRate(1.0);
-    await flutterTts.setVolume(1.0);
-    await flutterTts.setPitch(1.0);
-    await flutterTts.isLanguageAvailable("en-US");
+    await flutterTts.isLanguageAvailable("en-US")
+        ? flutterTts.setLanguage("en-US")
+        : flutterTts.setLanguage("en");
+    // await flutterTts.setSpeechRate(0.5);
+    // await flutterTts.setVolume(1.0);
+    // await flutterTts.setPitch(1.0);
   }
 
   void showToast(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(text),
-        duration:Duration(milliseconds: 1000),
+        duration: Duration(milliseconds: 1000),
       ),
     );
   }
@@ -139,6 +172,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   void _toggleListening() async {
     if (_isListening) {
       _speechToText.stop();
+      _controller.clear();
+      _sendMessage(_lastRecognizedWords);
       setState(() {
         _isListening = false;
       });
@@ -146,8 +181,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       await _speechToText.listen(
         onResult: (SpeechRecognitionResult result) {
           setState(() {
-            // _controller.text = result.recognizedWords;
-            _sendMessage(result.recognizedWords);
+            _controller.text = result.recognizedWords;
+            _lastRecognizedWords = result.recognizedWords;
           });
         },
       );
@@ -159,10 +194,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _speak(String text) async {
+    if(false == _settings?.ttsEnable) return;
+
     print("speak start");
     await flutterTts.speak(text);
   }
-
 
   @override
   void dispose() {
@@ -458,7 +494,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                   BottomAppBar(
                     child: Container(
                       // height: 60,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
                       child: Row(
                         children: [
                           Expanded(
@@ -505,7 +542,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                               ),
                               onPressed: _toggleListening,
                             ),
-
                           if (_isLoading)
                             SizedBox(
                               width: 20,

@@ -19,6 +19,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _baseUrlController; //
   late bool _continueConversationEnable;
   late bool _localCacheEnable;
+  late bool _ttsEnable;
 
   @override
   void initState() {
@@ -42,6 +43,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Constants.defaultContinueConversationEnable;
     _localCacheEnable = widget.prefs.getBool(Constants.localCacheEnableKey) ??
         Constants.defaultLocalCacheEnable;
+    _ttsEnable = widget.prefs.getBool(Constants.ttsEnableKey) ??
+        Constants.defaultTtsEnable;
 
     _proxyUrlController = TextEditingController(
         text: widget.prefs.getString(Constants.proxyUrlKey));
@@ -59,6 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget.prefs.setBool(
         Constants.continueConversationEnableKey, _continueConversationEnable);
     widget.prefs.setBool(Constants.localCacheEnableKey, _localCacheEnable);
+    widget.prefs.setBool(Constants.ttsEnableKey, _ttsEnable);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Settings saved'),
@@ -83,8 +87,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
+    bool enable = true,
   }) {
     return TextFormField(
+      enabled: enable,
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
@@ -111,6 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 16),
               _buildTextField(
+                enable: false,
                 controller: _promptStringController,
                 label: 'Prompt String',
               ),
@@ -135,6 +142,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (value) {
                   setState(() {
                     _localCacheEnable = value!;
+                  });
+                },
+              ),
+              CheckboxListTile(
+                title: Text('Enable TTS(Text to Speech)'),
+                value: _ttsEnable,
+                onChanged: (value) {
+                  setState(() {
+                    _ttsEnable = value!;
                   });
                 },
               ),

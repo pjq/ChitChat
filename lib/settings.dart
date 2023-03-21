@@ -35,6 +35,14 @@ class Settings {
     prefs.setBool(Constants.continueConversationEnableKey, value);
   }
 
+  bool get ttsEnable =>
+      prefs.getBool(Constants.ttsEnableKey) ??
+          Constants.defaultTtsEnable;
+
+  set ttsEnable(bool value) {
+    prefs.setBool(Constants.ttsEnableKey, value);
+  }
+
   // new property for proxy settings
   String get proxyUrl => prefs.getString(Constants.proxyUrlKey) ?? '';
 
