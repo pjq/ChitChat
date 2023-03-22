@@ -14,7 +14,8 @@ jobs:
           channel: 'stable'
           architecture: x64
       - run: flutter config --enable-macos-desktop
-      - run: flutter build macos
+      - run:  flutter gen-l10n
+      - run: flutter build macos --release
       - name: Create the DMG file
         run: |
           hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release/chitchat.app build/macos/Build/Products/Release/chitchat.dmg

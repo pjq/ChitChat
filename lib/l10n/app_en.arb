@@ -19,14 +19,14 @@
     "continueConversation": "Continue Conversation",
     "localCache": "Local Cache",
     "enableTts": "Enable TTS(Text to Speech)",
-    "ttsLanguage": "TTS Language",
-    "sttLanguage": "STT Language",
+    "ttsLanguage": "Text to Speech Language",
+    "sttLanguage": "Speech to Text Language",
     "clearChatHistory": "Clear Chat History",
     "proxyUrl": "Proxy(host:port)",
-    "openAIBaseUrl": "OpenAI Base URL",
+    "openAIBaseUrl": "OpenAI URL",
     "save": "Save",
     "settingsSaved": "Settings saved",
     "conversationRecordsErased": "Conversation records erased, you may restart the App.",
-    "noTtsLanguagesAvailable": "No TTS languages available",
-    "noSttLanguagesAvailable": "No STT languages available"
+    "noTtsLanguagesAvailable": "No languages available",
+    "noSttLanguagesAvailable": "No languages available"
 }
