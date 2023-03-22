@@ -87,7 +87,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    loc = AppLocalizations.of(context);
+    loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(

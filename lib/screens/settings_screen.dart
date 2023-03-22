@@ -116,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(loc.conversationRecordsErased),
+        content: Text(loc!.conversationRecordsErased),
       ),
     );
   }
@@ -138,7 +138,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    loc = AppLocalizations.of(context); // Add this line
+    loc = AppLocalizations.of(context)!; // Add this line
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.settings),
