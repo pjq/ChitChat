@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:ui' as ui;
 import 'package:chitchat/LogUtils.dart';
 import 'package:chitchat/global_data.dart';
 import 'package:chitchat/models/prompt.dart';
@@ -54,6 +54,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   bool _isSpeechToTextAvailable = false;
   String _lastRecognizedWords = "";
   String _currentLocaleId = '';
+  String _currentLanguageCode = '';
   List<LocaleName> sttLocaleNames = [];
   List<dynamic> ttsLanguages = [];
   late AppLocalizations loc;
@@ -149,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
           //   }
           //
           setState(() {
-            _isSpeechToTextAvailable = true;
+            // _isSpeechToTextAvailable = true;
           });
         }
       },
@@ -172,6 +173,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       _currentLocaleId = systemLocale?.localeId ?? '';
       print("_currentLocaleId: " + _currentLocaleId);
     }
+
+    _currentLanguageCode = ui.window.locale.toString();
 
     ttsLanguages = await flutterTts.getLanguages;
     print("tts langs:");
@@ -719,7 +722,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 leading: Icon(Icons.translate),
                 title: Text(loc.translation),
                 onTap: () {
-                  translate(message.content, Constants.translationPrompt)
+                  String prompt = Constants.translationPrompt.replaceAll("LOCALE_ID", _currentLanguageCode);
+                  print(prompt);
+
+                  translate(message.content, prompt)
                       .then((translatedText) {
                     setState(() {
                       _messages.add(ChatMessage(
