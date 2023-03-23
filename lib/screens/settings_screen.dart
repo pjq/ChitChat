@@ -7,8 +7,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   final SharedPreferences prefs;
+  final Function onSettingsChanged;
 
-  const SettingsScreen({Key? key, required this.prefs}) : super(key: key);
+  const SettingsScreen({Key? key, required this.prefs, required this.onSettingsChanged}) : super(key: key);
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -25,15 +26,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late bool _localCacheEnable;
   late bool _ttsEnable;
 
-  late String? _ttsSelectedLanguage;
-  late LocaleName? _sttSelectedLanguage;
+  late String? _ttsSelectedLanguage = null;
+  late LocaleName? _sttSelectedLanguage = null;
   late AppLocalizations loc;
 
   @override
   void initState() {
     super.initState();
-
-
 
     // If the temperature value has not been set, set it to 1.0
     if (widget.prefs.getDouble(Constants.temperatureValueKey) == 0.0) {
@@ -108,6 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     Navigator.pop(context);
+    widget.onSettingsChanged();
   }
 
   void _clearChatHistory() {

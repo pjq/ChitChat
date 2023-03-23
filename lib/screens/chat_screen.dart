@@ -5,6 +5,7 @@ import 'package:chitchat/global_data.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:chitchat/screens/SyntaxHighlight.dart';
 import 'package:chitchat/screens/prompt_list_screen.dart';
+import 'package:chitchat/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/settings.dart';
 import 'package:chitchat/constants.dart';
@@ -38,6 +39,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   bool _isLoading = false;
   ChatService? _chatService;
   Settings? _settings;
+  late SharedPreferences _prefs;
+
   ChatHistory? _history;
   String defaultAppTitle = "ChitChat";
   String appTitle = "";
@@ -83,6 +86,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     });
 
     SharedPreferences.getInstance().then((prefs) {
+      _prefs = prefs;
       setState(() {
         _settings = Settings(prefs: prefs);
         _chatService = ChatService(_messageController);
@@ -99,6 +103,23 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     });
 
     _initializeSpeechRecognition();
+  }
+
+  void handleSettingsChanged() {
+    // Do the initialization here
+    _initializeSpeechRecognition();
+  }
+
+  void startSettingsScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SettingsScreen(
+          prefs: _prefs,
+          onSettingsChanged: handleSettingsChanged,
+        ),
+      ),
+    );
   }
 
   Future<void> _initializeSpeechRecognition() async {
@@ -180,14 +201,13 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       flutterTts.setLanguage(Constants.ttsSelectedLanguageKey);
     }
 
-    String? savedsttSelectedLanguage =
-        _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
-    LocaleName _sttSelectedLanguage = GlobalData()
-        .sttLocaleNames
-        .where((element) => savedsttSelectedLanguage == element.localeId)
-        .firstOrNull();
-
     if (GlobalData().sttLocaleNames.isNotEmpty) {
+      String? savedsttSelectedLanguage =
+      _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
+      LocaleName _sttSelectedLanguage = GlobalData()
+          .sttLocaleNames
+          .where((element) => savedsttSelectedLanguage == element.localeId)
+          .firstOrNull();
       String? savedSttSelectedLanguage =
           _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
 
@@ -355,7 +375,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 child: Text(loc.ok),
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/settings');
+                  startSettingsScreen();
                 }),
           ],
         ),
@@ -446,7 +466,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         showAboutPage(
           context: context,
           values: {
-             'version': _version +"+"+ _buildNumber,
+            'version': _version + "+" + _buildNumber,
             'year': DateTime.now().year.toString(),
           },
           applicationLegalese:
@@ -544,7 +564,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/settings');
+                  startSettingsScreen();
                 }),
             IconButton(
                 icon: Icon(Icons.info),

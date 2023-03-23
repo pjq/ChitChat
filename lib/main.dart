@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => ChatScreen(settings: settings),
-        '/settings': (context) => SettingsScreen(prefs: settings.prefs),
+        // '/settings': (context) => SettingsScreen(prefs: settings.prefs),
         '/splash': (context) => SplashScreen(),
         '/about': (context) => const AboutScreen(),
       },
