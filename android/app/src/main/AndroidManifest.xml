@@ -2,6 +2,20 @@
     package="me.pjq.chitchat">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+<!--    <queries>-->
+<!--        <intent>-->
+<!--            <action android:name="android.intent.action.TTS_SERVICE" />-->
+<!--        </intent>-->
+<!--    </queries>-->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
 
     <application
         android:label="chitchat"

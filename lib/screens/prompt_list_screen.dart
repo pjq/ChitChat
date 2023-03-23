@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:chitchat/constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PromptListScreen extends StatefulWidget {
   final Function(Prompt) onSelectedPrompt;
@@ -24,6 +25,7 @@ class PromptListScreen extends StatefulWidget {
 
 class _PromptListScreenState extends State<PromptListScreen> {
   List<Prompt> _prompts = [];
+  late AppLocalizations loc;
 
   @override
   void initState() {
@@ -32,21 +34,14 @@ class _PromptListScreenState extends State<PromptListScreen> {
     _prompts = _prompts.addAllT(widget.promptStorage.loadPrompts());
   }
 
-  // Future<void> _savePrompts() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   List<Map<String, dynamic>> data =
-  //       _prompts.map((prompt) => prompt.toJson()).toList();
-  //   String json = jsonEncode(data);
-  //   prefs.setString('promptList', json);
-  // }
-
   void _addPrompt() {
     String newId = DateTime.now().toIso8601String();
     Prompt newPrompt = Prompt(
       id: newId,
-      title: 'Prompt ${_prompts.length + 1}',
+      title: loc.prompt_number((_prompts.length + 1).toString()),
+      // Replace with localized string
       content: Constants.defaultPrompt,
-      category: 'Default',
+      category: loc.default_prompt_category,
     );
     // _prompts.add(newPrompt);
     // widget.promptStorage.savePrompts(_prompts);
@@ -92,9 +87,11 @@ class _PromptListScreenState extends State<PromptListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Assistants'),
+        title: Text(loc!.assistants),
       ),
       body: ListView.builder(
         itemCount: _prompts.length,
@@ -135,21 +132,21 @@ class _PromptListScreenState extends State<PromptListScreen> {
         TextEditingController(text: currentPrompt.category);
 
     return AlertDialog(
-      title: Text('Edit prompt'),
+      title: Text(loc.edit_prompt),
       content: SingleChildScrollView(
         child: Column(
           children: [
             TextField(
               controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: InputDecoration(labelText: loc.title),
             ),
             TextField(
               controller: _contentController,
-              decoration: InputDecoration(labelText: 'Content'),
+              decoration: InputDecoration(labelText: loc.content),
             ),
             TextField(
               controller: _categoryController,
-              decoration: InputDecoration(labelText: 'Category'),
+              decoration: InputDecoration(labelText: loc.category),
             ),
           ],
         ),
@@ -157,7 +154,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Cancel'),
+          child: Text(loc.cancel),
         ),
         TextButton(
           onPressed: () {
@@ -172,7 +169,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
             _updatePrompt(updatedPrompt);
             Navigator.pop(context);
           },
-          child: Text('Save'),
+          child: Text(loc.save),
         ),
       ],
     );

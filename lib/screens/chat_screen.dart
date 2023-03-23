@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:chitchat/LogUtils.dart';
+import 'package:chitchat/global_data.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:chitchat/screens/SyntaxHighlight.dart';
 import 'package:chitchat/screens/prompt_list_screen.dart';
@@ -17,6 +17,13 @@ import 'package:about/about.dart';
 import 'package:chitchat/pubspec.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:velocity_x/velocity_x.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:package_info/package_info.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -32,11 +39,21 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   ChatService? _chatService;
   Settings? _settings;
   ChatHistory? _history;
-  final String defaultAppTitle = "ChitChat";
+  String defaultAppTitle = "ChitChat";
   String appTitle = "";
   late Prompt currentPrompt;
   late PromptStorage promptStorage;
   final _chatListController = ScrollController();
+
+  final FlutterTts flutterTts = FlutterTts();
+  final SpeechToText _speechToText = SpeechToText();
+  bool _isListening = false;
+  bool _isSpeechToTextAvailable = false;
+  String _lastRecognizedWords = "";
+  String _currentLocaleId = '';
+  List<LocaleName> sttLocaleNames = [];
+  List<dynamic> ttsLanguages = [];
+  late AppLocalizations loc;
 
   StreamSubscription? _streamSubscription;
   final StreamController<ChatMessage> _messageController =
@@ -57,6 +74,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
               _messages.elementAt(_messages.length - 2), currentPrompt.id);
           _history?.addMessageWithPromptChannel(
               _messages.last, currentPrompt.id);
+          _speak(_messages.last.content);
         } else {
           _messages.last.content += data.content;
           _listViewScrollToBottom();
@@ -67,7 +85,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
         _settings = Settings(prefs: prefs);
-        _chatService = ChatService(_settings!.openaiApiKey, _messageController);
+        _chatService = ChatService(_messageController);
         _history = ChatHistory(prefs: prefs);
         // _messages.addAll(_history!.messages);
         promptStorage = PromptStorage(prefs: prefs);
@@ -79,6 +97,198 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         });
       });
     });
+
+    _initializeSpeechRecognition();
+  }
+
+  Future<void> _initializeSpeechRecognition() async {
+    bool available = await _speechToText.initialize(
+      debugLogging: true,
+      onError: (SpeechRecognitionError error) {
+        print("Error: ${error.errorMsg}");
+        setState(() {
+          _isListening = false;
+        });
+        showToast(error.errorMsg);
+      },
+      onStatus: (String status) {
+        print("Status: $status");
+
+        if (status == "avalilable") {
+          //   print("Speech recognition available ${_isSpeechToTextAvailable}");
+          //
+          //   if (_isSpeechToTextAvailable) {
+          //     // Get the list of languages installed on the supporting platform so they
+          //     // can be displayed in the UI for selection by the user.
+          //     _localeNames = _speechToText.locales();
+          //     print(_localeNames);
+          //
+          //     var systemLocale = _speechToText.systemLocale();
+          //     _currentLocaleId = systemLocale?.localeId ?? '';
+          //   }
+          //
+          setState(() {
+            _isSpeechToTextAvailable = true;
+          });
+        }
+      },
+    );
+
+    setState(() {
+      _isSpeechToTextAvailable = available;
+    });
+
+    print("Speech recognition available ${_isSpeechToTextAvailable}");
+    // Get the list of languages installed on the supporting platform so they
+    // can be displayed in the UI for selection by the user.
+    if (_isSpeechToTextAvailable) {
+      sttLocaleNames = await _speechToText.locales();
+      sttLocaleNames.forEach((element) {
+        print("sttLocaleNames: " + element.name + ", " + element.localeId);
+      });
+
+      var systemLocale = await _speechToText.systemLocale();
+      _currentLocaleId = systemLocale?.localeId ?? '';
+      print("_currentLocaleId: " + _currentLocaleId);
+    }
+
+    ttsLanguages = await flutterTts.getLanguages;
+    print("tts langs:");
+    ttsLanguages.forEach((element) {
+      print("ttsLanguages: " + element);
+    });
+    // [nn, bg, kea, mg, mr, zu, ko, hsb, ak, kde, lv, seh, dz, mgo, ia, kkj, sd-Arab, pa-Guru, mer, pcm, sah, mni, br, sk, ml, ast, yue-Hans, cs, sv, el, pa, rn, rwk, tg, hu, ks-Arab, af, twq, bm, smn, dsb, sd-Deva, khq, ku, tr, cgg, ksf, cy, yi, fr, sq, de, agq, sa, ebu, zh-Hans, lg, sat-Olck, ff, mn, sd, teo, eu, wo, shi-Tfng, xog, so, ru, az, su-Latn, fa, kab, ms, nus, nd, ug, kk, az-Cyrl, hi, tk, hy, shi-Latn, vai, vi, dyo, mi, mt, ksb, lb, luo, mni-Beng, yav, ne, eo, kam, su, ro, ee, pl, my, ka, ur, mgh, shi, uz-Arab, kl, se, chr, doi, zh, yue-Hant, saq, az-Latn, ta, lag, luy, bo, as, bez, it, kln, uk, kw, mai, vai-Latn, mzn, ii, tt, ksh, ln, naq, pt, tzm, gl, sr-Cyrl, ff-Adlm, fur, om, to, ga, qu, et, asa, mua, jv, id, ps, sn, rof, ff-Latn, km, zgh, be, fil, gv, uz-Cyrl, dua, es, jgo, fo, gsw, hr, lt, guz, mfe, ccp, ja, lkt, ceb, is, or, si, brx, en, ca, te, ks, ha, sl, sbp, nyn, jmc, yue, fi, mk, sat, bs-Cyrl, uz, pa-Arab, sr-Latn, bs, sw, fy, nmg, rm, th, bn, ar, vai-Vaii, haw, kn, dje, bas, nnh, sg, uz-La
+    // await flutterTts.isLanguageAvailable("en-US")
+    //     ? flutterTts.setLanguage("en-US")
+    //     : flutterTts.setLanguage("en");
+    flutterTts.setVolume(1.0);
+    // await flutterTts.setSpeechRate(0.5);
+    // await flutterTts.setVolume(1.0);
+    // await flutterTts.setPitch(1.0);
+
+    GlobalData().ttsLanguages.addAll(ttsLanguages.toSet().toList());
+    GlobalData().sttLocaleNames.addAll(sttLocaleNames.toSet().toList());
+
+    updateTTSAndSTT();
+  }
+
+  void updateTTSAndSTT() {
+    if (GlobalData().ttsLanguages.isNotEmpty) {
+      String ttsSelectedLanguage =
+          _settings?.prefs.getString(Constants.ttsSelectedLanguageKey) ??
+              GlobalData().ttsLanguages[0];
+      flutterTts.setLanguage(Constants.ttsSelectedLanguageKey);
+    }
+
+    String? savedsttSelectedLanguage =
+        _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
+    LocaleName _sttSelectedLanguage = GlobalData()
+        .sttLocaleNames
+        .where((element) => savedsttSelectedLanguage == element.localeId)
+        .firstOrNull();
+
+    if (GlobalData().sttLocaleNames.isNotEmpty) {
+      String? savedSttSelectedLanguage =
+          _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
+
+      if (savedSttSelectedLanguage == null) {
+        // if not set before, just use the current localeId.
+        _settings?.prefs
+            .setString(Constants.sttSelectedLanguageKey, _currentLocaleId);
+      }
+
+      _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
+            (element) => savedSttSelectedLanguage == element.localeId,
+            orElse: () => GlobalData().sttLocaleNames[0], // Set a default value
+          );
+      print("selected: " + _sttSelectedLanguage!.localeId);
+    } else {
+      setState(() {
+        _isSpeechToTextAvailable = false;
+      });
+    }
+  }
+
+  void showToast(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        duration: Duration(milliseconds: 1000),
+      ),
+    );
+  }
+
+  void _toggleListening2() async {
+    flutterTts.stop();
+
+    if (_isListening) {
+      _speechToText.stop();
+      // _sendMessage(_lastRecognizedWords);
+      setState(() {
+        _isListening = false;
+        // _controller.clear();
+      });
+    } else {
+      await _speechToText.listen(
+        onResult: (SpeechRecognitionResult result) {
+          setState(() {
+            _controller.text = result.recognizedWords;
+            _lastRecognizedWords = result.recognizedWords;
+          });
+        },
+      );
+
+      setState(() {
+        _isListening = true;
+      });
+    }
+  }
+
+  void _toggleListening() async {
+    flutterTts.stop();
+    Timer? _listeningTimeout;
+
+    void _resetListeningTimeout() {
+      _listeningTimeout?.cancel();
+      _listeningTimeout = Timer(Duration(seconds: 2), () {
+        if (_isListening) {
+          _speechToText.stop();
+          _sendMessage(_lastRecognizedWords);
+          setState(() {
+            _isListening = false;
+          });
+        }
+      });
+    }
+
+    if (_isListening) {
+      _speechToText.stop();
+      _sendMessage(_lastRecognizedWords);
+      setState(() {
+        _isListening = false;
+      });
+    } else {
+      await _speechToText.listen(
+        onResult: (SpeechRecognitionResult result) {
+          setState(() {
+            _controller.text = result.recognizedWords;
+            _lastRecognizedWords = result.recognizedWords;
+          });
+          _resetListeningTimeout();
+        },
+      );
+
+      setState(() {
+        _isListening = true;
+      });
+    }
+  }
+
+  void _speak(String text) async {
+    if (false == _settings?.ttsEnable) return;
+
+    print("speak start");
+    await flutterTts.speak(text);
   }
 
   @override
@@ -138,11 +348,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('OpenAI API key not set'),
-          content: Text('Kindly configure the OpenAI API key in the settings'),
+          title: Text(loc.openai_api_key_not_set),
+          content: Text(loc.kindly_configure_openai_api_key),
           actions: [
             TextButton(
-                child: Text('OK'),
+                child: Text(loc.ok),
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/settings');
@@ -159,13 +369,13 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     setState(() {
       _isLoading = true;
+      _controller.clear();
     });
 
     _listViewScrollToBottom();
 
     final messageSend = ChatMessage(role: ChatMessage.ROLE_USER, content: text);
     _messages.add(messageSend);
-    _controller.clear();
 
     if (Constants.useStream) {
       //add as a placeholder for the stream message.
@@ -207,9 +417,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Failed to send message'),
+            Text(loc.failed_to_send_message),
             TextButton(
-              child: Text('Retry'),
+              child: Text(loc.retry),
               onPressed: () => _sendMessage(messageSend.content),
             ),
           ],
@@ -226,34 +436,43 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _showAbout() {
-    showAboutPage(
-      context: context,
-      values: {
-        'version': Pubspec.version,
-        'year': DateTime.now().year.toString(),
-      },
-      applicationLegalese:
-          'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
-      applicationDescription: Text(Pubspec.description),
-      children: const <Widget>[
-        MarkdownPageListTile(
-          icon: Icon(Icons.list),
-          title: Text('Changelog'),
-          filename: 'assets/CHANGELOG.md',
-        ),
-        LicensesPageListTile(
-          icon: Icon(Icons.favorite),
-        ),
-      ],
-      applicationIcon: const SizedBox(
-        width: 100,
-        height: 100,
-        child: Image(
-          image: AssetImage(
-              'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png'),
-        ),
-      ),
-    );
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      setState(() {
+        String _version = packageInfo.version;
+        String _buildNumber = packageInfo.buildNumber;
+        // You can also get other details like app name and package name
+        // from packageInfo, if needed.
+
+        showAboutPage(
+          context: context,
+          values: {
+             'version': _version +"+"+ _buildNumber,
+            'year': DateTime.now().year.toString(),
+          },
+          applicationLegalese:
+              'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
+          applicationDescription: Text(Pubspec.description),
+          children: const <Widget>[
+            MarkdownPageListTile(
+              icon: Icon(Icons.list),
+              title: Text('Changelog'),
+              filename: 'assets/CHANGELOG.md',
+            ),
+            LicensesPageListTile(
+              icon: Icon(Icons.favorite),
+            ),
+          ],
+          applicationIcon: const SizedBox(
+            width: 100,
+            height: 100,
+            child: Image(
+              image: AssetImage(
+                  'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png'),
+            ),
+          ),
+        );
+      });
+    });
   }
 
   // Add a new method to switch to a selected prompt channel.
@@ -288,6 +507,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
   @override
   Widget build(BuildContext context) {
+    loc = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         final currentFocus = FocusScope.of(context);
@@ -339,7 +559,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                     _history?.deleteMessageForPromptChannel(currentPrompt.id);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Conversation records erased'),
+                        content: Text(loc.conversationRecordsErased),
                       ),
                     );
                   });
@@ -375,14 +595,16 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                   BottomAppBar(
                     child: Container(
                       // height: 60,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
                       child: Row(
                         children: [
                           Expanded(
                             child: TextField(
                               controller: _controller,
                               decoration: InputDecoration(
-                                hintText: 'Type a message',
+                                hintText: AppLocalizations.of(context)!
+                                    .type_a_message,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide.none,
@@ -415,6 +637,13 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                                 ? null
                                 : _sendMessage(_controller.text),
                           ),
+                          if (_isSpeechToTextAvailable)
+                            IconButton(
+                              icon: Icon(
+                                _isListening ? Icons.mic_off : Icons.mic,
+                              ),
+                              onPressed: _toggleListening,
+                            ),
                           if (_isLoading)
                             SizedBox(
                               width: 20,
@@ -447,20 +676,20 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             children: <Widget>[
               ListTile(
                 leading: Icon(Icons.content_copy),
-                title: Text('Copy'),
+                title: Text(loc.copy),
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: message.content));
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Copied to clipboard'),
+                      content: Text(loc.copied_to_clipboard),
                     ),
                   );
                 },
               ),
               ListTile(
                 leading: Icon(Icons.share),
-                title: Text('Share'),
+                title: Text(loc.share),
                 onTap: () {
                   Share.share(message.content);
                   Navigator.pop(context);
@@ -468,7 +697,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
               ),
               ListTile(
                 leading: Icon(Icons.translate),
-                title: Text('Translation'),
+                title: Text(loc.translation),
                 onTap: () {
                   translate(message.content, Constants.translationPrompt)
                       .then((translatedText) {
@@ -483,7 +712,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
               ),
               ListTile(
                 leading: Icon(Icons.book),
-                title: Text('Rephrase'),
+                title: Text(loc.rephrase),
                 onTap: () {
                   translate(message.content, Constants.rephrasePrompt)
                       .then((translatedText) {
@@ -498,11 +727,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
               ),
               ListTile(
                 leading: Icon(Icons.remove),
-                title: Text('Delete'),
+                title: Text(loc.delete),
                 onTap: () {
                   delete(message);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Message deleted'),
+                    content: Text(loc.message_deleted),
                   ));
                   Navigator.pop(context);
                 },

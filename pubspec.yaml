@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   # Added chatGPT SDK using this link - https://pub.dev/packages/chat_gpt_sdk
-  chat_gpt_sdk: ^1.0.2+3
+  chat_gpt_sdk: ^2.0.6
 
   # Added http package for Api Calls using this link - https://pub.dev/packages/http
   http: ^0.13.5
@@ -53,6 +53,13 @@ dependencies:
   flutter_highlighter: ^0.1.1
   google_fonts: ^4.0.3
   flutter_keyboard_visibility: ^5.4.0
+  flutter_tts: ^3.6.3
+  speech_to_text: ^6.1.1
+  intl: any
+  flutter_localizations: 
+    sdk: flutter
+  # Add the package_info plugin
+  package_info: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -71,7 +78,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  generate: true
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

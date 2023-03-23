@@ -19,9 +19,10 @@ jobs:
         with:
           flutter-version: '3.7.7'
       - run: flutter pub get
+      - run:  flutter gen-l10n
       #      - run: flutter test
-      - run: flutter build apk
-      #      - run: flutter build appbundle
+      - run: flutter build apk  --release
+      - run: flutter build appbundle  --release
       - run: |
           sudo apt-get update -y
           sudo apt-get install -y ninja-build libgtk-3-dev
@@ -30,7 +31,7 @@ jobs:
       - name: Create Github Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/*.apk"
+          artifacts: "build/app/outputs/flutter-apk/*.apk，build/app/outputs/bundle/release/*.aab"
           token: ${{ secrets.PERSONAL_RELEASE_TOKEN }}
           bodyFile: "assets/RELEASELOG.md"
 #      - uses: actions/checkout@v2
