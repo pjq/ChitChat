@@ -168,6 +168,8 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     GlobalData().ttsLanguages.addAll(ttsLanguages.toSet().toList());
     GlobalData().sttLocaleNames.addAll(sttLocaleNames.toSet().toList());
+
+    updateTTSAndSTT();
   }
 
   void updateTTSAndSTT() {
@@ -200,6 +202,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             orElse: () => GlobalData().sttLocaleNames[0], // Set a default value
           );
       print("selected: " + _sttSelectedLanguage!.localeId);
+    } else {
+      setState(() {
+        _isSpeechToTextAvailable = false;
+      });
     }
   }
 
@@ -212,7 +218,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     );
   }
 
-  void _toggleListening() async {
+  void _toggleListening2() async {
     flutterTts.stop();
 
     if (_isListening) {
@@ -229,6 +235,46 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             _controller.text = result.recognizedWords;
             _lastRecognizedWords = result.recognizedWords;
           });
+        },
+      );
+
+      setState(() {
+        _isListening = true;
+      });
+    }
+  }
+
+  void _toggleListening() async {
+    flutterTts.stop();
+    Timer? _listeningTimeout;
+
+    void _resetListeningTimeout() {
+      _listeningTimeout?.cancel();
+      _listeningTimeout = Timer(Duration(seconds: 2), () {
+        if (_isListening) {
+          _speechToText.stop();
+          _sendMessage(_lastRecognizedWords);
+          setState(() {
+            _isListening = false;
+          });
+        }
+      });
+    }
+
+    if (_isListening) {
+      _speechToText.stop();
+      _sendMessage(_lastRecognizedWords);
+      setState(() {
+        _isListening = false;
+      });
+    } else {
+      await _speechToText.listen(
+        onResult: (SpeechRecognitionResult result) {
+          setState(() {
+            _controller.text = result.recognizedWords;
+            _lastRecognizedWords = result.recognizedWords;
+          });
+          _resetListeningTimeout();
         },
       );
 
