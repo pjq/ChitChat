@@ -63,7 +63,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   void initState() {
     super.initState();
     LogUtils.info("init state");
-    // defaultAppTitle = AppLocalizations.of(context)!.app_name;
     appTitle = defaultAppTitle;
 
     _streamSubscription = _messageController.stream.listen((data) {
@@ -86,7 +85,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
         _settings = Settings(prefs: prefs);
-        _chatService = ChatService(_settings!.openaiApiKey, _messageController);
+        _chatService = ChatService(_messageController);
         _history = ChatHistory(prefs: prefs);
         // _messages.addAll(_history!.messages);
         promptStorage = PromptStorage(prefs: prefs);

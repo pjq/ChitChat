@@ -10,16 +10,17 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 
 class ChatService {
-  final String apiKey;
+  late String? apiKey;
   final StreamController<ChatMessage> messageController;
 
-  ChatService(this.apiKey, this.messageController);
+  ChatService(this.messageController);
 
   Future<String> getTranslation(
     String content,
     String translationPrompt,
     Settings? _settings,
   ) async {
+    apiKey = _settings?.openaiApiKey;
     final response = await getCompletionRaw(
       translationPrompt + content,
       _settings!.promptString,
@@ -36,6 +37,7 @@ class ChatService {
 
   Future<String> getCompletion(String content, List<ChatMessage>? latestChat,
       Settings? _settings, PromptStorage? promptStorage) async {
+    apiKey = _settings?.openaiApiKey;
     final response = await getCompletionRaw(
       content,
       promptStorage?.getSelectedPrompt().content ?? _settings!.promptString,
