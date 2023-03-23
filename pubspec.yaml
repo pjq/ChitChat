@@ -58,6 +58,8 @@ dependencies:
   intl: any
   flutter_localizations: 
     sdk: flutter
+  # Add the package_info plugin
+  package_info: ^2.0.0
 
 dev_dependencies:
   flutter_test:

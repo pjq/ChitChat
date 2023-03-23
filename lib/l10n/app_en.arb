@@ -28,5 +28,22 @@
     "settingsSaved": "Settings saved",
     "conversationRecordsErased": "Conversation records erased, you may restart the App.",
     "noTtsLanguagesAvailable": "No languages available",
-    "noSttLanguagesAvailable": "No languages available"
+    "noSttLanguagesAvailable": "No languages available",
+     "openai_api_key_not_set": "OpenAI API key not set",
+      "kindly_configure_openai_api_key": "Kindly configure the OpenAI API key in the settings",
+      "ok": "OK",
+      "type_a_message": "Type a message",
+      "failed_to_send_message": "Failed to send message",
+      "retry": "Retry",
+      "conversation_records_erased": "Conversation records erased",
+      "copy": "Copy",
+      "share": "Share",
+      "translation": "Translation",
+      "rephrase": "Rephrase",
+      "delete": "Delete",
+      "version": "version",
+      "year": "year",
+      "changelog": "Changelog",
+      "copied_to_clipboard": "Copied to clipboard",
+      "message_deleted": "Message deleted"
 }
