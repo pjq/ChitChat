@@ -55,18 +55,12 @@ cp macos_icon.iconset/icon_512x512.png macos/Runner/Assets.xcassets/AppIcon.appi
 cp macos_icon.iconset/icon_512x512@2x.png macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png
 
 # Create Android app icons
-mkdir android_icon
-sips -z 48 48 $icon_file --out android_icon/drawable-mdpi/ic_launcher.png
-sips -z 72 72 $icon_file --out android_icon/drawable-hdpi/ic_launcher.png
-sips -z 96 96 $icon_file --out android_icon/drawable-xhdpi/ic_launcher.png
-sips -z 144 144 $icon_file --out android_icon/drawable-xxhdpi/ic_launcher.png
-sips -z 192 192 $icon_file --out android_icon/drawable-xxxhdpi/ic_launcher.png
-
-cp  android_icon/drawable-mdpi/ic_launcher.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-cp  android_icon/drawable-hdpi/ic_launcher.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-cp  android_icon/drawable-xhdpi/ic_launcher.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-cp  android_icon/drawable-xxhdpi/ic_launcher.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-cp  android_icon/drawable-xxxhdpi/ic_launcher.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+sips -z 48 48 $icon_file --out android/app/src/main/res/drawable/ic_launcher.png
+sips -z 48 48 $icon_file --out android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+sips -z 72 72 $icon_file --out android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+sips -z 96 96 $icon_file --out android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+sips -z 144 144 $icon_file --out android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+sips -z 192 192 $icon_file --out android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
 
 # Create Windows app icons
@@ -78,7 +72,6 @@ sips -z 192 192 $icon_file --out web/icons/Icon-maskable-192.png
 sips -z 512 512 $icon_file --out web/icons/Icon-512.png
 sips -z 512 512 $icon_file --out web/icons/Icon-maskable-512.png
 
-rm -rf android_icon
 rm -rf macos_icon.iconset
 rm -rf ios_icon.iconset
 rm -rf windows_icon
