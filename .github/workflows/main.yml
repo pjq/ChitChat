@@ -18,4 +18,9 @@ jobs:
       - run: flutter pub get
 #      - run: flutter test
 #      - run: flutter build apk
+      - name: Decode android/release.keystore
+        run: echo "${{ secrets.KEY_STORE_RELEASE}}" | base64 --decode > android/release.keystore
+
+      - name: Decode android/key.properties
+        run: echo "${{ secrets.KEY_PROPERTIES_PROD }}" | base64 --decode > android/key.properties
       - run: flutter build appbundle
