@@ -55,11 +55,14 @@ dependencies:
   flutter_keyboard_visibility: ^5.4.0
   flutter_tts: ^3.6.3
   speech_to_text: ^6.1.1
-  intl: ^0.17.0
+  intl: any
   flutter_localizations: 
     sdk: flutter
   # Add the package_info plugin
   package_info: ^2.0.0
+
+dependency_overrides:
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
