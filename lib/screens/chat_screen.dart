@@ -207,10 +207,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     if (GlobalData().sttLocaleNames.isNotEmpty) {
       String? savedsttSelectedLanguage =
       _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
-      LocaleName _sttSelectedLanguage = GlobalData()
-          .sttLocaleNames
-          .where((element) => savedsttSelectedLanguage == element.localeId)
-          .firstOrNull();
+
       String? savedSttSelectedLanguage =
           _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
 
@@ -220,7 +217,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             .setString(Constants.sttSelectedLanguageKey, _currentLocaleId);
       }
 
-      _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
+      LocaleName _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
             (element) => savedSttSelectedLanguage == element.localeId,
             orElse: () => GlobalData().sttLocaleNames[0], // Set a default value
           );
@@ -393,6 +390,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     setState(() {
       _isLoading = true;
       _controller.clear();
+      _controller.text="";
     });
 
     _listViewScrollToBottom();
