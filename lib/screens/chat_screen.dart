@@ -55,6 +55,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   String _lastRecognizedWords = "";
   String _currentLocaleId = '';
   String _currentLanguageCode = '';
+  LocaleName? _sttSelectedLanguage;
   List<LocaleName> sttLocaleNames = [];
   List<dynamic> ttsLanguages = [];
   late AppLocalizations loc;
@@ -166,7 +167,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     if (_isSpeechToTextAvailable) {
       sttLocaleNames = await _speechToText.locales();
       sttLocaleNames.forEach((element) {
-        print("sttLocaleNames: " + element.name + ", " + element.localeId);
+        // print("sttLocaleNames: " + element.name + ", " + element.localeId);
       });
 
       var systemLocale = await _speechToText.systemLocale();
@@ -179,7 +180,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     ttsLanguages = await flutterTts.getLanguages;
     print("tts langs:");
     ttsLanguages.forEach((element) {
-      print("ttsLanguages: " + element);
+      // print("ttsLanguages: " + element);
     });
     // [nn, bg, kea, mg, mr, zu, ko, hsb, ak, kde, lv, seh, dz, mgo, ia, kkj, sd-Arab, pa-Guru, mer, pcm, sah, mni, br, sk, ml, ast, yue-Hans, cs, sv, el, pa, rn, rwk, tg, hu, ks-Arab, af, twq, bm, smn, dsb, sd-Deva, khq, ku, tr, cgg, ksf, cy, yi, fr, sq, de, agq, sa, ebu, zh-Hans, lg, sat-Olck, ff, mn, sd, teo, eu, wo, shi-Tfng, xog, so, ru, az, su-Latn, fa, kab, ms, nus, nd, ug, kk, az-Cyrl, hi, tk, hy, shi-Latn, vai, vi, dyo, mi, mt, ksb, lb, luo, mni-Beng, yav, ne, eo, kam, su, ro, ee, pl, my, ka, ur, mgh, shi, uz-Arab, kl, se, chr, doi, zh, yue-Hant, saq, az-Latn, ta, lag, luy, bo, as, bez, it, kln, uk, kw, mai, vai-Latn, mzn, ii, tt, ksh, ln, naq, pt, tzm, gl, sr-Cyrl, ff-Adlm, fur, om, to, ga, qu, et, asa, mua, jv, id, ps, sn, rof, ff-Latn, km, zgh, be, fil, gv, uz-Cyrl, dua, es, jgo, fo, gsw, hr, lt, guz, mfe, ccp, ja, lkt, ceb, is, or, si, brx, en, ca, te, ks, ha, sl, sbp, nyn, jmc, yue, fi, mk, sat, bs-Cyrl, uz, pa-Arab, sr-Latn, bs, sw, fy, nmg, rm, th, bn, ar, vai-Vaii, haw, kn, dje, bas, nnh, sg, uz-La
     // await flutterTts.isLanguageAvailable("en-US")
@@ -201,27 +202,27 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       String ttsSelectedLanguage =
           _settings?.prefs.getString(Constants.ttsSelectedLanguageKey) ??
               GlobalData().ttsLanguages[0];
-      flutterTts.setLanguage(Constants.ttsSelectedLanguageKey);
+      flutterTts.setLanguage(ttsSelectedLanguage);
     }
 
     if (GlobalData().sttLocaleNames.isNotEmpty) {
-      String? savedsttSelectedLanguage =
-      _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
-
       String? savedSttSelectedLanguage =
           _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
 
+      print("selected stt: ${savedSttSelectedLanguage}");
       if (savedSttSelectedLanguage == null) {
         // if not set before, just use the current localeId.
         _settings?.prefs
             .setString(Constants.sttSelectedLanguageKey, _currentLocaleId);
+        savedSttSelectedLanguage = _currentLocaleId;
       }
 
-      LocaleName _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
+      _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
             (element) => savedSttSelectedLanguage == element.localeId,
             orElse: () => GlobalData().sttLocaleNames[0], // Set a default value
           );
-      print("selected: " + _sttSelectedLanguage!.localeId);
+
+      print("selected stt: " + _sttSelectedLanguage!.localeId);
     } else {
       setState(() {
         _isSpeechToTextAvailable = false;
@@ -236,32 +237,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         duration: Duration(milliseconds: 1000),
       ),
     );
-  }
-
-  void _toggleListening2() async {
-    flutterTts.stop();
-
-    if (_isListening) {
-      _speechToText.stop();
-      // _sendMessage(_lastRecognizedWords);
-      setState(() {
-        _isListening = false;
-        // _controller.clear();
-      });
-    } else {
-      await _speechToText.listen(
-        onResult: (SpeechRecognitionResult result) {
-          setState(() {
-            _controller.text = result.recognizedWords;
-            _lastRecognizedWords = result.recognizedWords;
-          });
-        },
-      );
-
-      setState(() {
-        _isListening = true;
-      });
-    }
   }
 
   void _toggleListening() async {
@@ -289,7 +264,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         _isListening = false;
       });
     } else {
+      String? savedSelectedLanguage = _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
+      String localeId = savedSelectedLanguage??_currentLocaleId;
+      print("saved stt: " + localeId);
       await _speechToText.listen(
+        localeId: localeId ,
         onResult: (SpeechRecognitionResult result) {
           setState(() {
             if (!_isLoading) {

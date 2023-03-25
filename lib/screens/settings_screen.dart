@@ -77,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   GlobalData().sttLocaleNames[0], // Set a default value
             );
 
-        // print("selected: " + _sttSelectedLanguage!.localeId);
+        print("selected: " + _sttSelectedLanguage!.localeId);
       }
     });
 
@@ -86,11 +86,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      _saveSettings();
+      _saveSettings(false);
     }
   }
 
-  void _saveSettings() {
+  void _saveSettings(bool back) {
     widget.prefs.setString(Constants.apiKeyKey, _apiKeyController.text);
     widget.prefs
         .setString(Constants.promptStringKey, _promptStringController.text);
@@ -114,10 +114,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (null != _sttSelectedLanguage) {
       widget.prefs.setString(
-          Constants.sttSelectedLanguageKey, _sttSelectedLanguage!.name);
+          Constants.sttSelectedLanguageKey, _sttSelectedLanguage!.localeId);
     }
 
-    Navigator.pop(context);
+    if (back) {
+      Navigator.pop(context);
+    }
     widget.onSettingsChanged();
   }
 
@@ -156,7 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.save),
-            onPressed: _saveSettings,
+            onPressed: () =>_saveSettings(true),
             tooltip: loc.save,
           ),
         ],
@@ -171,42 +173,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 controller: _apiKeyController,
                 label: loc.openAIApiKey,
               ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                enable: false,
-                controller: _promptStringController,
-                label: loc.promptString,
-              ),
+              // const SizedBox(height: 16),
+              // _buildTextField(
+              //   enable: false,
+              //   controller: _promptStringController,
+              //   label: loc.promptString,
+              // ),
               const SizedBox(height: 16),
               _buildTextField(
                 controller: _temperatureValueController,
                 label: loc.temperatureValue,
               ),
-              const SizedBox(height: 16),
+              // const SizedBox(height: 16),
               CheckboxListTile(
                 title: Text(loc.continueConversation),
                 value: _continueConversationEnable,
+                contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _continueConversationEnable = value!;
+                    _saveSettings(false);
                   });
                 },
               ),
               CheckboxListTile(
                 title: Text(loc.localCache),
                 value: _localCacheEnable,
+                contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _localCacheEnable = value!;
+                    _saveSettings(false);
                   });
                 },
               ),
               CheckboxListTile(
                 title: Text(loc.enableTts),
                 value: _ttsEnable,
+                contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _ttsEnable = value!;
+                    _saveSettings(false);
                   });
                 },
               ),
@@ -307,9 +315,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       onChanged: (LocaleName? newValue) {
         setState(() {
           _sttSelectedLanguage = newValue!;
-          print("selected: " + _sttSelectedLanguage!.localeId);
 
           if (null != _sttSelectedLanguage) {
+            print("selected stt: " + _sttSelectedLanguage!.localeId);
             widget.prefs.setString(Constants.sttSelectedLanguageKey,
                 _sttSelectedLanguage!.localeId);
           }

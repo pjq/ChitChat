@@ -12,6 +12,7 @@ import 'dart:io';
 class ChatService {
   late String? apiKey;
   final StreamController<ChatMessage> messageController;
+  final HttpClient client = HttpClient();
 
   ChatService(this.messageController);
 
@@ -87,7 +88,6 @@ class ChatService {
     });
     LogUtils.info(body);
 
-    HttpClient client = HttpClient();
     LogUtils.info(proxy);
     if (proxy.isNotEmpty) {
       client.findProxy = (url) {
@@ -102,6 +102,7 @@ class ChatService {
     }
     LogUtils.info(url);
 
+    client.connectionTimeout = const Duration(seconds:60);
     final request = await client.postUrl(Uri.parse('$url/v1/chat/completions'));
     request.headers.contentType = ContentType.json;
     request.headers.set('Authorization', 'Bearer $apiKey');
