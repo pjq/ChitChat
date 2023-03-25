@@ -270,12 +270,13 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     void _resetListeningTimeout() {
       _listeningTimeout?.cancel();
-      _listeningTimeout = Timer(Duration(seconds: 2), () {
+      _listeningTimeout = Timer(Duration(milliseconds: 1000), () {
         if (_isListening) {
           _speechToText.stop();
           _sendMessage(_lastRecognizedWords);
           setState(() {
             _isListening = false;
+            _controller.clear();
           });
         }
       });
@@ -291,8 +292,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       await _speechToText.listen(
         onResult: (SpeechRecognitionResult result) {
           setState(() {
-            _controller.text = result.recognizedWords;
-            _lastRecognizedWords = result.recognizedWords;
+            if (!_isLoading) {
+              // If it's in the sending status, then no need update the input entry.
+              _controller.text = result.recognizedWords;
+              _lastRecognizedWords = result.recognizedWords;
+            }
           });
           _resetListeningTimeout();
         },
@@ -387,12 +391,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _controller.clear();
-      _controller.text="";
-    });
-
     _listViewScrollToBottom();
 
     final messageSend = ChatMessage(role: ChatMessage.ROLE_USER, content: text);
@@ -406,6 +404,12 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     }
 
     try {
+      setState(() {
+        _isLoading = true;
+        _controller.clear();
+        _controller.text="";
+      });
+
       final completion = await _callAPI(messageSend.content);
 
       setState(() {
@@ -753,7 +757,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _listViewScrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 50), () {
       _chatListController.animateTo(
         _chatListController.position.maxScrollExtent,
         duration: Duration(milliseconds: Constants.scrollDuration),
