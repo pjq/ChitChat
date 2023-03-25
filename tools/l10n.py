@@ -10,33 +10,41 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 # Top 10 languages by number of speakers
 languages = [
     ("zh", "Chinese"),
-#     ("es", "Spanish"),
-#     ("en", "English"),
-#     ("hi", "Hindi"),
-#     ("ar", "Arabic"),
-#     ("pt", "Portuguese"),
-#     ("bn", "Bengali"),
-#     ("ru", "Russian"),
-#     ("ja", "Japanese"),
-#     ("jv", "Javanese"),
+    ("zh_Hant", "Traditional Chinese"),
+    ("vi", "Vietnam"),
+    ("ja", "Japanese"),
+    ("ko", "Korean"),
+    ("it", "Italian"),
+    ("fr", "French"),
+    ("de", "German"),
+    ("es", "Spanish"),
+    ("en", "English"),
+    ("hi", "Hindi"),
+    ("ar", "Arabic"),
+    ("pt", "Portuguese"),
+    ("bn", "Bengali"),
+    ("ru", "Russian"),
+    ("jv", "Javanese"),
 ]
 
 def translate_data(data, target_language):
     data_without_app_name = {k: v for k, v in data.items() if k != "app_name"}
     json_string = json.dumps(data_without_app_name, ensure_ascii=False)
 
-    prompt = f"Translate the following JSON content from English to {target_language}:\n{json_string}"
+    messages = [
+        {
+            "role": "system",
+            "content": f"Translate the following JSON content from English to {target_language}: {json_string}"
+        }
+    ]
 
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
         temperature=0.8,
     )
 
-    translated_text = response.choices[0].text.strip()
+    translated_text = response.choices[0].message["content"].strip()
     return json.loads(translated_text)
 
 def translate_file(file_path):
