@@ -1,0 +1,23 @@
+name: 'Windows Release'
+on:
+  push:
+    tags:
+      - '*windows'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'beta'
+      - run: flutter config --enable-windows-desktop
+      - run: flutter gen-l10n
+      - run: flutter build windows
+      - name: Create Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/windows/runner/Release/"
+          token: ${{ secrets.PERSONAL_RELEASE_TOKEN }}
+          bodyFile: "assets/RELEASELOG.md"

@@ -16,13 +16,15 @@ jobs:
       - run: flutter config --enable-macos-desktop
       - run:  flutter gen-l10n
       - run: flutter build macos --release
+      - run: flutter build ios --release --no-codesign
       - name: Create the DMG file
         run: |
           hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release/chitchat.app build/macos/Build/Products/Release/chitchat.dmg
+          hdiutil create -format UDZO -srcfolder build/ios/iphoneos/Runner.app build/ios/iphoneos/chitchat-ios.dmg
       - name: Create Github Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/macos/Build/Products/Release/chitchat.dmg"
+          artifacts: "build/macos/Build/Products/Release/chitchat.dmg,build/ios/iphoneos/chitchat-ios.dmg"
           token: ${{ secrets.PERSONAL_RELEASE_TOKEN }}
           bodyFile: "assets/RELEASELOG.md"
 #      - uses: actions/checkout@v2
