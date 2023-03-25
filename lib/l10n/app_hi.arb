@@ -7,7 +7,7 @@
   "cancel": "रद्द करना",
   "save": "बचाना",
   "you_are_my_assistant": "आप मेरे व्यक्तिगत सहायक हैं",
-  "prompt_number": "प्रॉम्प्ट {संख्या}",
+  "prompt_number": "प्रॉम्प्ट {number}",
   "default_prompt_category": "डिफ़ॉल्ट",
   "assistant": "सहायक",
   "type_a_message": "एक संदेश टाइप करें",

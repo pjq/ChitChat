@@ -80,6 +80,19 @@ git tag 1.0.0-mac && git push origin 1.0.0-mac
 git tag 1.0.0-android && git push origin 1.0.0-android
 ```
 
+Or delete tag and push again
+```shell
+git tag -d 1.1.1-mac &&  git push origin --delete 1.1.1-mac &&  git tag 1.1.1-mac && git push origin 1.1.1-mac
+echo " git tag -d 1.1.1-mac &&  git push origin --delete 1.1.1-mac &&  git tag 1.1.1-mac && git push origin 1.1.1-mac" | sed "s/mac/android/g" | sed "s/1.1.1/1.1.2/g"
+```
+
+### Generate l10n by Call GPT 3.5 Turbo API
+
+```shell
+cd lib/l10n
+python3 ../../tools/l10n.py --file app_en.arb;
+```
+
 ## Getting Started for Flutter
 
 This project is a starting point for a Flutter application.
