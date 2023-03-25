@@ -30,8 +30,26 @@ class _PromptListScreenState extends State<PromptListScreen> {
   @override
   void initState() {
     super.initState();
-
     _prompts = _prompts.addAllT(widget.promptStorage.loadPrompts());
+  }
+
+  void _addDefaultPrompt() {
+    List<Prompt> allPrompts = widget.promptStorage.loadPrompts();
+    if (allPrompts.isEmpty) {
+      //add the default prompts
+      Prompt newPrompt = Prompt(
+        id: "-1",
+        title: loc.default_prompt_category,
+        content: loc.you_are_my_assistant,
+        category: loc.default_prompt_category,
+      );
+
+      widget.promptStorage.savePrompts(_prompts);
+
+      setState(() {
+        allPrompts.add(newPrompt);
+      });
+    }
   }
 
   void _addPrompt() {
@@ -88,6 +106,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
   @override
   Widget build(BuildContext context) {
     loc = AppLocalizations.of(context)!;
+    _addDefaultPrompt();
 
     return Scaffold(
       appBar: AppBar(
