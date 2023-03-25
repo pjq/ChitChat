@@ -4,6 +4,7 @@ import 'package:chitchat/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class SettingsScreen extends StatefulWidget {
   final SharedPreferences prefs;
@@ -63,8 +64,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         text: widget.prefs.getString(Constants.baseUrlKey));
 
     setState(() {
-      _ttsSelectedLanguage =
-          widget.prefs.getString(Constants.ttsSelectedLanguageKey);
+      String? selected = widget.prefs.getString(Constants.ttsSelectedLanguageKey);
+      _ttsSelectedLanguage = selected != null && selected.isNotEmpty?selected:null;
+      print("${_ttsSelectedLanguage}");
 
       if (GlobalData().sttLocaleNames.isNotEmpty) {
         String? savedSttSelectedLanguage =
@@ -78,6 +80,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         // print("selected: " + _sttSelectedLanguage!.localeId);
       }
     });
+
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _saveSettings();
+    }
   }
 
   void _saveSettings() {
@@ -93,6 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(loc.settings_saved),
+        duration: Duration(milliseconds: 1000),
       ),
     );
     widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
@@ -142,6 +153,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.settings),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: _saveSettings,
+            tooltip: loc.save,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -237,10 +255,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: loc.openAIBaseUrl,
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _saveSettings,
-                child: Text(loc.save),
-              ),
+              // ElevatedButton(
+              //   onPressed: _saveSettings,
+              //   child: Text(loc.save),
+              // ),
             ],
           ),
         ),
@@ -263,9 +281,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }).toList(),
       onChanged: (String? newValue) {
         setState(() {
-          _ttsSelectedLanguage = newValue!;
-          widget.prefs.setString(
-              Constants.ttsSelectedLanguageKey, _ttsSelectedLanguage ?? "");
+          if(newValue.isNotEmptyAndNotNull) {
+            _ttsSelectedLanguage = newValue!;
+            widget.prefs.setString(
+                Constants.ttsSelectedLanguageKey, _ttsSelectedLanguage ?? "");
+          }
         });
       },
     );

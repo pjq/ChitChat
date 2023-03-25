@@ -42,12 +42,13 @@ class _PromptListScreenState extends State<PromptListScreen> {
         title: loc.default_prompt_category,
         content: loc.you_are_my_assistant,
         category: loc.default_prompt_category,
+        selected: true,
       );
 
       widget.promptStorage.savePrompts(_prompts);
 
       setState(() {
-        allPrompts.add(newPrompt);
+        _prompts.add(newPrompt);
       });
     }
   }
@@ -163,10 +164,10 @@ class _PromptListScreenState extends State<PromptListScreen> {
               controller: _contentController,
               decoration: InputDecoration(labelText: loc.content),
             ),
-            TextField(
-              controller: _categoryController,
-              decoration: InputDecoration(labelText: loc.category),
-            ),
+            // TextField(
+            //   controller: _categoryController,
+            //   decoration: InputDecoration(labelText: loc.category),
+            // ),
           ],
         ),
       ),

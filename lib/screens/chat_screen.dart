@@ -431,11 +431,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       setState(() {
         _isLoading = false;
       });
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text('Failed to send message'),
-      //   ),
-      // );
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -580,11 +575,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                   setState(() {
                     _messages.clear();
                     _history?.deleteMessageForPromptChannel(currentPrompt.id);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(loc.conversationRecordsErased),
-                      ),
-                    );
+                    showToast(loc.conversationRecordsErased);
                   });
                 }),
           ],
@@ -703,11 +694,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: message.content));
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(loc.copied_to_clipboard),
-                    ),
-                  );
+                  showToast(loc.copied_to_clipboard);
                 },
               ),
               ListTile(
@@ -756,9 +743,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 title: Text(loc.delete),
                 onTap: () {
                   delete(message);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(loc.message_deleted),
-                  ));
+                  showToast(loc.message_deleted);
                   Navigator.pop(context);
                 },
               ),
