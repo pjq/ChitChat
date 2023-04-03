@@ -1,3 +1,5 @@
+## April 3, 2023
+- Provide support for selecting either gpt-3.5 or gpt-4.
 ## March 22, 2023
 - Support i18n 
 ## March 21, 2023
