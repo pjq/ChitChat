@@ -17,6 +17,7 @@
     "openAIApiKey": "OpenAI API Key",
     "promptString": "Prompt String",
     "temperatureValue": "Temperature Value(0-1.0)",
+    "selectModel": "Select AI Model",
     "continueConversation": "Continue Conversation",
     "localCache": "Local Cache",
     "enableTts": "Enable TTS(Text to Speech)",

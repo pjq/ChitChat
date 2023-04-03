@@ -29,6 +29,7 @@ class ChatService {
       [],
       _settings!.proxyUrl,
       _settings!.baseUrl,
+      _settings!.selectedModel,
     );
     // final completion = response['choices'][0]['message']['content'];
     LogUtils.info(response);
@@ -46,6 +47,7 @@ class ChatService {
       latestChat,
       _settings!.proxyUrl,
       _settings!.baseUrl,
+      _settings!.selectedModel,
     );
     LogUtils.info(response);
 
@@ -59,6 +61,7 @@ class ChatService {
     List<ChatMessage>? latestChat,
     String proxy,
     String baseUrl,
+      String aiModel,
   ) async {
     LogUtils.info("getCompletion");
 
@@ -81,7 +84,8 @@ class ChatService {
     bool useStream = Constants.useStream;
 
     final body = jsonEncode({
-      "model": "gpt-3.5-turbo",
+      "model": aiModel,
+      // "model": "gpt-4",
       "temperature": temperatureValue,
       "messages": chatMessages,
       "stream": useStream

@@ -31,6 +31,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late LocaleName? _sttSelectedLanguage = null;
   late AppLocalizations loc;
 
+  late String _selectedModel;
+
+
   @override
   void initState() {
     super.initState();
@@ -81,6 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     });
 
+    _selectedModel = widget.prefs.getString(Constants.selectedModelKey) ?? Constants.default_ai_model;
   }
 
   @override
@@ -183,6 +187,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildTextField(
                 controller: _temperatureValueController,
                 label: loc.temperatureValue,
+              ),
+              const SizedBox(height: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(loc.selectModel),
+                  _buildModelDropdown(),
+                ],
               ),
               // const SizedBox(height: 16),
               CheckboxListTile(
@@ -325,4 +337,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
+
+  Widget _buildModelDropdown() {
+    List<String> models = ["gpt-3.5-turbo", "gpt-4"];
+
+    return DropdownButton<String>(
+      value: _selectedModel,
+      items: models.map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedModel = newValue!;
+          widget.prefs.setString(Constants.selectedModelKey, _selectedModel);
+        });
+      },
+    );
+  }
+
 }

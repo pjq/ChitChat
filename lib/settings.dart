@@ -52,6 +52,8 @@ class Settings {
 
   String get baseUrl => prefs.getString(Constants.baseUrlKey) ?? 'https://api.openai.com';
 
+  String get selectedModel => prefs.getString(Constants.selectedModelKey) ?? Constants.default_ai_model;
+
   set baseUrl(String value) {
     prefs.setString(Constants.baseUrlKey, value);
   }

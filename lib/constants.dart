@@ -11,6 +11,9 @@ class Constants {
   static const String ttsSelectedLanguageKey = 'ttsSelectedLanguage';
   static const String sttSelectedLanguageKey = 'sttSelectedLanguage';
 
+  static const String selectedModelKey = "selectedModel";
+
+
   static const double defaultTemperatureValue = 1.0;
   static const bool defaultContinueConversationEnable = false;
   static const bool defaultLocalCacheEnable = true;
@@ -38,5 +41,7 @@ class Constants {
   static String cachePromptKey ="prompt_list";
 
   static var defaultPrompt = "You are my personal Assistant";
+
+  static var default_ai_model = "gpt-3.5-turbo";
 
 }
