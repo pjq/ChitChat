@@ -14,6 +14,7 @@ import 'package:chitchat/services/chat_service.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:about/about.dart';
 import 'package:chitchat/pubspec.dart';
 import 'package:share_plus/share_plus.dart';
@@ -787,14 +788,20 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
       title: MarkdownBody(
         key: const Key("defaultmarkdownformatter"),
         data: message.content,
+        selectable:true,
         styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
-
-        // builders: {
-        //   'code': CodeElementBuilder(),
-        // },
+        onTapText:() => chatService.showMessageActions(context, message),
+        extensionSet: md.ExtensionSet(
+          md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+          [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
+        ),
+        builders: {
+          'code': CodeElementBuilder(),
+        },
       ),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-      onTap: () => chatService.showMessageActions(context, message),
+      // onTap: () => chatService.showMessageActions(context, message),
+      // onLongPress: () => chatService.showMessageActions(context, message),
       // contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
     );
   }
