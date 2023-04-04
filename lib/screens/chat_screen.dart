@@ -796,7 +796,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
           [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
         ),
         builders: {
-          'code': CodeElementBuilder(),
+          'code': CodeElementBuilder(context),
         },
       ),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
