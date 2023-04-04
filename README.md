@@ -16,6 +16,13 @@ It is built with Flutter and supports platforms
 - Linux
 - Windows
 
+### Downloads
+For Mac/Android, You can download in from the release builds
+- https://github.com/pjq/ChitChat/releases/
+
+For Android, you can also download from Google Play
+- Android https://play.google.com/store/apps/details?id=me.pjq.chitchat
+
 ### Features
 
 - Chat with GPT-3.5 Turbo model.
