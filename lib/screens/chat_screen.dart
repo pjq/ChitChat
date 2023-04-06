@@ -602,7 +602,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                                 hintText: AppLocalizations.of(context)!
                                     .type_a_message,
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide.none,
                                 ),
                                 filled: true,
@@ -758,9 +758,12 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     MarkdownStyleSheet markdownStyleSheet =
-    MarkdownStyleSheet.fromTheme(themeData);
+    MarkdownStyleSheet.fromTheme(themeData).copyWith(
+      p: themeData.textTheme.bodyMedium!.copyWith(fontSize: 16),
+    );
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Row(
         mainAxisAlignment: message.isUser
             ? MainAxisAlignment.end
@@ -770,10 +773,10 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
           Expanded(
             child: AnimatedContainer(
               duration: Duration(milliseconds: 300),
-              padding: const EdgeInsets.all(0.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 1.0),
               decoration: BoxDecoration(
-                color: message.isUser ? Colors.blue[100] : Colors.grey[200],
-                borderRadius: BorderRadius.circular(8.0),
+                color: message.isUser ? Colors.blue[200] : Colors.white,
+                borderRadius: BorderRadius.circular(4.0),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.3),
@@ -787,8 +790,9 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
                 title: MarkdownBody(
                   key: const Key("defaultmarkdownformatter"),
                   data: message.content,
-                  selectable:true,
+                  selectable: true,
                   onTapText: () => chatService.showMessageActions(context, message),
+                  styleSheet: markdownStyleSheet,
                   styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
                   extensionSet: md.ExtensionSet(
                     md.ExtensionSet.gitHubFlavored.blockSyntaxes,
@@ -808,7 +812,6 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     );
   }
 }
-
 
 abstract class IChatService {
   Future<String> translate(String content, String translationPrompt);

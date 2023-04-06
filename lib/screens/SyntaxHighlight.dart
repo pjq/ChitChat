@@ -1,10 +1,8 @@
 import 'dart:ui';
 
-import 'package:chitchat/LogUtils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_highlighter/flutter_highlighter.dart';
 import 'package:flutter_highlighter/themes/atom-one-dark.dart';
 import 'package:flutter_highlighter/themes/atom-one-light.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -12,20 +10,21 @@ import 'package:markdown/markdown.dart' as md;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'flutter_highlighter2.dart';
 
 class CodeElementBuilder extends MarkdownElementBuilder {
   final BuildContext context;
   late AppLocalizations loc;
   late String copied;
 
-  CodeElementBuilder(this.context){
+  CodeElementBuilder(this.context) {
     loc = AppLocalizations.of(context)!;
     copied = loc.code_copied_to_clipboard;
   }
 
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    var language = '';
+    var language;
 
     if (element.attributes['class'] != null) {
       String lg = element.attributes['class'] as String;
@@ -33,7 +32,7 @@ class CodeElementBuilder extends MarkdownElementBuilder {
     }
 
     double? width;
-    if (language.length > 0) {
+    if (null != language && language.length > 0) {
       width =
           MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.width;
     }
