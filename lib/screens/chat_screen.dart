@@ -747,30 +747,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 }
 
-class ChatMessageWidgetSimple extends StatelessWidget {
-  final ChatMessage message;
-  final IChatService chatService;
-
-  const ChatMessageWidgetSimple(
-      {required this.message, required this.chatService});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        message.content.replaceAll("\n\n", "\n"),
-        textAlign: message.isUser ? TextAlign.right : TextAlign.left,
-        // onSelectionChanged: (text, _) {
-        //   _showMessageActions(
-        //       context, ChatMessage(role: "user", content: text.toString()));
-        // },
-      ),
-      onTap: () => chatService.showMessageActions(context, message),
-      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-    );
-  }
-}
-
 class ChatMessageWidgetMarkdown extends StatelessWidget {
   final ChatMessage message;
   final IChatService chatService;
@@ -784,7 +760,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     MarkdownStyleSheet markdownStyleSheet =
     MarkdownStyleSheet.fromTheme(themeData);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
       child: Row(
         mainAxisAlignment: message.isUser
             ? MainAxisAlignment.end
@@ -794,10 +770,10 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
           Expanded(
             child: AnimatedContainer(
               duration: Duration(milliseconds: 300),
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(0.0),
               decoration: BoxDecoration(
                 color: message.isUser ? Colors.blue[100] : Colors.grey[200],
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(8.0),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.3),
