@@ -782,30 +782,57 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     MarkdownStyleSheet markdownStyleSheet =
-        MarkdownStyleSheet.fromTheme(themeData);
-    // markdownStyleSheet.textAlign = message.isUser ?  WrapAlignment.end : WrapAlignment.start;
-    return ListTile(
-      title: MarkdownBody(
-        key: const Key("defaultmarkdownformatter"),
-        data: message.content,
-        selectable:true,
-        styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
-        // onTapText:() => chatService.showMessageActions(context, message),
-        extensionSet: md.ExtensionSet(
-          md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-          [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
-        ),
-        builders: {
-          'code': CodeElementBuilder(context),
-        },
+    MarkdownStyleSheet.fromTheme(themeData);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: message.isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: message.isUser ? Colors.blue[100] : Colors.grey[200],
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                    offset: Offset(0, 3),
+                  )
+                ],
+              ),
+              child: ListTile(
+                title: MarkdownBody(
+                  key: const Key("defaultmarkdownformatter"),
+                  data: message.content,
+                  selectable:true,
+                  onTapText: () => chatService.showMessageActions(context, message),
+                  styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
+                  extensionSet: md.ExtensionSet(
+                    md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+                    [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
+                  ),
+                  builders: {
+                    'code': CodeElementBuilder(context),
+                  },
+                ),
+                onTap: () => chatService.showMessageActions(context, message),
+                // onLongPress: () => chatService.showMessageActions(context, message),
+              ),
+            ),
+          ),
+        ],
       ),
-      tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-      onTap: () => chatService.showMessageActions(context, message),
-      // onLongPress: () => chatService.showMessageActions(context, message),
-      // contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
     );
   }
 }
+
 
 abstract class IChatService {
   Future<String> translate(String content, String translationPrompt);
