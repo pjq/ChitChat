@@ -771,8 +771,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 300),
+            child: Container(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 1.0),
               decoration: BoxDecoration(
                 color: message.isUser ? Colors.blue[200] : Colors.white,
