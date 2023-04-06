@@ -790,7 +790,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
         data: message.content,
         selectable:true,
         styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
-        onTapText:() => chatService.showMessageActions(context, message),
+        // onTapText:() => chatService.showMessageActions(context, message),
         extensionSet: md.ExtensionSet(
           md.ExtensionSet.gitHubFlavored.blockSyntaxes,
           [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
@@ -800,7 +800,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
         },
       ),
       tileColor: message.isUser ? Colors.blue[100] : Colors.grey[200],
-      // onTap: () => chatService.showMessageActions(context, message),
+      onTap: () => chatService.showMessageActions(context, message),
       // onLongPress: () => chatService.showMessageActions(context, message),
       // contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
     );
