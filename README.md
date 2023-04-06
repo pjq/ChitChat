@@ -1,6 +1,6 @@
 ## ChitChat
 
-ChitChat is a simple chat application that utilizes the GPT-3.5 Turbo model to provide an interactive
+ChitChat is a simple chat application that utilizes the GPT-3.5/GPT-4 Turbo model to provide an interactive
 chat experience.
 
 ChitChat is a cross-platform chat application that uses cutting-edge artificial intelligence to
@@ -25,9 +25,9 @@ For Android, you can also download from Google Play
 
 ### Features
 
-- Chat with GPT-3.5 Turbo model.
+- Chat with GPT-3.5/GPT-4 Turbo model.
 - Chat history persistence.
-- Clean chat history.
+- Support TTS and STT, so you can just talk with AI.
 - Support for continuous conversation mode.
 - Support for Chinese character display.
 - Copy, share, and translate, rephrase chat messages.
@@ -49,6 +49,11 @@ To run the application, connect your device or emulator and run the following co
 
 ```bash
 flutter run
+```
+
+To run on iPhone, need add `--release`
+```shell
+ flutter run --release
 ```
 
 ### Usage
@@ -93,6 +98,11 @@ git tag -d 1.1.1-mac &&  git push origin --delete 1.1.1-mac &&  git tag 1.1.1-ma
 echo " git tag -d 1.1.1-mac &&  git push origin --delete 1.1.1-mac &&  git tag 1.1.1-mac && git push origin 1.1.1-mac" | sed "s/mac/android/g" | sed "s/1.1.1/1.1.2/g"
 ```
 
+Or with one command line
+```shell
+CURRENT_VERSION=1.0.0 && PLATFORM=mac && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM && PLATFORM=android && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM
+```
+
 ### Generate l10n by Call GPT 3.5 Turbo API
 
 ```shell
@@ -100,8 +110,14 @@ cd lib/l10n
 python3 ../../tools/l10n.py --file app_en.arb;
 ```
 
-## Getting Started for Flutter
 
+### Screenshots
+
+![Screenshot of Chat Screen](screenshots/chat.png)
+![Screenshot of Settings Screen](screenshots/settings.png)
+![Screenshot of Actions Menu](screenshots/actions.png)
+
+## Getting Started for Flutter
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
@@ -112,9 +128,3 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-
-### Screenshots
-
-![Screenshot of Chat Screen](screenshots/chat.png)
-![Screenshot of Settings Screen](screenshots/settings.png)
-![Screenshot of Actions Menu](screenshots/actions.png)

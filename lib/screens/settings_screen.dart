@@ -138,20 +138,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
     bool enable = true,
+    bool passwordField = false,
   }) {
     return TextFormField(
+      obscureText: passwordField,
       enabled: enable,
       controller: controller,
+      cursorColor: passwordField ? Theme.of(context).canvasColor : null,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(),
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -176,6 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildTextField(
                 controller: _apiKeyController,
                 label: loc.openAIApiKey,
+                passwordField: true,
               ),
               // const SizedBox(height: 16),
               // _buildTextField(
