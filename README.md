@@ -32,6 +32,8 @@ For Android, you can also download from Google Play
 - Android https://play.google.com/store/apps/details?id=me.pjq.chitchat
 
 
+### Watch the video
+[![Watch the video](https://img.youtube.com/vi/OeV6ms91L8U/default.jpg)](https://www.youtube.com/watch?v=OeV6ms91L8U)
 
 
 
