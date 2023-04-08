@@ -39,35 +39,6 @@ For Android, you can also download from Google Play
 
 
 
-
-
-
-
-
-
-
-
-### Getting Started
-
-To get started with ChitChat, clone this repository to your local machine and open it in your
-preferred IDE. Then, run the following command in the terminal to download the required
-dependencies:
-
-```bash
-flutter pub get
-```
-
-To run the application, connect your device or emulator and run the following command:
-
-```bash
-flutter run
-```
-
-To run on iPhone, need add `--release`
-```shell
- flutter run --release
-```
-
 ### Usage
 
 When you launch the application, you will be taken to the chat screen where you can enter text to
@@ -128,6 +99,27 @@ python3 ../../tools/l10n.py --file app_en.arb;
 ![Screenshot of Chat Screen](screenshots/chat.png)
 ![Screenshot of Settings Screen](screenshots/settings.png)
 ![Screenshot of Actions Menu](screenshots/actions.png)
+
+### Getting Started
+
+To get started with ChitChat, clone this repository to your local machine and open it in your
+preferred IDE. Then, run the following command in the terminal to download the required
+dependencies:
+
+```bash
+flutter pub get
+```
+
+To run the application, connect your device or emulator and run the following command:
+
+```bash
+flutter run
+```
+
+To run on iPhone, need add `--release`
+```shell
+ flutter run --release
+```
 
 ## Getting Started for Flutter
 This project is a starting point for a Flutter application.
