@@ -1,12 +1,20 @@
-## ChitChat
+# Introducing ChitChat App 🎉
 
-ChitChat is a simple chat application that utilizes the GPT-3.5/GPT-4 Turbo model to provide an interactive
-chat experience.
+ChitChat is a powerful and easy-to-use app that allows you to connect with AI models such as GPT-3.5-turbo and GPT-4 for engaging and productive conversations. Here's what makes ChitChat your ultimate AI chat collaborator:
 
-ChitChat is a cross-platform chat application that uses cutting-edge artificial intelligence to
-provide engaging conversations. Chat with the GPT model, explore the chat history, and customize
-your experience with our settings options. With ChitChat, you can chat like friends, learn new
-things, and have fun!
+- 💬 **Multiple AI Models**: Choose between gpt-3.5-turbo or GPT-4 for personalized and dynamic conversations.
+- 🌍 **Internationalization Support**: Supports i18n for effortless communication in multiple languages.
+- 🔊 **Text-to-Speech & Speech-to-Text**: Seamlessly convert text to speech and vice versa for a hands-free experience.
+- 📜 **Multi-line Input**: Easily paste or input multiple lines of text.
+- 📡 **Multi-channel Chat**: Engage in conversations across different channels.
+- 📚 **Prompt Management**: Add, edit, and manage multiple prompts.
+- 🎯 **API Integration**: Utilizes stream=true API call for fast, efficient interactions.
+- 📝 **Markdown & Rich Text**: Enjoy Markdown support for enhanced text formatting.
+- 🚀 **Advanced Features**: Chat history persistence, proxy settings, continuous conversation mode, base URL settings, and more.
+- 🔄 **Translation & Rephrasing**: Built-in translation and rephrase actions for instant multilingual support.
+- 📤 **Easy Sharing**: Conveniently copy or share your conversations with others.
+
+Discover the power of engaging, AI-driven conversations with **ChitChat App**! Download now and start chatting! 🚀
 
 It is built with Flutter and supports platforms
 - Android
@@ -23,38 +31,9 @@ For Mac/Android, You can download in from the release builds
 For Android, you can also download from Google Play
 - Android https://play.google.com/store/apps/details?id=me.pjq.chitchat
 
-### Features
 
-- Chat with GPT-3.5/GPT-4 Turbo model.
-- Chat history persistence.
-- Support TTS and STT, so you can just talk with AI.
-- Support for continuous conversation mode.
-- Support for Chinese character display.
-- Copy, share, and translate, rephrase chat messages.
-- Retry logic in case of message send failure.
-- Proxy settings
-- OpenAI Base URL Support
 
-### Getting Started
 
-To get started with ChitChat, clone this repository to your local machine and open it in your
-preferred IDE. Then, run the following command in the terminal to download the required
-dependencies:
-
-```bash
-flutter pub get
-```
-
-To run the application, connect your device or emulator and run the following command:
-
-```bash
-flutter run
-```
-
-To run on iPhone, need add `--release`
-```shell
- flutter run --release
-```
 
 ### Usage
 
@@ -65,10 +44,10 @@ the chat window.
 You can also access the settings screen by tapping on the settings icon in the app bar. Here, you
 can set the OpenAI API key, prompt string, and temperature value.
 
-To copy or share a chat message, simply long-press on the message and select the appropriate action
+To copy or share a chat message, simply click on the message and select the appropriate action
 from the context menu.
 
-To translate a chat message, long-press on the message and select the "Translate" option. This will
+To translate a chat message, click on the message and select the "Translate" option. This will
 open the Google Translate app, where you can choose the language to translate to.
 
 ### Contributing
@@ -83,7 +62,7 @@ Contributions are welcome and appreciated. To contribute to ChatGPT, follow thes
 
 ### License
 
-ChatGPT is licensed under the MIT license. See LICENSE for more information.
+It is licensed under the MIT license. See LICENSE for more information.
 
 ### Release command
 
@@ -116,6 +95,27 @@ python3 ../../tools/l10n.py --file app_en.arb;
 ![Screenshot of Chat Screen](screenshots/chat.png)
 ![Screenshot of Settings Screen](screenshots/settings.png)
 ![Screenshot of Actions Menu](screenshots/actions.png)
+
+### Getting Started
+
+To get started with ChitChat, clone this repository to your local machine and open it in your
+preferred IDE. Then, run the following command in the terminal to download the required
+dependencies:
+
+```bash
+flutter pub get
+```
+
+To run the application, connect your device or emulator and run the following command:
+
+```bash
+flutter run
+```
+
+To run on iPhone, need add `--release`
+```shell
+ flutter run --release
+```
 
 ## Getting Started for Flutter
 This project is a starting point for a Flutter application.
