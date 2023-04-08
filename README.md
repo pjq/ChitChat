@@ -1,24 +1,20 @@
-## ChitChat
+# Introducing ChitChat App 🎉
 
-ChitChat is a simple chat application that utilizes the GPT-3.5/GPT-4 model to provide an interactive
-chat experience.
+ChitChat is a powerful and easy-to-use app that allows you to connect with AI models such as GPT-3.5-turbo and GPT-4 for engaging and productive conversations. Here's what makes ChitChat your ultimate AI chat collaborator:
 
-ChitChat a feature-rich and user-friendly chat application built on Flutter, designed to elevate your chatting experience. Our app is packed with an array of handy features, ensuring seamless communication with state-of-the-art AI technologies. Explore the key highlights of ChatChit App below:
+- 💬 **Multiple AI Models**: Choose between gpt-3.5-turbo or GPT-4 for personalized and dynamic conversations.
+- 🌍 **Internationalization Support**: Supports i18n for effortless communication in multiple languages.
+- 🔊 **Text-to-Speech & Speech-to-Text**: Seamlessly convert text to speech and vice versa for a hands-free experience.
+- 📜 **Multi-line Input**: Easily paste or input multiple lines of text.
+- 📡 **Multi-channel Chat**: Engage in conversations across different channels.
+- 📚 **Prompt Management**: Add, edit, and manage multiple prompts.
+- 🎯 **API Integration**: Utilizes stream=true API call for fast, efficient interactions.
+- 📝 **Markdown & Rich Text**: Enjoy Markdown support for enhanced text formatting.
+- 🚀 **Advanced Features**: Chat history persistence, proxy settings, continuous conversation mode, base URL settings, and more.
+- 🔄 **Translation & Rephrasing**: Built-in translation and rephrase actions for instant multilingual support.
+- 📤 **Easy Sharing**: Conveniently copy or share your conversations with others.
 
-- :arrows_counterclockwise: **Multi-Engine Support**: Seamlessly switch between GPT-3.5 and GPT-4, tailoring your chat experience based on your preferences.
-- :globe_with_meridians: **i18n Support**: Enjoy a truly international experience with our built-in support for multiple languages.
-- :speech_balloon: **Text-to-Speech & Speech-to-Text**: Effortlessly communicate using voice inputs and outputs with our integrated TTS and STT technologies.
-- :page_with_curl: **Markdown Support**: Enhance your chat messages with clean and elegant formatting using the power of Markdown.
-- :clipboard: **Multiline Input**: Copy and paste multiline content with ease, simplifying your communications.
-- :black_nib: **Chat Channels & Prompts**: Engage in simultaneous conversations by participating in multiple channels and utilizing customized prompts.
-- :unlock: **Proxy & BaseURL Settings**: Easily configure proxy settings and baseURL settings to suit your unique requirements.
-- :zap: **Stream API Calls**: Benefit from real-time interactions with our support for `stream=true` API calls.
-- :wastebasket: **Message Management**: Delete messages effortlessly, keeping your chats tidy and organized.
-- :repeat: **Retry Logic**: Stay connected with our intelligent retry system, which ensures your messages are delivered even during connectivity hiccups.
-- :bookmark_tabs: **Chat History & Continuous Mode**: Retrieve previous chats and engage in fluid, natural conversations with our conversation persistence and continuous mode feature.
-- :incoming_envelope: **Copy, Share & Translate**: Boost your productivity with built-in actions for copying, sharing, translating, and rephrasing messages.
-
-Upgrade your chat experience today with **ChitChat App** — where AI-powered communication meets elegance, functionality, and accessibility.
+Discover the power of engaging, AI-driven conversations with **ChitChat App**! Download now and start chatting! 🚀
 
 It is built with Flutter and supports platforms
 - Android
@@ -48,10 +44,10 @@ the chat window.
 You can also access the settings screen by tapping on the settings icon in the app bar. Here, you
 can set the OpenAI API key, prompt string, and temperature value.
 
-To copy or share a chat message, simply long-press on the message and select the appropriate action
+To copy or share a chat message, simply click on the message and select the appropriate action
 from the context menu.
 
-To translate a chat message, long-press on the message and select the "Translate" option. This will
+To translate a chat message, click on the message and select the "Translate" option. This will
 open the Google Translate app, where you can choose the language to translate to.
 
 ### Contributing
@@ -66,7 +62,7 @@ Contributions are welcome and appreciated. To contribute to ChatGPT, follow thes
 
 ### License
 
-ChatGPT is licensed under the MIT license. See LICENSE for more information.
+It is licensed under the MIT license. See LICENSE for more information.
 
 ### Release command
 
