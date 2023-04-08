@@ -1,12 +1,24 @@
 ## ChitChat
 
-ChitChat is a simple chat application that utilizes the GPT-3.5/GPT-4 Turbo model to provide an interactive
+ChitChat is a simple chat application that utilizes the GPT-3.5/GPT-4 model to provide an interactive
 chat experience.
 
-ChitChat is a cross-platform chat application that uses cutting-edge artificial intelligence to
-provide engaging conversations. Chat with the GPT model, explore the chat history, and customize
-your experience with our settings options. With ChitChat, you can chat like friends, learn new
-things, and have fun!
+ChitChat a feature-rich and user-friendly chat application built on Flutter, designed to elevate your chatting experience. Our app is packed with an array of handy features, ensuring seamless communication with state-of-the-art AI technologies. Explore the key highlights of ChatChit App below:
+
+- :arrows_counterclockwise: **Multi-Engine Support**: Seamlessly switch between GPT-3.5 and GPT-4, tailoring your chat experience based on your preferences.
+- :globe_with_meridians: **i18n Support**: Enjoy a truly international experience with our built-in support for multiple languages.
+- :speech_balloon: **Text-to-Speech & Speech-to-Text**: Effortlessly communicate using voice inputs and outputs with our integrated TTS and STT technologies.
+- :page_with_curl: **Markdown Support**: Enhance your chat messages with clean and elegant formatting using the power of Markdown.
+- :clipboard: **Multiline Input**: Copy and paste multiline content with ease, simplifying your communications.
+- :black_nib: **Chat Channels & Prompts**: Engage in simultaneous conversations by participating in multiple channels and utilizing customized prompts.
+- :unlock: **Proxy & BaseURL Settings**: Easily configure proxy settings and baseURL settings to suit your unique requirements.
+- :zap: **Stream API Calls**: Benefit from real-time interactions with our support for `stream=true` API calls.
+- :wastebasket: **Message Management**: Delete messages effortlessly, keeping your chats tidy and organized.
+- :repeat: **Retry Logic**: Stay connected with our intelligent retry system, which ensures your messages are delivered even during connectivity hiccups.
+- :bookmark_tabs: **Chat History & Continuous Mode**: Retrieve previous chats and engage in fluid, natural conversations with our conversation persistence and continuous mode feature.
+- :incoming_envelope: **Copy, Share & Translate**: Boost your productivity with built-in actions for copying, sharing, translating, and rephrasing messages.
+
+Upgrade your chat experience today with **ChitChat App** — where AI-powered communication meets elegance, functionality, and accessibility.
 
 It is built with Flutter and supports platforms
 - Android
@@ -23,17 +35,17 @@ For Mac/Android, You can download in from the release builds
 For Android, you can also download from Google Play
 - Android https://play.google.com/store/apps/details?id=me.pjq.chitchat
 
-### Features
 
-- Chat with GPT-3.5/GPT-4 Turbo model.
-- Chat history persistence.
-- Support TTS and STT, so you can just talk with AI.
-- Support for continuous conversation mode.
-- Support for Chinese character display.
-- Copy, share, and translate, rephrase chat messages.
-- Retry logic in case of message send failure.
-- Proxy settings
-- OpenAI Base URL Support
+
+
+
+
+
+
+
+
+
+
 
 ### Getting Started
 
