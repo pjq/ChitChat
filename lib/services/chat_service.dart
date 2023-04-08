@@ -83,6 +83,10 @@ class ChatService {
 
     bool useStream = Constants.useStream;
 
+    if (baseUrl.contains("localhost")) {
+      // useStream = false;
+    }
+
     final body = jsonEncode({
       "model": aiModel,
       // "model": "gpt-4",
