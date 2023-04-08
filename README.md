@@ -33,8 +33,9 @@ For Android, you can also download from Google Play
 
 
 ### Watch the video
-[![Watch the video](https://img.youtube.com/vi/OeV6ms91L8U/default.jpg)](https://www.youtube.com/watch?v=OeV6ms91L8U)
-
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=OeV6ms91L8U" target="_blank">
+ <img src="http://img.youtube.com/vi/OeV6ms91L8U/mqdefault.jpg" alt="Watch the video" width="480" height="360" border="10" />
+</a>
 
 
 ### Usage
@@ -94,9 +95,9 @@ python3 ../../tools/l10n.py --file app_en.arb;
 
 ### Screenshots
 
-![Screenshot of Chat Screen](screenshots/chat.png)
-![Screenshot of Settings Screen](screenshots/settings.png)
-![Screenshot of Actions Menu](screenshots/actions.png)
+<img src="screenshots/chat.png" alt="Screenshot of Chat Screen" style="width:50%;">
+<img src="screenshots/settings.png" alt="Screenshot of Settings Screen" style="width:50%;">
+<img src="screenshots/actions.png" alt="Screenshot of Actions Menu" style="width:50%;">
 
 ### Getting Started
 
