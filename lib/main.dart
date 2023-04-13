@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/splash': (context) => SplashScreen(),
         '/about': (context) => const AboutScreen(),
       },
+      debugShowCheckedModeBanner: false,
       // home: SplashScreen(),
       // // Display the splash screen initially
       // onGenerateRoute: (RouteSettings settings) {

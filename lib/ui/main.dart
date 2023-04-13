@@ -24,8 +24,11 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => ChatScreen(),
-        '/settings': (context) => SettingsScreen(prefs: prefs),
+        '/settings': (context) => SettingsScreen(prefs: prefs, onSettingsChanged: () {
+
+        }),
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }

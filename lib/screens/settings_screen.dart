@@ -323,6 +323,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return DropdownButton<LocaleName>(
+      isExpanded: true,
       value: _sttSelectedLanguage ?? GlobalData().sttLocaleNames[0],
       items: GlobalData().sttLocaleNames.toSet().map((LocaleName value) {
         return DropdownMenuItem<LocaleName>(
