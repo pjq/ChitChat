@@ -67,6 +67,7 @@ class AboutScreen extends StatelessWidget {
         theme: CupertinoThemeData(
           brightness: theme.brightness,
         ),
+        debugShowCheckedModeBanner: false,
       );
     }
 
@@ -75,6 +76,7 @@ class AboutScreen extends StatelessWidget {
       home: aboutPage,
       theme: ThemeData(),
       darkTheme: ThemeData(brightness: Brightness.dark),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
