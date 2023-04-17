@@ -44,4 +44,5 @@ class Constants {
 
   static var default_ai_model = "gpt-3.5-turbo";
 
+  static int MAX_MESSAGE_COUNT_FOR_CONVERSTAION = 100;
 }

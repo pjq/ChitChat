@@ -40,10 +40,10 @@ class ChatHistory {
   List<ChatMessage> getLatestMessages(String id) {
     _messages.clear();
     _messages.addAll(getMessagesForPromptChannel(id));
-    if (_messages.length < 4) {
+    if (_messages.length < Constants.MAX_MESSAGE_COUNT_FOR_CONVERSTAION) {
       return _messages;
     } else {
-      return _messages.sublist(_messages.length - 4);
+      return _messages.sublist(_messages.length - Constants.MAX_MESSAGE_COUNT_FOR_CONVERSTAION);
     }
   }
 
