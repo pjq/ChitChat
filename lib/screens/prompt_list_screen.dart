@@ -2,11 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:chitchat/models/prompt.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:chitchat/constants.dart';
@@ -71,32 +66,6 @@ class _PromptListScreenState extends State<PromptListScreen> {
     // _editPromptDialog(newPrompt);
   }
 
-  // Future<void> _handleAddPrompt() async {
-  //   Prompt p = Prompt();
-  //   _prompts.add(Prompt(
-  //     id: newId,
-  //     title: 'Prompt ${_prompts.length + 1}',
-  //     content: '',
-  //     category: 'Default',
-  //   ));
-  //
-  //   _editPromptDialog();
-  //
-  //   if (result == true) {
-  //     setState(() {
-  //       widget.promptStorage.addPrompt(
-  //         Prompt(
-  //           id: newPromptId,
-  //           title: newPromptTitle,
-  //           content: newPromptContent,
-  //           category: newPromptCategory,
-  //           selected: false,
-  //         ),
-  //       );
-  //     });
-  //   }
-  // }
-
   void _editPrompt(int index, Prompt updatedPrompt) {
     setState(() {
       _prompts[index] = updatedPrompt;
@@ -124,15 +93,37 @@ class _PromptListScreenState extends State<PromptListScreen> {
               widget.onSelectedPrompt(_prompts[index]);
               Navigator.pop(context);
             },
-            onLongPress: () async {
-              final result = await showDialog<Prompt>(
-                context: context,
-                builder: (context) => _editPromptDialog(_prompts[index]),
-              );
-              if (result != null) {
-                _editPrompt(index, result);
-              }
-            },
+              onLongPress: () async {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => Wrap(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.edit),
+                        title: Text(loc.edit_prompt),
+                        onTap: () {
+                          Navigator.pop(context);
+                          final result = showDialog<Prompt>(
+                            context: context,
+                            builder: (context) => _editPromptDialog(_prompts[index]),
+                          );
+                          if (result != null) {
+                            _editPrompt(index, result as Prompt);
+                          }
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.delete),
+                        title: Text(loc.delete),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _deletePrompt(index);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
           );
         },
       ),
@@ -210,5 +201,30 @@ class _PromptListScreenState extends State<PromptListScreen> {
         _prompts.add(updatedPrompt);
       });
     }
+  }
+  void _deletePrompt(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.delete),
+        content: Text(loc.delete_prompt_confirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(loc.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _prompts.removeAt(index);
+              });
+              widget.promptStorage.savePrompts(_prompts);
+              Navigator.pop(context);
+            },
+            child: Text(loc.delete),
+          ),
+        ],
+      ),
+    );
   }
 }

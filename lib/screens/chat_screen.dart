@@ -347,6 +347,34 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     });
   }
 
+  void deleteAllMessage() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.delete),
+        content: Text(loc.delete_all_messages_confirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(loc.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _messages.clear();
+                _history?.deleteMessageForPromptChannel(currentPrompt.id);
+                showToast(loc.conversationRecordsErased);
+              });
+
+              Navigator.pop(context);
+            },
+            child: Text(loc.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _sendMessage(String text) async {
     if (_settings!.openaiApiKey.isEmpty) {
       showDialog(
@@ -554,11 +582,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
             IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () {
-                  setState(() {
-                    _messages.clear();
-                    _history?.deleteMessageForPromptChannel(currentPrompt.id);
-                    showToast(loc.conversationRecordsErased);
-                  });
+                  deleteAllMessage();
                 }),
           ],
         ),

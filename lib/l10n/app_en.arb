@@ -2,6 +2,8 @@
   "app_name": "ChitChat",
   "assistants": "Assistants",
     "edit_prompt": "Edit prompt",
+    "delete_prompt_confirmation": "The prompt and the related messages will be deleted",
+    "delete_all_messages_confirmation": "All messages in current channel will be deleted",
     "title": "Title",
     "content": "Content",
     "category": "Category",
