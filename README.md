@@ -88,6 +88,10 @@ CURRENT_VERSION=1.0.0 && PLATFORM=mac && git tag $CURRENT_VERSION-$PLATFORM && g
 ### Generate l10n by Call GPT 3.5 Turbo API
 
 ```shell
+flutter gen-l10n  -v 
+```
+
+```shell
 cd lib/l10n
 python3 ../../tools/l10n.py --file app_en.arb;
 ```
