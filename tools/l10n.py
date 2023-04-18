@@ -5,7 +5,7 @@ import argparse
 import os
 
 # Read the OpenAI API key from the environment variable
-openai.api_key = os.environ["OPENAI_API_KEY"]
+# openai.api_key = os.environ["OPENAI_API_KEY"]
 
 # Top 10 languages by number of speakers
 languages = [
@@ -66,7 +66,14 @@ def translate_file(file_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--key", required=False, help="openai api key")
     parser.add_argument("--file", required=True, help="Path to the input .arb file")
+    
     args = parser.parse_args()
+
+    if args.key is not None:
+        openai.api_key = args.key
+    else:
+        openai.api_key = os.environ["OPENAI_API_KEY"]
 
     translate_file(args.file)
