@@ -7,12 +7,15 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:chitchat/models/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../models/chat_message.dart';
+
 class PromptListScreen extends StatefulWidget {
   final Function(Prompt) onSelectedPrompt;
   final PromptStorage promptStorage;
+  final ChatHistory history;
 
   const PromptListScreen(
-      {required this.onSelectedPrompt, required this.promptStorage, super.key});
+      {required this.onSelectedPrompt, required this.promptStorage, required this.history, super.key});
 
   @override
   _PromptListScreenState createState() => _PromptListScreenState();
@@ -218,7 +221,14 @@ class _PromptListScreenState extends State<PromptListScreen> {
           TextButton(
             onPressed: () {
               setState(() {
+               if( _prompts[index].selected ) {
+                 // if remove the selected prompt, then reset to the first prompt
+                 widget.promptStorage.selectPrompt(_prompts, _prompts[0].id);
+                 widget.onSelectedPrompt(_prompts[0]);
+               }
+
                 _prompts.removeAt(index);
+                widget.history.deleteMessageForPromptChannel(_prompts[index].id);
               });
               widget.promptStorage.savePrompts(_prompts);
               Navigator.pop(context);

@@ -9,6 +9,7 @@
     "category": "Category",
     "cancel": "Cancel",
     "save": "Save",
+    "about": "About the Application",
     "you_are_my_assistant": "You are my personal assistant",
     "prompt_number": "Prompt {number}",
       "default_prompt_category": "Default",

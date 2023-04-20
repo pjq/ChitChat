@@ -267,11 +267,12 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
         _isListening = false;
       });
     } else {
-      String? savedSelectedLanguage = _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
-      String localeId = savedSelectedLanguage??_currentLocaleId;
+      String? savedSelectedLanguage =
+          _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
+      String localeId = savedSelectedLanguage ?? _currentLocaleId;
       LogUtils.debug("saved stt: $localeId");
       await _speechToText.listen(
-        localeId: localeId ,
+        localeId: localeId,
         onResult: (SpeechRecognitionResult result) {
           setState(() {
             if (!_isLoading) {
@@ -417,7 +418,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       setState(() {
         _isLoading = true;
         _controller.clear();
-        _controller.text="";
+        _controller.text = "";
       });
 
       final completion = await _callAPI(messageSend.content);
@@ -561,6 +562,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                       });
                     },
                     promptStorage: promptStorage,
+                    history: _history!,
                   ),
                 ),
               );
@@ -714,11 +716,11 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 leading: const Icon(Icons.translate),
                 title: Text(loc.translation),
                 onTap: () {
-                  String prompt = Constants.translationPrompt.replaceAll("LOCALE_ID", _currentLanguageCode);
+                  String prompt = Constants.translationPrompt
+                      .replaceAll("LOCALE_ID", _currentLanguageCode);
                   LogUtils.debug(prompt);
 
-                  translate(message.content, prompt)
-                      .then((translatedText) {
+                  translate(message.content, prompt).then((translatedText) {
                     setState(() {
                       _messages.add(ChatMessage(
                           role: ChatMessage.ROLE_ASSISTANT,
@@ -781,21 +783,21 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     MarkdownStyleSheet markdownStyleSheet =
-    MarkdownStyleSheet.fromTheme(themeData).copyWith(
+        MarkdownStyleSheet.fromTheme(themeData).copyWith(
       p: themeData.textTheme.bodyMedium!.copyWith(fontSize: 16),
     );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Row(
-        mainAxisAlignment: message.isUser
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
+        mainAxisAlignment:
+            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 1.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 1.0),
               decoration: BoxDecoration(
                 color: message.isUser ? Colors.blue[200] : Colors.white,
                 borderRadius: BorderRadius.circular(4.0),
@@ -813,12 +815,16 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
                   key: const Key("defaultmarkdownformatter"),
                   data: message.content,
                   selectable: true,
-                  onTapText: () => chatService.showMessageActions(context, message),
+                  onTapText: () =>
+                      chatService.showMessageActions(context, message),
                   styleSheet: markdownStyleSheet,
                   styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
                   extensionSet: md.ExtensionSet(
                     md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-                    [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
+                    [
+                      md.EmojiSyntax(),
+                      ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes
+                    ],
                   ),
                   builders: {
                     'code': CodeElementBuilder(context),

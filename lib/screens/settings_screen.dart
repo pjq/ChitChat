@@ -1,8 +1,12 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:about/about.dart';
+import 'package:chitchat/models/pubspec.dart';
+
 import 'package:chitchat/utils/log_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/models/constants.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -283,10 +287,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: loc.openAIBaseUrl,
               ),
               const SizedBox(height: 16),
-              // ElevatedButton(
-              //   onPressed: _saveSettings,
-              //   child: Text(loc.save),
-              // ),
+              ElevatedButton(
+                onPressed: _showAbout,
+                child: Text(loc.about),
+              ),
             ],
           ),
         ),
@@ -367,4 +371,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+
+  void _showAbout() {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      setState(() {
+        String _version = packageInfo.version;
+        String _buildNumber = packageInfo.buildNumber;
+        // You can also get other details like app name and package name
+        // from packageInfo, if needed.
+
+        showAboutPage(
+          context: context,
+          values: {
+            'version': _version + "+" + _buildNumber,
+            'year': DateTime.now().year.toString(),
+          },
+          applicationLegalese:
+          'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
+          applicationDescription: Text(Pubspec.description),
+          children: const <Widget>[
+            MarkdownPageListTile(
+              icon: Icon(Icons.list),
+              title: Text('Changelog'),
+              filename: 'assets/CHANGELOG.md',
+            ),
+            LicensesPageListTile(
+              icon: Icon(Icons.favorite),
+            ),
+          ],
+          applicationIcon: const SizedBox(
+            width: 100,
+            height: 100,
+            child: Image(
+              image: AssetImage(
+                  'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png'),
+            ),
+          ),
+        );
+      });
+    });
+  }
 }
