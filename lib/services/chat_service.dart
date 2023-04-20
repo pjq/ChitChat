@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
-import 'package:chitchat/LogUtils.dart';
-import 'package:chitchat/constants.dart';
+import 'package:chitchat/utils/log_utils.dart';
+import 'package:chitchat/models/constants.dart';
 import 'package:chitchat/models/chat_message.dart';
 import 'package:chitchat/models/prompt.dart';
-import 'package:chitchat/settings.dart';
-import 'package:http/http.dart' as http;
+import 'package:chitchat/models/settings.dart';
 import 'dart:io';
 
 class ChatService {
@@ -19,17 +17,17 @@ class ChatService {
   Future<String> getTranslation(
     String content,
     String translationPrompt,
-    Settings? _settings,
+    Settings? settings,
   ) async {
-    apiKey = _settings?.openaiApiKey;
+    apiKey = settings?.openaiApiKey;
     final response = await getCompletionRaw(
       translationPrompt + content,
-      _settings!.promptString,
-      _settings!.temperatureValue,
+      settings!.promptString,
+      settings.temperatureValue,
       [],
-      _settings!.proxyUrl,
-      _settings!.baseUrl,
-      _settings!.selectedModel,
+      settings.proxyUrl,
+      settings.baseUrl,
+      settings.selectedModel,
     );
     // final completion = response['choices'][0]['message']['content'];
     LogUtils.info(response);
@@ -38,16 +36,16 @@ class ChatService {
   }
 
   Future<String> getCompletion(String content, List<ChatMessage>? latestChat,
-      Settings? _settings, PromptStorage? promptStorage) async {
-    apiKey = _settings?.openaiApiKey;
+      Settings? settings, PromptStorage? promptStorage) async {
+    apiKey = settings?.openaiApiKey;
     final response = await getCompletionRaw(
       content,
-      promptStorage?.getSelectedPrompt().content ?? _settings!.promptString,
-      _settings!.temperatureValue,
+      promptStorage?.getSelectedPrompt().content ?? settings!.promptString,
+      settings!.temperatureValue,
       latestChat,
-      _settings!.proxyUrl,
-      _settings!.baseUrl,
-      _settings!.selectedModel,
+      settings.proxyUrl,
+      settings.baseUrl,
+      settings.selectedModel,
     );
     LogUtils.info(response);
 
@@ -137,7 +135,7 @@ class ChatService {
     LogUtils.info("handleStream");
     String lastTruncatedMessage = "";
     ChatMessage chatMessage = ChatMessage(role: "assistant", content: "");
-    await response.transform(utf8.decoder).listen((event) {
+    response.transform(utf8.decoder).listen((event) {
       //{"id":"chatcmpl-6ttclp0wSdVFsT9Usl0yvuwNkvLzJ","object":"chat.completion.chunk","created":1678779879,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":" today"},"index":0,"finish_reason":null}]}
       // LogUtils.info("${event}");
       event = lastTruncatedMessage + event;
@@ -145,15 +143,15 @@ class ChatService {
       lastTruncatedMessage = itemList.last;
       itemList.sublist(0, itemList.length - 1).forEach((jsonItem) {
         jsonItem = jsonItem.replaceAll("data:", "");
-        String formatedJson = "${jsonItem}]}";
+        String formatedJson = "$jsonItem]}";
         final decodeEvent = jsonDecode(formatedJson);
 
         final content = decodeEvent["choices"][0]["delta"]["content"];
         final role = decodeEvent["choices"][0]["delta"]["role"];
-        final finish_reason = decodeEvent["choices"][0]["finish_reason"];
+        final finishReason = decodeEvent["choices"][0]["finish_reason"];
         // LogUtils.info("content: ${content}, role: ${role}");
         // data: {"id":"chatcmpl-6u0BWt3AaTJefyeglqZ7aYihqbZbL","object":"chat.completion.chunk","created":1678805098,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{},"index":0,"finish_reason":"stop"}]}
-        if (ChatMessage.STOP == finish_reason) {
+        if (ChatMessage.STOP == finishReason) {
           // reach the stop item
           chatMessage = ChatMessage(
               role: ChatMessage.ROLE_ASSISTANT, content: ChatMessage.STOP);

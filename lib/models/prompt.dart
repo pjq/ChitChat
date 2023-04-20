@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:chitchat/constants.dart';
+import 'package:chitchat/models/constants.dart';
 class Prompt {
   final String id;
   final String title;
@@ -61,7 +61,7 @@ class Prompt {
 
 
 class PromptStorage {
-  SharedPreferences _prefs;
+  final SharedPreferences _prefs;
 
   PromptStorage({required SharedPreferences prefs}) : _prefs = prefs;
 
@@ -79,13 +79,13 @@ class PromptStorage {
   }
 
   void selectPrompt(List<Prompt> prompts, String id) {
-    prompts.forEach((prompt) {
+    for (var prompt in prompts) {
       if (prompt.id == id) {
         prompt.selected = true;
       } else {
         prompt.selected = false;
       }
-    });
+    }
 
     savePrompts(prompts);
   }

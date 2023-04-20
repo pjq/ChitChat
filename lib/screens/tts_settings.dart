@@ -35,7 +35,7 @@ class SessionOptionsWidget extends StatelessWidget {
         children: <Widget>[
           Row(
             children: [
-              Text('Language: '),
+              const Text('Language: '),
               DropdownButton<String>(
                 onChanged: (selectedVal) => switchLang(selectedVal),
                 value: currentLocaleId,
@@ -52,18 +52,18 @@ class SessionOptionsWidget extends StatelessWidget {
           ),
           Row(
             children: [
-              Text('pauseFor: '),
+              const Text('pauseFor: '),
               Container(
-                  padding: EdgeInsets.only(left: 8),
+                  padding: const EdgeInsets.only(left: 8),
                   width: 80,
                   child: TextFormField(
                     controller: pauseForController,
                   )),
               Container(
-                  padding: EdgeInsets.only(left: 16),
-                  child: Text('listenFor: ')),
+                  padding: const EdgeInsets.only(left: 16),
+                  child: const Text('listenFor: ')),
               Container(
-                  padding: EdgeInsets.only(left: 8),
+                  padding: const EdgeInsets.only(left: 8),
                   width: 80,
                   child: TextFormField(
                     controller: listenForController,
@@ -72,12 +72,12 @@ class SessionOptionsWidget extends StatelessWidget {
           ),
           Row(
             children: [
-              Text('On device: '),
+              const Text('On device: '),
               Checkbox(
                 value: onDevice,
                 onChanged: switchOnDevice,
               ),
-              Text('Log events: '),
+              const Text('Log events: '),
               Checkbox(
                 value: logEvents,
                 onChanged: switchLogging,

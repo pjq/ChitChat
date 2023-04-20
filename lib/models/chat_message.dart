@@ -1,11 +1,15 @@
 import 'dart:convert';
-import 'package:chitchat/constants.dart';
+import 'package:chitchat/models/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatMessage {
+  // ignore: constant_identifier_names
   static const String ROLE_USER = 'user';
+  // ignore: constant_identifier_names
   static const String ROLE_ASSISTANT = 'assistant';
+  // ignore: constant_identifier_names
   static const String DONE = '[DONE]';
+  // ignore: non_constant_identifier_names
   static String STOP = "stop";
 
   String role;
@@ -28,8 +32,8 @@ class ChatMessage {
 }
 
 class ChatHistory {
-  SharedPreferences _prefs;
-  List<ChatMessage> _messages = [];
+  final SharedPreferences _prefs;
+  final List<ChatMessage> _messages;
 
   ChatHistory({required SharedPreferences prefs})
       : _prefs = prefs,
@@ -81,10 +85,10 @@ class ChatHistory {
     _prefs.setString(Constants.cacheHistoryKey, json);
   }
 
-  void _clearHistory() {
-    _messages.clear();
-    _saveHistory();
-  }
+  // void _clearHistory() {
+  //   _messages.clear();
+  //   _saveHistory();
+  // }
 
   // Add a new method to get the chat history for a specific prompt channel.
   List<ChatMessage> getMessagesForPromptChannel(String promptChannel) {

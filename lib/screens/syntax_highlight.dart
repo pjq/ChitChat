@@ -1,11 +1,10 @@
-import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_highlighter/themes/atom-one-dark.dart';
 import 'package:flutter_highlighter/themes/atom-one-light.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+// ignore: depend_on_referenced_packages
 import 'package:markdown/markdown.dart' as md;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,7 +23,7 @@ class CodeElementBuilder extends MarkdownElementBuilder {
 
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    var language;
+    String? language;
 
     if (element.attributes['class'] != null) {
       String lg = element.attributes['class'] as String;
@@ -32,23 +31,23 @@ class CodeElementBuilder extends MarkdownElementBuilder {
     }
 
     double? width;
-    if (null != language && language.length > 0) {
-      width =
-          MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.width;
+    if (null != language && language.isNotEmpty) {
+      width = MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width;
     }
 
     return SizedBox(
       width: width,
       child: GestureDetector(
-        onTap: () async {
+        onTap: () {
           // Copy code to clipboard when user taps on it
-          await Clipboard.setData(ClipboardData(text: element.textContent));
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Code copied to clipboard"),
-              duration: Duration(milliseconds: 1000),
-            ),
-          );
+          Clipboard.setData(ClipboardData(text: element.textContent)).then((value) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Code copied to clipboard"),
+                duration: Duration(milliseconds: 1000),
+              ),
+            );
+          });
         },
         child: HighlightView(
           // The original code to be highlighted
@@ -58,7 +57,7 @@ class CodeElementBuilder extends MarkdownElementBuilder {
           language: language,
           // Specify highlight theme
           // All available themes are listed in `themes` folder
-          theme: MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
+          theme: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                       .platformBrightness ==
                   Brightness.light
               ? atomOneLightTheme
