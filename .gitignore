@@ -48,3 +48,5 @@ android/upload_key.properties
 android/pepk.jar
 android/output.zip
 android/output.zip.bak
+
+pubspec.lock

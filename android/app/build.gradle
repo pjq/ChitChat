@@ -31,16 +31,23 @@ def keystorePropertiesFile = rootProject.file("key.properties")
 
 // Load the keystore properties from the key.properties file if it exists, otherwise use environment variables
 //print("key.properties")
+def signingEnabled = false
+
 if (keystorePropertiesFile.exists()) {
     print("key.properties exists")
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-} else {
-    print("key.properties not exists")
+    signingEnabled = true
+} else if (System.getenv("KEY_ALIAS") && System.getenv("KEY_PASSWORD") && System.getenv("STORE_FILE") && System.getenv("STORE_PASSWORD")) {
+    print("Environment variables found")
     keystoreProperties['keyAlias'] = System.getenv("KEY_ALIAS")
     keystoreProperties['keyPassword'] = System.getenv("KEY_PASSWORD")
     keystoreProperties['storeFile'] = System.getenv("STORE_FILE")
     keystoreProperties['storePassword'] = System.getenv("STORE_PASSWORD")
+    signingEnabled = true
+} else {
+    print("Both key.properties and environment variables not found, signing disabled")
 }
+
 
 
 apply plugin: 'com.android.application'
@@ -53,27 +60,31 @@ android {
     ndkVersion flutter.ndkVersion
 
     signingConfigs {
-        debug {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
-        }
-
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+        if (signingEnabled) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        } else {
+            release {
+                defaultConfig {}
+            }
         }
     }
+
+
     buildTypes {
         debug {
-            signingConfig signingConfigs.release
+            if (signingEnabled) {
+                signingConfig signingConfigs.release
+            }
         }
         release {
-            signingConfig signingConfigs.release
-
+            if (signingEnabled) {
+                signingConfig signingConfigs.release
+            }
             crunchPngs  true
             debuggable = false
             minifyEnabled = true
