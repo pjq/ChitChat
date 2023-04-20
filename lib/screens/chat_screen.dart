@@ -18,8 +18,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 // ignore: depend_on_referenced_packages
 import 'package:markdown/markdown.dart' as md;
-import 'package:about/about.dart';
-import 'package:chitchat/models/pubspec.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -27,7 +25,6 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:package_info/package_info.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -466,46 +463,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     return _settings!.continueConversationEnable ? recentHistory : [];
   }
 
-  void _showAbout() {
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      setState(() {
-        String version = packageInfo.version;
-        String buildNumber = packageInfo.buildNumber;
-        // You can also get other details like app name and package name
-        // from packageInfo, if needed.
-
-        showAboutPage(
-          context: context,
-          values: {
-            'version': "$version+$buildNumber",
-            'year': DateTime.now().year.toString(),
-          },
-          applicationLegalese:
-              'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
-          applicationDescription: Text(Pubspec.description),
-          children: const <Widget>[
-            MarkdownPageListTile(
-              icon: Icon(Icons.list),
-              title: Text('Changelog'),
-              filename: 'assets/CHANGELOG.md',
-            ),
-            LicensesPageListTile(
-              icon: Icon(Icons.favorite),
-            ),
-          ],
-          applicationIcon: const SizedBox(
-            width: 100,
-            height: 100,
-            child: Image(
-              image: AssetImage(
-                  'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png'),
-            ),
-          ),
-        );
-      });
-    });
-  }
-
   // Add a new method to switch to a selected prompt channel.
   void _switchToPromptChannel(Prompt promptChannel) {
     currentPrompt = promptChannel;
@@ -574,11 +531,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 icon: const Icon(Icons.settings),
                 onPressed: () {
                   startSettingsScreen();
-                }),
-            IconButton(
-                icon: const Icon(Icons.info),
-                onPressed: () {
-                  _showAbout();
                 }),
             IconButton(
                 icon: const Icon(Icons.delete),

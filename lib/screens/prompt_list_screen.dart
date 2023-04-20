@@ -227,8 +227,8 @@ class _PromptListScreenState extends State<PromptListScreen> {
                  widget.onSelectedPrompt(_prompts[0]);
                }
 
-                _prompts.removeAt(index);
                 widget.history.deleteMessageForPromptChannel(_prompts[index].id);
+                _prompts.removeAt(index);
               });
               widget.promptStorage.savePrompts(_prompts);
               Navigator.pop(context);

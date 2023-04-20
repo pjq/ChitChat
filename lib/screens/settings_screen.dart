@@ -73,23 +73,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _baseUrlController = TextEditingController(
         text: widget.prefs.getString(Constants.baseUrlKey));
 
-    setState(() {
-      String? selected = widget.prefs.getString(Constants.ttsSelectedLanguageKey);
-      _ttsSelectedLanguage = selected != null && selected.isNotEmpty?selected:null;
-      LogUtils.debug("$_ttsSelectedLanguage");
+    String? selected = widget.prefs.getString(Constants.ttsSelectedLanguageKey);
+    _ttsSelectedLanguage = (selected != null && selected.isNotEmpty) ? selected : null;
+    LogUtils.debug("$_ttsSelectedLanguage");
 
-      if (GlobalData().sttLocaleNames.isNotEmpty) {
-        String? savedSttSelectedLanguage =
-            widget.prefs.getString(Constants.sttSelectedLanguageKey);
-        _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
-              (element) => savedSttSelectedLanguage == element.localeId,
-              orElse: () =>
-                  GlobalData().sttLocaleNames[0], // Set a default value
-            );
+    if (GlobalData().sttLocaleNames.isNotEmpty) {
+      String? savedSttSelectedLanguage =
+          widget.prefs.getString(Constants.sttSelectedLanguageKey);
+      _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
+            (element) => savedSttSelectedLanguage == element.localeId,
+            orElse: () =>
+                GlobalData().sttLocaleNames[0], // Set a default value
+          );
 
-        LogUtils.debug("selected: ${_sttSelectedLanguage!.localeId}");
-      }
-    });
+      LogUtils.debug("selected: ${_sttSelectedLanguage?.localeId}");
+    } else {
+      _sttSelectedLanguage = null;
+    }
 
     _selectedModel = widget.prefs.getString(Constants.selectedModelKey) ?? Constants.defaultAIModel;
   }
@@ -375,15 +375,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showAbout() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
-        String _version = packageInfo.version;
-        String _buildNumber = packageInfo.buildNumber;
+        String version = packageInfo.version;
+        String buildNumber = packageInfo.buildNumber;
         // You can also get other details like app name and package name
         // from packageInfo, if needed.
 
         showAboutPage(
           context: context,
           values: {
-            'version': _version + "+" + _buildNumber,
+            'version': "$version+$buildNumber",
             'year': DateTime.now().year.toString(),
           },
           applicationLegalese:
