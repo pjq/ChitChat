@@ -10,7 +10,7 @@ import os
 # Top 10 languages by number of speakers
 languages = [
     ("zh", "Chinese"),
-    ("zh_Hant", "Traditional Chinese"),
+    ("zh_TW", "Traditional Chinese"),
     ("vi", "Vietnam"),
     ("ja", "Japanese"),
     ("ko", "Korean"),
@@ -34,7 +34,7 @@ def translate_data(data, target_language):
     messages = [
         {
             "role": "system",
-            "content": f"Translate the following JSON content from English to {target_language}: {json_string}"
+            "content": f"Translate the following JSON content(respect the Flutter l10n arb language coding grammer) from English to {target_language}: {json_string}"
         }
     ]
 
