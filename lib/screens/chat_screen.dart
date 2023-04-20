@@ -16,7 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:about/about.dart';
-import 'package:chitchat/pubspec.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -464,45 +463,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     return _settings!.continueConversationEnable ? recentHistory : [];
   }
 
-  void _showAbout() {
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      setState(() {
-        String _version = packageInfo.version;
-        String _buildNumber = packageInfo.buildNumber;
-        // You can also get other details like app name and package name
-        // from packageInfo, if needed.
 
-        showAboutPage(
-          context: context,
-          values: {
-            'version': _version + "+" + _buildNumber,
-            'year': DateTime.now().year.toString(),
-          },
-          applicationLegalese:
-              'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
-          applicationDescription: Text(Pubspec.description),
-          children: const <Widget>[
-            MarkdownPageListTile(
-              icon: Icon(Icons.list),
-              title: Text('Changelog'),
-              filename: 'assets/CHANGELOG.md',
-            ),
-            LicensesPageListTile(
-              icon: Icon(Icons.favorite),
-            ),
-          ],
-          applicationIcon: const SizedBox(
-            width: 100,
-            height: 100,
-            child: Image(
-              image: AssetImage(
-                  'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png'),
-            ),
-          ),
-        );
-      });
-    });
-  }
 
   // Add a new method to switch to a selected prompt channel.
   void _switchToPromptChannel(Prompt promptChannel) {
@@ -575,11 +536,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 icon: Icon(Icons.settings),
                 onPressed: () {
                   startSettingsScreen();
-                }),
-            IconButton(
-                icon: Icon(Icons.info),
-                onPressed: () {
-                  _showAbout();
                 }),
             IconButton(
                 icon: Icon(Icons.delete),
