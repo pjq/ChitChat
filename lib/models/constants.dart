@@ -42,7 +42,8 @@ class Constants {
 
   static var defaultPrompt = "You are my personal Assistant";
 
-  static var default_ai_model = "gpt-3.5-turbo";
+  static var defaultAIModel = "gpt-3.5-turbo";
 
+  // ignore: non_constant_identifier_names
   static int MAX_MESSAGE_COUNT_FOR_CONVERSTAION = 100;
 }

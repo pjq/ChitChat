@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chitchat/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:chitchat/settings.dart';
+import 'package:chitchat/models/settings.dart';
 
 
 void main() {

@@ -1,10 +1,10 @@
-import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:chitchat/constants.dart';
+import 'package:chitchat/models/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/chat_message.dart';
@@ -14,8 +14,8 @@ class PromptListScreen extends StatefulWidget {
   final PromptStorage promptStorage;
   final ChatHistory history;
 
-  PromptListScreen(
-      {required this.onSelectedPrompt, required this.promptStorage, required this.history});
+  const PromptListScreen(
+      {required this.onSelectedPrompt, required this.promptStorage, required this.history, super.key});
 
   @override
   _PromptListScreenState createState() => _PromptListScreenState();
@@ -62,7 +62,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
     );
     // _prompts.add(newPrompt);
     // widget.promptStorage.savePrompts(_prompts);
-    final result = showDialog<Prompt>(
+    showDialog<Prompt>(
       context: context,
       builder: (context) => _editPromptDialog(newPrompt),
     );
@@ -83,7 +83,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc!.assistants),
+        title: Text(loc.assistants),
       ),
       body: ListView.builder(
         itemCount: _prompts.length,
@@ -102,7 +102,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
                   builder: (context) => Wrap(
                     children: [
                       ListTile(
-                        leading: Icon(Icons.edit),
+                        leading: const Icon(Icons.edit),
                         title: Text(loc.edit_prompt),
                         onTap: () {
                           Navigator.pop(context);
@@ -110,13 +110,15 @@ class _PromptListScreenState extends State<PromptListScreen> {
                             context: context,
                             builder: (context) => _editPromptDialog(_prompts[index]),
                           );
-                          if (result != null) {
-                            _editPrompt(index, result as Prompt);
-                          }
+                          result.then((prompt) {
+                            if (prompt != null) {
+                              _editPrompt(index, prompt);
+                            }
+                          });
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.delete),
+                        leading: const Icon(Icons.delete),
                         title: Text(loc.delete),
                         onTap: () {
                           Navigator.pop(context);
@@ -132,17 +134,17 @@ class _PromptListScreenState extends State<PromptListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addPrompt,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
 
   Widget _editPromptDialog(Prompt currentPrompt) {
-    final TextEditingController _titleController =
+    final TextEditingController titleController =
         TextEditingController(text: currentPrompt.title);
-    final TextEditingController _contentController =
+    final TextEditingController contentController =
         TextEditingController(text: currentPrompt.content);
-    final TextEditingController _categoryController =
+    final TextEditingController categoryController =
         TextEditingController(text: currentPrompt.category);
 
     return AlertDialog(
@@ -151,11 +153,11 @@ class _PromptListScreenState extends State<PromptListScreen> {
         child: Column(
           children: [
             TextField(
-              controller: _titleController,
+              controller: titleController,
               decoration: InputDecoration(labelText: loc.title),
             ),
             TextField(
-              controller: _contentController,
+              controller: contentController,
               decoration: InputDecoration(labelText: loc.content),
             ),
             // TextField(
@@ -175,9 +177,9 @@ class _PromptListScreenState extends State<PromptListScreen> {
             // currentPrompt.selected = true;
             Prompt updatedPrompt = Prompt(
               id: currentPrompt.id,
-              title: _titleController.text,
-              content: _contentController.text,
-              category: _categoryController.text,
+              title: titleController.text,
+              content: contentController.text,
+              category: categoryController.text,
               selected: currentPrompt.selected,
             );
             _updatePrompt(updatedPrompt);
@@ -225,8 +227,8 @@ class _PromptListScreenState extends State<PromptListScreen> {
                  widget.onSelectedPrompt(_prompts[0]);
                }
 
+                widget.history.deleteMessageForPromptChannel(_prompts[index].id);
                 _prompts.removeAt(index);
-                widget.history?.deleteMessageForPromptChannel(_prompts[index].id);
               });
               widget.promptStorage.savePrompts(_prompts);
               Navigator.pop(context);

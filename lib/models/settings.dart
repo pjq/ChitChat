@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:chitchat/constants.dart';
+import 'package:chitchat/models/constants.dart';
 
 class Settings {
   final SharedPreferences prefs;
@@ -52,7 +51,7 @@ class Settings {
 
   String get baseUrl => prefs.getString(Constants.baseUrlKey) ?? 'https://api.openai.com';
 
-  String get selectedModel => prefs.getString(Constants.selectedModelKey) ?? Constants.default_ai_model;
+  String get selectedModel => prefs.getString(Constants.selectedModelKey) ?? Constants.defaultAIModel;
 
   set baseUrl(String value) {
     prefs.setString(Constants.baseUrlKey, value);

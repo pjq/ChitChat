@@ -1,13 +1,17 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:about/about.dart';
-import 'package:chitchat/pubspec.dart';
-import 'package:chitchat/global_data.dart';
+import 'package:chitchat/models/pubspec.dart';
+
+import 'package:chitchat/utils/log_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:chitchat/constants.dart';
+import 'package:chitchat/models/constants.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:chitchat/models/global_data.dart';
 
 class SettingsScreen extends StatefulWidget {
   final SharedPreferences prefs;
@@ -30,8 +34,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late bool _localCacheEnable;
   late bool _ttsEnable;
 
-  late String? _ttsSelectedLanguage = null;
-  late LocaleName? _sttSelectedLanguage = null;
+  late String? _ttsSelectedLanguage;
+  late LocaleName? _sttSelectedLanguage;
   late AppLocalizations loc;
 
   late String _selectedModel;
@@ -69,28 +73,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _baseUrlController = TextEditingController(
         text: widget.prefs.getString(Constants.baseUrlKey));
 
-    setState(() {
-      String? selected = widget.prefs.getString(Constants.ttsSelectedLanguageKey);
-      _ttsSelectedLanguage = selected != null && selected.isNotEmpty?selected:null;
-      print("${_ttsSelectedLanguage}");
+    String? selected = widget.prefs.getString(Constants.ttsSelectedLanguageKey);
+    _ttsSelectedLanguage = (selected != null && selected.isNotEmpty) ? selected : null;
+    LogUtils.debug("$_ttsSelectedLanguage");
 
-      if (GlobalData().sttLocaleNames.isNotEmpty) {
-        String? savedSttSelectedLanguage =
-            widget.prefs.getString(Constants.sttSelectedLanguageKey);
-        _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
-              (element) => savedSttSelectedLanguage == element.localeId,
-              orElse: () =>
-                  GlobalData().sttLocaleNames[0], // Set a default value
-            );
+    if (GlobalData().sttLocaleNames.isNotEmpty) {
+      String? savedSttSelectedLanguage =
+          widget.prefs.getString(Constants.sttSelectedLanguageKey);
+      _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
+            (element) => savedSttSelectedLanguage == element.localeId,
+            orElse: () =>
+                GlobalData().sttLocaleNames[0], // Set a default value
+          );
 
-        print("selected: " + _sttSelectedLanguage!.localeId);
-      }
-    });
+      LogUtils.debug("selected: ${_sttSelectedLanguage?.localeId}");
+    } else {
+      _sttSelectedLanguage = null;
+    }
 
-    _selectedModel = widget.prefs.getString(Constants.selectedModelKey) ?? Constants.default_ai_model;
+    _selectedModel = widget.prefs.getString(Constants.selectedModelKey) ?? Constants.defaultAIModel;
   }
 
-  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _saveSettings(false);
@@ -110,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(loc.settings_saved),
-        duration: Duration(milliseconds: 1000),
+        duration: const Duration(milliseconds: 1000),
       ),
     );
     widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
@@ -130,16 +133,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget.onSettingsChanged();
   }
 
-  void _clearChatHistory() {
-    // Clear the chat history from the shared preferences
-    widget.prefs.remove(Constants.cacheHistoryKey);
+  // void _clearChatHistory() {
+  //   // Clear the chat history from the shared preferences
+  //   widget.prefs.remove(Constants.cacheHistoryKey);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(loc!.conversationRecordsErased),
-      ),
-    );
-  }
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(loc.conversationRecordsErased),
+  //     ),
+  //   );
+  // }
 
 
   Widget _buildTextField({
@@ -155,7 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       cursorColor: passwordField ? Theme.of(context).canvasColor : null,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
     );
   }
@@ -169,7 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: Text(loc.settings),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
             onPressed: () =>_saveSettings(true),
             tooltip: loc.save,
           ),
@@ -209,7 +212,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 title: Text(loc.continueConversation),
                 value: _continueConversationEnable,
-                contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _continueConversationEnable = value!;
@@ -220,7 +223,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 title: Text(loc.localCache),
                 value: _localCacheEnable,
-                contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _localCacheEnable = value!;
@@ -231,7 +234,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 title: Text(loc.enableTts),
                 value: _ttsEnable,
-                contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _ttsEnable = value!;
@@ -339,7 +342,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _sttSelectedLanguage = newValue!;
 
           if (null != _sttSelectedLanguage) {
-            print("selected stt: " + _sttSelectedLanguage!.localeId);
+            LogUtils.debug("selected stt: ${_sttSelectedLanguage!.localeId}");
             widget.prefs.setString(Constants.sttSelectedLanguageKey,
                 _sttSelectedLanguage!.localeId);
           }
@@ -372,15 +375,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showAbout() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
-        String _version = packageInfo.version;
-        String _buildNumber = packageInfo.buildNumber;
+        String version = packageInfo.version;
+        String buildNumber = packageInfo.buildNumber;
         // You can also get other details like app name and package name
         // from packageInfo, if needed.
 
         showAboutPage(
           context: context,
           values: {
-            'version': _version + "+" + _buildNumber,
+            'version': "$version+$buildNumber",
             'year': DateTime.now().year.toString(),
           },
           applicationLegalese:

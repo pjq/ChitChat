@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class LogUtils {
   static const String tag = 'OpenAIChat';
 
@@ -21,6 +23,8 @@ class LogUtils {
     final now = DateTime.now();
     final timeString = '${now.hour}:${now.minute}:${now.second}.${now.millisecond}';
     final fullMessage = '[$timeString][$tag][$level] $message';
-    print(fullMessage);
+    if (kDebugMode) {
+      print(fullMessage);
+    }
   }
 }
