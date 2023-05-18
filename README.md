@@ -30,7 +30,8 @@ For Mac/Android, You can download in from the release builds
 
 For Android, you can also download from Google Play
 - Android https://play.google.com/store/apps/details?id=me.pjq.chitchat
-
+For iOS, you can download from the App Store
+- https://apps.apple.com/cn/app/chitchat-your-best-assistant/id6447462831
 
 ### Watch the video
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=OeV6ms91L8U" target="_blank">
