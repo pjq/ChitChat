@@ -47,7 +47,6 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   String appTitle = "";
   late Prompt currentPrompt;
   late PromptStorage promptStorage;
-  final _chatListController = ScrollController();
 
   final FlutterTts flutterTts = FlutterTts();
   final SpeechToText _speechToText = SpeechToText();
@@ -60,6 +59,9 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   List<LocaleName> sttLocaleNames = [];
   List<dynamic> ttsLanguages = [];
   late AppLocalizations loc;
+
+  bool _autoScrollEnabled = true;
+  late ScrollController _chatListController;
 
   StreamSubscription? _streamSubscription;
   final StreamController<ChatMessage> _messageController =
@@ -107,6 +109,22 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     });
 
     _initializeSpeechRecognition();
+
+    _chatListController = ScrollController();
+    _chatListController.addListener(_onScrollStart);
+    _chatListController.addListener(_onScrollEnd);
+  }
+
+  void _onScrollStart() {
+    setState(() {
+      _autoScrollEnabled = false;
+    });
+  }
+
+  void _onScrollEnd() {
+    setState(() {
+      _autoScrollEnabled = true;
+    });
   }
 
   void handleSettingsChanged() {
@@ -231,6 +249,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       });
     }
   }
+
 
   void showToast(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -716,6 +735,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _listViewScrollToBottom() {
+    if (!_autoScrollEnabled) {
+      return;
+    }
+
     Future.delayed(const Duration(milliseconds: 50), () {
       _chatListController.animateTo(
         _chatListController.position.maxScrollExtent,
