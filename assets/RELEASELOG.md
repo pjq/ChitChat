@@ -1,3 +1,6 @@
+## May 19, 2023
+- Support delete prompt item.
+- Move the PromptListScreen to the LeftPanel of ChatScreen
 ## April 4, 2023
 - Support code syntax highlight
 - Support click to copy the code block

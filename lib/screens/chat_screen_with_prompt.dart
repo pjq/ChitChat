@@ -8,10 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChatScreenWithPrompt extends StatefulWidget {
-  final Settings settings;
-
-  const ChatScreenWithPrompt(
-      {required this.settings});
 
   @override
   _ChatScreenWithPromptState createState() => _ChatScreenWithPromptState();
@@ -19,18 +15,17 @@ class ChatScreenWithPrompt extends StatefulWidget {
 
 class _ChatScreenWithPromptState extends State<ChatScreenWithPrompt> {
   late AppLocalizations loc;
-  late Settings settings;
-  late ChatHistory chatHistory;
-  late PromptStorage promptStorage;
+  late Settings? settings;
+  late ChatHistory? chatHistory;
+  late PromptStorage? promptStorage;
+  final GlobalKey<ChatScreenState> chatScreenKey = GlobalKey<ChatScreenState>();
 
   @override
   void initState() {
     super.initState();
-    // Settings? settings;
-    // PromptStorage? promptStorage = null;
-    // ChatHistory? chatHistory;
 
-    SharedPreferences.getInstance().then((prefs) {
+    Future.delayed(Duration.zero, () async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         settings = Settings(prefs: prefs);
         chatHistory = ChatHistory(prefs: prefs);
@@ -41,12 +36,13 @@ class _ChatScreenWithPromptState extends State<ChatScreenWithPrompt> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Chat Screen With Prompt'),
-      ),
-      body: Row(
+      // appBar: AppBar(
+      //   title: Text('Chat Screen With Prompt'),
+      // ),
+      body: settings == null || chatHistory == null || promptStorage == null
+          ? Center(child: CircularProgressIndicator())
+          : Row(
         children: <Widget>[
           Container(
             width: 250,
@@ -54,13 +50,14 @@ class _ChatScreenWithPromptState extends State<ChatScreenWithPrompt> {
               promptStorage: promptStorage!,
               history: chatHistory!,
               onSelectedPrompt: (prompt) {
-                // TODO: Handle selected prompt
+                chatScreenKey.currentState?.switchToPromptChannel(prompt);
               },
             ),
           ),
           Expanded(
             child: ChatScreen(
-              settings: settings, // TODO: Add appropriate settings
+              settings: settings,
+              key:chatScreenKey,
             ),
           ),
         ],

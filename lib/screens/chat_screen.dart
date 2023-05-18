@@ -25,15 +25,16 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:chitchat/utils/Utils.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  ChatScreenState createState() => ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> implements IChatService {
+class ChatScreenState extends State<ChatScreen> implements IChatService {
   final TextEditingController _controller = TextEditingController();
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
@@ -89,14 +90,15 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     SharedPreferences.getInstance().then((prefs) {
       _prefs = prefs;
+      _settings = Settings(prefs: prefs);
+      _chatService = ChatService(_messageController);
+
       setState(() {
-        _settings = Settings(prefs: prefs);
-        _chatService = ChatService(_messageController);
         _history = ChatHistory(prefs: prefs);
         // _messages.addAll(_history!.messages);
         promptStorage = PromptStorage(prefs: prefs);
         currentPrompt = promptStorage.getSelectedPrompt();
-        _switchToPromptChannel(currentPrompt);
+        switchToPromptChannel(currentPrompt);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _listViewScrollToBottom();
@@ -464,7 +466,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   // Add a new method to switch to a selected prompt channel.
-  void _switchToPromptChannel(Prompt promptChannel) {
+  void switchToPromptChannel(Prompt promptChannel) {
     currentPrompt = promptChannel;
     setState(() {
       appTitle = "$defaultAppTitle(${currentPrompt.title})";
@@ -505,7 +507,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
+          leading: !Utils.isBigScreen()? IconButton(
             icon: const Icon(Icons.list),
             onPressed: () async {
               await Navigator.push(
@@ -515,7 +517,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                     onSelectedPrompt: (prompt) {
                       LogUtils.info("selected: $prompt");
                       setState(() {
-                        _switchToPromptChannel(prompt);
+                        switchToPromptChannel(prompt);
                       });
                     },
                     promptStorage: promptStorage,
@@ -524,7 +526,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 ),
               );
             },
-          ),
+          ): null,
           title: Text(appTitle),
           actions: [
             IconButton(

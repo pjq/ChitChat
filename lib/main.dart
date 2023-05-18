@@ -1,7 +1,6 @@
 
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:chitchat/screens/chat_screen_with_prompt.dart';
+import 'package:chitchat/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/screens/chat_screen.dart';
 import 'package:chitchat/models/settings.dart';
@@ -38,8 +37,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) {
-          if (Platform.isMacOS || Platform.isWindows || Platform.isLinux || Platform.isFuchsia || kIsWeb) {
-            return ChatScreenWithPrompt(settings: settings);
+          if (Utils.isBigScreen()) {
+            return ChatScreenWithPrompt();
           } else {
             return ChatScreen(settings: settings);
           }
