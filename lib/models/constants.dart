@@ -28,10 +28,21 @@ class Constants {
   static String proxyUrlKey="proxy_url";
   static const String baseUrlKey = 'base_url';
 
-  static String translationPrompt = "Play a role as translator, auto detect the language, if the text is LOCALE_ID, then translate to English, if other languages, then translate to LOCALE_ID, nothing else, do not write explanations:\n\n ";
+  static String translationPrompt = "Play a role as translator, auto detect the language, if the text is LOCALE_ID, then translate to English, if other languages, then translate to LOCALE_ID, Keep the meaning the same. Do not alter the original structure and formatting outlined in any way. Only give me the output and nothing else: \n\"\"\"\n"
+      + "CONTENT"
+      +"\n\"\"\"";
+
+  // static String translationPrompt = "I will give you text content, you will rewrite it and translate the text into English language. \n
+  // Keep the meaning the same. Do not alter the original structure and formatting outlined in any way. Only give me the output and nothing else. \n
+  // Now, using the concepts above, translate the following text: \n
+  // """ \n
+  // """ \n
+  // ";
 
   // static String translationPrompt = "I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, . I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations: ";
-  static String rephrasePrompt = "Play a role as language expert,rephrase the folllowing content with original language, while keeping its meaning,  nothing else, do not write explanations:\n\n ";
+  static String rephrasePrompt = "Play a role as language expert,rephrase the folllowing content with original language, while keeping its meaning,  nothing else, do not write explanations:\n\"\"\"\n"
+  + "CONTENT"
+  +"\n\"\"\"";
 
   //animation duration
   static int scrollDuration = 100;

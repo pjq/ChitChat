@@ -15,14 +15,13 @@ class ChatService {
   ChatService(this.messageController);
 
   Future<String> getTranslation(
-    String content,
     String translationPrompt,
-    Settings? settings,
+    Settings settings,
   ) async {
     apiKey = settings?.openaiApiKey;
     final response = await getCompletionRaw(
-      translationPrompt + content,
-      settings!.promptString,
+      "",
+      translationPrompt,
       settings.temperatureValue,
       [],
       settings.proxyUrl,
@@ -77,7 +76,9 @@ class ChatService {
       chatMessages.insert(0, {"role": "system", "content": prompt});
     }
     // Add the user's message to the list of chat messages
-    chatMessages.add({"role": "user", "content": content});
+    if (content.isNotEmpty) {
+      chatMessages.add({"role": "user", "content": content});
+    }
 
     bool useStream = Constants.useStream;
 

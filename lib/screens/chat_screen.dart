@@ -348,10 +348,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     setState(() {
       _isLoading = true;
     });
+    // check the Constants.translationPrompt, it has the placeholder "CONTENT" for the real content.
     final completion = await _chatService!.getTranslation(
-      content,
-      translationPrompt,
-      _settings,
+      translationPrompt.replaceAll("CONTENT", content),
+      _settings!,
     );
 
     setState(() {
