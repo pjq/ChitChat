@@ -1,6 +1,7 @@
 
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:chitchat/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -93,8 +94,14 @@ class _PromptListScreenState extends State<PromptListScreen> {
             tileColor: _prompts[index].selected ? Colors.green[100] : null,
             onTap: () {
               widget.promptStorage.selectPrompt(_prompts, _prompts[index].id);
+              setState(() {
+                _prompts[index].selected = true;
+              });
               widget.onSelectedPrompt(_prompts[index]);
-              Navigator.pop(context);
+              if(!Utils.isBigScreen()){
+                //if it's phone then need to pop
+                Navigator.pop(context);
+              }
             },
               onLongPress: () async {
                 showModalBottomSheet(

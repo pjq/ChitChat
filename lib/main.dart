@@ -1,4 +1,6 @@
 
+import 'package:chitchat/screens/chat_screen_with_prompt.dart';
+import 'package:chitchat/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/screens/chat_screen.dart';
 import 'package:chitchat/models/settings.dart';
@@ -30,13 +32,20 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily:
-            Constants.fontFamilies.join(', '), // Use the new font families
+        Constants.fontFamilies.join(', '), // Use the new font families
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => ChatScreen(settings: settings),
+        '/': (context) {
+          if (Utils.isBigScreen()) {
+            return ChatScreenWithPrompt();
+          } else {
+            return ChatScreen(settings: settings);
+          }
+        }
       },
       debugShowCheckedModeBanner: false,
     );
   }
+
 }

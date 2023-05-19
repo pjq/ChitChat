@@ -25,15 +25,16 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:chitchat/utils/Utils.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  ChatScreenState createState() => ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> implements IChatService {
+class ChatScreenState extends State<ChatScreen> implements IChatService {
   final TextEditingController _controller = TextEditingController();
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
@@ -46,7 +47,6 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   String appTitle = "";
   late Prompt currentPrompt;
   late PromptStorage promptStorage;
-  final _chatListController = ScrollController();
 
   final FlutterTts flutterTts = FlutterTts();
   final SpeechToText _speechToText = SpeechToText();
@@ -59,6 +59,9 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   List<LocaleName> sttLocaleNames = [];
   List<dynamic> ttsLanguages = [];
   late AppLocalizations loc;
+
+  bool _autoScrollEnabled = true;
+  late ScrollController _chatListController;
 
   StreamSubscription? _streamSubscription;
   final StreamController<ChatMessage> _messageController =
@@ -89,14 +92,15 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
 
     SharedPreferences.getInstance().then((prefs) {
       _prefs = prefs;
+      _settings = Settings(prefs: prefs);
+      _chatService = ChatService(_messageController);
+
       setState(() {
-        _settings = Settings(prefs: prefs);
-        _chatService = ChatService(_messageController);
         _history = ChatHistory(prefs: prefs);
         // _messages.addAll(_history!.messages);
         promptStorage = PromptStorage(prefs: prefs);
         currentPrompt = promptStorage.getSelectedPrompt();
-        _switchToPromptChannel(currentPrompt);
+        switchToPromptChannel(currentPrompt);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _listViewScrollToBottom();
@@ -105,6 +109,22 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     });
 
     _initializeSpeechRecognition();
+
+    _chatListController = ScrollController();
+    _chatListController.addListener(_onScrollStart);
+    _chatListController.addListener(_onScrollEnd);
+  }
+
+  void _onScrollStart() {
+    setState(() {
+      _autoScrollEnabled = false;
+    });
+  }
+
+  void _onScrollEnd() {
+    setState(() {
+      _autoScrollEnabled = true;
+    });
   }
 
   void handleSettingsChanged() {
@@ -230,6 +250,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     }
   }
 
+
   void showToast(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -327,10 +348,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
     setState(() {
       _isLoading = true;
     });
+    // check the Constants.translationPrompt, it has the placeholder "CONTENT" for the real content.
     final completion = await _chatService!.getTranslation(
-      content,
-      translationPrompt,
-      _settings,
+      translationPrompt.replaceAll("CONTENT", content),
+      _settings!,
     );
 
     setState(() {
@@ -464,7 +485,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   // Add a new method to switch to a selected prompt channel.
-  void _switchToPromptChannel(Prompt promptChannel) {
+  void switchToPromptChannel(Prompt promptChannel) {
     currentPrompt = promptChannel;
     setState(() {
       appTitle = "$defaultAppTitle(${currentPrompt.title})";
@@ -505,7 +526,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
+          leading: !Utils.isBigScreen()? IconButton(
             icon: const Icon(Icons.list),
             onPressed: () async {
               await Navigator.push(
@@ -515,7 +536,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                     onSelectedPrompt: (prompt) {
                       LogUtils.info("selected: $prompt");
                       setState(() {
-                        _switchToPromptChannel(prompt);
+                        switchToPromptChannel(prompt);
                       });
                     },
                     promptStorage: promptStorage,
@@ -524,7 +545,7 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
                 ),
               );
             },
-          ),
+          ): null,
           title: Text(appTitle),
           actions: [
             IconButton(
@@ -714,6 +735,10 @@ class _ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _listViewScrollToBottom() {
+    if (!_autoScrollEnabled) {
+      return;
+    }
+
     Future.delayed(const Duration(milliseconds: 50), () {
       _chatListController.animateTo(
         _chatListController.position.maxScrollExtent,
