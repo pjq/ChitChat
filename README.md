@@ -10,7 +10,7 @@ ChitChat is a powerful and easy-to-use app that allows you to connect with AI mo
 - 📚 **Prompt Management**: Add, edit, and manage multiple prompts.
 - 🎯 **API Integration**: Utilizes stream=true API call for fast, efficient interactions.
 - 📝 **Markdown & Rich Text**: Enjoy Markdown support for enhanced text formatting.
-- 🚀 **Advanced Features**: Chat history persistence, proxy settings, continuous conversation mode, base URL settings, and more.
+- 🚀 **Advanced Features**q: Chat history persistence, proxy settings, continuous conversation mode, base URL settings, and more.
 - 🔄 **Translation & Rephrasing**: Built-in translation and rephrase actions for instant multilingual support.
 - 📤 **Easy Sharing**: Conveniently copy or share your conversations with others.
 
