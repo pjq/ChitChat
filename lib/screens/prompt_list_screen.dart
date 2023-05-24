@@ -91,8 +91,11 @@ class _PromptListScreenState extends State<PromptListScreen> {
         itemCount: _prompts.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(_prompts[index].title),
-            tileColor: _prompts[index].selected ? MyColors.accent200 : null,
+            title: Text(_prompts[index].title, maxLines: 1,),
+            isThreeLine: true,
+            textColor: MyColors.text100,
+            subtitle: Text(_prompts[index].content, maxLines: 2,),
+            tileColor: _prompts[index].selected ? MyColors.accent100 : MyColors.primary300,
             onTap: () {
               widget.promptStorage.selectPrompt(_prompts, _prompts[index].id);
               setState(() {
@@ -149,30 +152,36 @@ class _PromptListScreenState extends State<PromptListScreen> {
 
   Widget _editPromptDialog(Prompt currentPrompt) {
     final TextEditingController titleController =
-        TextEditingController(text: currentPrompt.title);
+    TextEditingController(text: currentPrompt.title);
     final TextEditingController contentController =
-        TextEditingController(text: currentPrompt.content);
+    TextEditingController(text: currentPrompt.content);
     final TextEditingController categoryController =
-        TextEditingController(text: currentPrompt.category);
+    TextEditingController(text: currentPrompt.category);
 
     return AlertDialog(
       title: Text(loc.edit_prompt),
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: loc.title),
-            ),
-            TextField(
-              controller: contentController,
-              decoration: InputDecoration(labelText: loc.content),
-            ),
-            // TextField(
-            //   controller: _categoryController,
-            //   decoration: InputDecoration(labelText: loc.category),
-            // ),
-          ],
+      contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
+      content: SizedBox(
+        height: Utils.isBigScreen()? 400.0: null, // Set this property to a larger value
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: loc.title),
+              ),
+              TextField(
+                controller: contentController,
+                maxLines: null, // Set this property to null or a higher number
+                minLines: 3,
+                decoration: InputDecoration(labelText: loc.content),
+              ),
+              // TextField(
+              //   controller: _categoryController,
+              //   decoration: InputDecoration(labelText: loc.category),
+              // ),
+            ],
+          ),
         ),
       ),
       actions: [

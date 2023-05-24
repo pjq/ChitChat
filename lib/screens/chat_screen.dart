@@ -574,22 +574,23 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
               return Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-                      // separatorBuilder: (BuildContext context, int index) =>
-                      //     Divider(thickness: 1.0,color: Colors.blueAccent ,),
-                      controller: _chatListController,
-                      itemCount: _messages.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final ChatMessage message = _messages[index];
-                        return ChatMessageWidgetMarkdown(
-                          message: message,
-                          chatService: this,
-                        );
-                      },
+                    child: Container(
+                      color: MyColors.bg100, // Set the background color here
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                        controller: _chatListController,
+                        itemCount: _messages.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final ChatMessage message = _messages[index];
+                          return ChatMessageWidgetMarkdown(
+                            message: message,
+                            chatService: this,
+                          );
+                        },
+                      ),
                     ),
                   ),
+
                   BottomAppBar(
                     child: Container(
                       // height: 60,
@@ -772,33 +773,49 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
 }
-
 class ChatMessageWidgetMarkdown extends StatelessWidget {
   final ChatMessage message;
   final IChatService chatService;
 
-  const ChatMessageWidgetMarkdown(
-      {super.key, required this.message, required this.chatService});
+  const ChatMessageWidgetMarkdown({
+    Key? key,
+    required this.message,
+    required this.chatService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    MarkdownStyleSheet markdownStyleSheet =
-        MarkdownStyleSheet.fromTheme(themeData).copyWith(
+    final themeData = Theme.of(context);
+    final markdownStyleSheet = MarkdownStyleSheet.fromTheme(themeData).copyWith(
       p: themeData.textTheme.bodyMedium!.copyWith(fontSize: 16),
     );
+
+    Widget messageIcon;
+    if (this.message.isUser) {
+      messageIcon = Padding(
+        padding: const EdgeInsets.only(right: 8.0),
+        child: Icon(Icons.person, color: MyColors.primary200),
+      );
+    } else {
+      messageIcon = const Padding(
+        padding: EdgeInsets.only(right: 8.0),
+        child: Icon(Icons.cloud, color: MyColors.primary200),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Row(
-        mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: message.isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          messageIcon,
           Expanded(
             child: Container(
               padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 1.0),
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               decoration: BoxDecoration(
                 color: message.isUser ? MyColors.bg100 : MyColors.bg200,
                 borderRadius: BorderRadius.circular(4.0),
@@ -841,6 +858,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     );
   }
 }
+
 
 abstract class IChatService {
   Future<String> translate(String content, String translationPrompt);
