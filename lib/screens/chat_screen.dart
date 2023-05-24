@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:chitchat/models/colors.dart';
 import 'package:chitchat/utils/log_utils.dart';
 import 'package:chitchat/models/global_data.dart';
 import 'package:chitchat/models/prompt.dart';
@@ -66,6 +67,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   StreamSubscription? _streamSubscription;
   final StreamController<ChatMessage> _messageController =
       StreamController<ChatMessage>.broadcast();
+
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -321,6 +324,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     super.dispose();
     _streamSubscription?.cancel();
     _messageController.close();
+    _focusNode.dispose();
   }
 
   @override
@@ -594,35 +598,54 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                       child: Row(
                         children: [
                           Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              decoration: InputDecoration(
-                                hintText: AppLocalizations.of(context)!
-                                    .type_a_message,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide.none,
-                                ),
-                                filled: true,
-                                fillColor: Colors.grey[200],
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 10,
-                              minLines: 1,
-                              // Allows for multiline input
-                              textInputAction: TextInputAction.newline,
-                              // Allows for newline on "Enter"
-                              onSubmitted: (value) {
-                                if (value.trim().isNotEmpty) {
-                                  _sendMessage(value);
-                                }
+                            child: RawKeyboardListener(
+                              focusNode: _focusNode,
+                              onKey: (event) {
+                                print("event: $event isShiftPressed: ${event.isShiftPressed}");
+                                // if (event is RawKeyEventDataMacOs &&
+                                  if(event.isKeyPressed(LogicalKeyboardKey.enter) &&
+                                    event.isShiftPressed) {
+                                  _controller.value = _controller.value.copyWith(
+                                    text: _controller.value.text + "\n",
+                                    selection: TextSelection.collapsed(offset: _controller.value.selection.end + 1),
+                                  );
+                                  print("new line");
+                                  // return false;
+                                } else if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+                                    if (_controller.text.trim().isNotEmpty) {
+                                      _sendMessage(_controller.text);
+                                    }
+                                  }
+                                // return true;
                               },
+                              child: TextField(
+                                controller: _controller,
+                                decoration: InputDecoration(
+                                  hintText: AppLocalizations.of(context)!.type_a_message,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                ),
+                                keyboardType: TextInputType.multiline,
+                                maxLines: 10,
+                                minLines: 1,
+                                // textInputAction: TextInputAction.send,
+                                // onSubmitted: (value) {
+                                //   if (value.trim().isNotEmpty) {
+                                //     _sendMessage(value);
+                                //   }
+                                // },
+                              ),
                             ),
                           ),
+
                           const SizedBox(width: 10),
                           IconButton(
                             icon: Icon(Icons.send,
@@ -747,6 +770,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       );
     });
   }
+
 }
 
 class ChatMessageWidgetMarkdown extends StatelessWidget {
@@ -776,7 +800,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 1.0),
               decoration: BoxDecoration(
-                color: message.isUser ? Colors.blue[200] : Colors.white,
+                color: message.isUser ? MyColors.bg100 : MyColors.bg200,
                 borderRadius: BorderRadius.circular(4.0),
                 boxShadow: [
                   BoxShadow(

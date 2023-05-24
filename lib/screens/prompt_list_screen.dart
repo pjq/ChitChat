@@ -1,6 +1,7 @@
 
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:chitchat/models/colors.dart';
 import 'package:chitchat/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/models/prompt.dart';
@@ -91,7 +92,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(_prompts[index].title),
-            tileColor: _prompts[index].selected ? Colors.green[100] : null,
+            tileColor: _prompts[index].selected ? MyColors.accent200 : null,
             onTap: () {
               widget.promptStorage.selectPrompt(_prompts, _prompts[index].id);
               setState(() {
