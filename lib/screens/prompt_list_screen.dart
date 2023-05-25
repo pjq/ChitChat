@@ -1,6 +1,8 @@
 
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:math';
+
 import 'package:chitchat/models/colors.dart';
 import 'package:chitchat/utils/Utils.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,10 @@ class _PromptListScreenState extends State<PromptListScreen> {
     _prompts = _prompts.addAllT(widget.promptStorage.loadPrompts());
   }
 
+  String _generatePromptId() {
+   return  (DateTime.now().millisecondsSinceEpoch+ Random().nextInt(999)).toString();
+  }
+
   void _addDefaultPrompt() {
     List<Prompt> allPrompts = widget.promptStorage.loadPrompts();
     if (allPrompts.isEmpty) {
@@ -40,7 +46,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
       setState(() {
         //init the predefined prompts
         Prompt newPrompt = Prompt(
-          id: DateTime.now().toIso8601String(),
+          id: _generatePromptId(),
           title: loc.default_prompt_category,
           content: loc.you_are_my_assistant,
           category: loc.default_prompt_category,
@@ -49,7 +55,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
         _prompts.add(newPrompt);
 
         newPrompt = Prompt(
-          id: DateTime.now().toIso8601String(),
+          id: _generatePromptId(),
           title: loc.translation_review_title,
           content: Constants.smart_string_review_prompt,
           category: loc.default_prompt_category,
@@ -58,7 +64,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
         _prompts.add(newPrompt);
 
         newPrompt = Prompt(
-          id: DateTime.now().toIso8601String(),
+          id: _generatePromptId(),
           title: loc.word_class_engineer_title,
           content:  Constants.word_class_engineer_prompt,
           category: loc.default_prompt_category,
@@ -72,7 +78,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
   }
 
   void _addPrompt() {
-    String newId = DateTime.now().toIso8601String();
+    String newId = _generatePromptId();
     Prompt newPrompt = Prompt(
       id: newId,
       title: loc.prompt_number((_prompts.length + 1).toString()),
@@ -135,7 +141,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
                   builder: (context) => Wrap(
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.edit),
+                        leading: const Icon(Icons.edit, color:MyColors.primary100),
                         title: Text(loc.edit_prompt),
                         onTap: () {
                           Navigator.pop(context);
@@ -151,7 +157,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
                         },
                       ),
                       ListTile(
-                        leading: const Icon(Icons.delete),
+                        leading: const Icon(Icons.delete, color:MyColors.primary100),
                         title: Text(loc.delete),
                         onTap: () {
                           Navigator.pop(context);

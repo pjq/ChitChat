@@ -495,13 +495,16 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   // Add a new method to switch to a selected prompt channel.
   void switchToPromptChannel(Prompt promptChannel) {
     currentPrompt = promptChannel;
+    LogUtils.info("currentPrompt: $currentPrompt");
     setState(() {
       appTitle = "$defaultAppTitle(${currentPrompt.title})";
       _messages.clear();
-      _messages.addAll(_history!.getMessagesForPromptChannel(currentPrompt.id));
+      if (null != _history) {
+        _messages
+            .addAll(_history!.getMessagesForPromptChannel(currentPrompt.id));
+      }
       _listViewScrollToBottom();
       LogUtils.info("history size: ${_messages.length}");
-      LogUtils.info("currentPrompt: $currentPrompt");
     });
   }
 
@@ -654,7 +657,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                           const SizedBox(width: 10),
                           IconButton(
                             icon: Icon(Icons.send,
-                                color: _isLoading ? Colors.grey : null),
+                                color: _isLoading ? Colors.grey : MyColors.primary100),
                             onPressed: () => _isLoading
                                 ? null
                                 : _sendMessage(_controller.text),
@@ -662,7 +665,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                           if (_isSpeechToTextAvailable)
                             IconButton(
                               icon: Icon(
-                                _isListening ? Icons.mic_off : Icons.mic,
+                                _isListening ? Icons.mic_off : Icons.mic, color: MyColors.primary100
                               ),
                               onPressed: _toggleListening,
                             ),
