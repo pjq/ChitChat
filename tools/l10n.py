@@ -10,7 +10,7 @@ import os
 # Top 10 languages by number of speakers
 languages = [
     ("zh", "Chinese"),
-    ("zh_TW", "Traditional Chinese"),
+    ("zh_Hant", "Traditional Chinese"),
     ("vi", "Vietnam"),
     ("ja", "Japanese"),
     ("ko", "Korean"),
