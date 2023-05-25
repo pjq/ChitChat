@@ -36,20 +36,38 @@ class _PromptListScreenState extends State<PromptListScreen> {
   void _addDefaultPrompt() {
     List<Prompt> allPrompts = widget.promptStorage.loadPrompts();
     if (allPrompts.isEmpty) {
-      //add the default prompts
-      Prompt newPrompt = Prompt(
-        id: "-1",
-        title: loc.default_prompt_category,
-        content: loc.you_are_my_assistant,
-        category: loc.default_prompt_category,
-        selected: true,
-      );
-
-      widget.promptStorage.savePrompts(_prompts);
 
       setState(() {
+        //init the predefined prompts
+        Prompt newPrompt = Prompt(
+          id: DateTime.now().toIso8601String(),
+          title: loc.default_prompt_category,
+          content: loc.you_are_my_assistant,
+          category: loc.default_prompt_category,
+          selected: true,
+        );
+        _prompts.add(newPrompt);
+
+        newPrompt = Prompt(
+          id: DateTime.now().toIso8601String(),
+          title: loc.translation_review_title,
+          content: Constants.smart_string_review_prompt,
+          category: loc.default_prompt_category,
+          selected: false,
+        );
+        _prompts.add(newPrompt);
+
+        newPrompt = Prompt(
+          id: DateTime.now().toIso8601String(),
+          title: loc.word_class_engineer_title,
+          content:  Constants.word_class_engineer_prompt,
+          category: loc.default_prompt_category,
+          selected: false,
+        );
         _prompts.add(newPrompt);
       });
+
+      widget.promptStorage.savePrompts(_prompts);
     }
   }
 
