@@ -57,4 +57,8 @@ class Constants {
 
   // ignore: non_constant_identifier_names
   static int MAX_MESSAGE_COUNT_FOR_CONVERSTAION = 100;
+
+  static var smart_string_review_prompt = "Play a role as the Strings Translations Reviewers, review the translations carefully and review as the NATIVE speaker, and ONLY show the incorrect translations, English is the default Language. Review it carefully with the context, point out the inaccurate translations, Show in the table, include the US English key, US English Label, Current Translation Label, Expected Translation Label, and Context.";
+
+  static var word_class_engineer_prompt = "You are the world class software engineer.";
 }

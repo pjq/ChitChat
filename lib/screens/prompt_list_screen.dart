@@ -1,6 +1,9 @@
 
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:math';
+
+import 'package:chitchat/models/colors.dart';
 import 'package:chitchat/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/models/prompt.dart';
@@ -32,28 +35,50 @@ class _PromptListScreenState extends State<PromptListScreen> {
     _prompts = _prompts.addAllT(widget.promptStorage.loadPrompts());
   }
 
+  String _generatePromptId() {
+   return  (DateTime.now().millisecondsSinceEpoch+ Random().nextInt(999)).toString();
+  }
+
   void _addDefaultPrompt() {
     List<Prompt> allPrompts = widget.promptStorage.loadPrompts();
     if (allPrompts.isEmpty) {
-      //add the default prompts
-      Prompt newPrompt = Prompt(
-        id: "-1",
-        title: loc.default_prompt_category,
-        content: loc.you_are_my_assistant,
-        category: loc.default_prompt_category,
-        selected: true,
-      );
-
-      widget.promptStorage.savePrompts(_prompts);
 
       setState(() {
+        //init the predefined prompts
+        Prompt newPrompt = Prompt(
+          id: _generatePromptId(),
+          title: loc.default_prompt_category,
+          content: loc.you_are_my_assistant,
+          category: loc.default_prompt_category,
+          selected: true,
+        );
+        _prompts.add(newPrompt);
+
+        newPrompt = Prompt(
+          id: _generatePromptId(),
+          title: loc.translation_review_title,
+          content: Constants.smart_string_review_prompt,
+          category: loc.default_prompt_category,
+          selected: false,
+        );
+        _prompts.add(newPrompt);
+
+        newPrompt = Prompt(
+          id: _generatePromptId(),
+          title: loc.word_class_engineer_title,
+          content:  Constants.word_class_engineer_prompt,
+          category: loc.default_prompt_category,
+          selected: false,
+        );
         _prompts.add(newPrompt);
       });
+
+      widget.promptStorage.savePrompts(_prompts);
     }
   }
 
   void _addPrompt() {
-    String newId = DateTime.now().toIso8601String();
+    String newId = _generatePromptId();
     Prompt newPrompt = Prompt(
       id: newId,
       title: loc.prompt_number((_prompts.length + 1).toString()),
@@ -65,7 +90,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
     // widget.promptStorage.savePrompts(_prompts);
     showDialog<Prompt>(
       context: context,
-      builder: (context) => _editPromptDialog(newPrompt),
+      builder: (context) => _editPromptDialog(newPrompt, true),
     );
     // _editPromptDialog(newPrompt);
   }
@@ -75,6 +100,18 @@ class _PromptListScreenState extends State<PromptListScreen> {
       _prompts[index] = updatedPrompt;
       widget.promptStorage.savePrompts(_prompts);
     });
+  }
+
+  void _onSelect(Prompt selected){
+    widget.promptStorage.selectPrompt(_prompts,selected.id);
+    setState(() {
+      selected.selected = true;
+    });
+    widget.onSelectedPrompt(selected);
+    if(!Utils.isBigScreen(context)){
+      //if it's phone then need to pop
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -90,18 +127,13 @@ class _PromptListScreenState extends State<PromptListScreen> {
         itemCount: _prompts.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(_prompts[index].title),
-            tileColor: _prompts[index].selected ? Colors.green[100] : null,
+            title: Text(_prompts[index].title, maxLines: 1,),
+            isThreeLine: true,
+            textColor: MyColors.text100,
+            subtitle: Text(_prompts[index].content, maxLines: 2,),
+            tileColor: _prompts[index].selected ? MyColors.accent100 : MyColors.primary300,
             onTap: () {
-              widget.promptStorage.selectPrompt(_prompts, _prompts[index].id);
-              setState(() {
-                _prompts[index].selected = true;
-              });
-              widget.onSelectedPrompt(_prompts[index]);
-              if(!Utils.isBigScreen()){
-                //if it's phone then need to pop
-                Navigator.pop(context);
-              }
+              _onSelect(_prompts[index]);
             },
               onLongPress: () async {
                 showModalBottomSheet(
@@ -109,13 +141,13 @@ class _PromptListScreenState extends State<PromptListScreen> {
                   builder: (context) => Wrap(
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.edit),
+                        leading: const Icon(Icons.edit, color:MyColors.primary100),
                         title: Text(loc.edit_prompt),
                         onTap: () {
                           Navigator.pop(context);
                           final result = showDialog<Prompt>(
                             context: context,
-                            builder: (context) => _editPromptDialog(_prompts[index]),
+                            builder: (context) => _editPromptDialog(_prompts[index], false),
                           );
                           result.then((prompt) {
                             if (prompt != null) {
@@ -125,7 +157,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
                         },
                       ),
                       ListTile(
-                        leading: const Icon(Icons.delete),
+                        leading: const Icon(Icons.delete, color:MyColors.primary100),
                         title: Text(loc.delete),
                         onTap: () {
                           Navigator.pop(context);
@@ -146,32 +178,39 @@ class _PromptListScreenState extends State<PromptListScreen> {
     );
   }
 
-  Widget _editPromptDialog(Prompt currentPrompt) {
+  Widget _editPromptDialog(Prompt currentPrompt, bool newAdd) {
     final TextEditingController titleController =
-        TextEditingController(text: currentPrompt.title);
+    TextEditingController(text: currentPrompt.title);
     final TextEditingController contentController =
-        TextEditingController(text: currentPrompt.content);
+    TextEditingController(text: currentPrompt.content);
     final TextEditingController categoryController =
-        TextEditingController(text: currentPrompt.category);
+    TextEditingController(text: currentPrompt.category);
 
     return AlertDialog(
       title: Text(loc.edit_prompt),
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: loc.title),
-            ),
-            TextField(
-              controller: contentController,
-              decoration: InputDecoration(labelText: loc.content),
-            ),
-            // TextField(
-            //   controller: _categoryController,
-            //   decoration: InputDecoration(labelText: loc.category),
-            // ),
-          ],
+      contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
+      content: SizedBox(
+        height: Utils.isBigScreen(context)? 480.0: null, // Set this property to a larger value
+        width: Utils.isBigScreen(context)? 640.0: null, // Set this property to a larger value
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: loc.title),
+              ),
+              TextField(
+                controller: contentController,
+                maxLines: null, // Set this property to null or a higher number
+                minLines: Utils.isBigScreen(context)?20:2,
+                decoration: InputDecoration(labelText: loc.content),
+              ),
+              // TextField(
+              //   controller: _categoryController,
+              //   decoration: InputDecoration(labelText: loc.category),
+              // ),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -189,8 +228,15 @@ class _PromptListScreenState extends State<PromptListScreen> {
               category: categoryController.text,
               selected: currentPrompt.selected,
             );
+
             _updatePrompt(updatedPrompt);
             Navigator.pop(context);
+
+            //if add new prompt, set to selected default.
+            if (newAdd) {
+              updatedPrompt.selected = true;
+              _onSelect(updatedPrompt);
+            }
           },
           child: Text(loc.save),
         ),

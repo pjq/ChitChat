@@ -16,13 +16,17 @@ class ChatScreenWithPrompt extends StatefulWidget {
 class _ChatScreenWithPromptState extends State<ChatScreenWithPrompt> {
   late AppLocalizations loc;
   late Settings? settings;
-  late ChatHistory? chatHistory;
+  late ChatHistory? chatHistory = null;
   late PromptStorage? promptStorage;
   final GlobalKey<ChatScreenState> chatScreenKey = GlobalKey<ChatScreenState>();
 
   @override
   void initState() {
     super.initState();
+
+    settings = null;
+    chatHistory = null;
+    promptStorage = null;
 
     Future.delayed(Duration.zero, () async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,9 +41,6 @@ class _ChatScreenWithPromptState extends State<ChatScreenWithPrompt> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Chat Screen With Prompt'),
-      // ),
       body: settings == null || chatHistory == null || promptStorage == null
           ? Center(child: CircularProgressIndicator())
           : Row(

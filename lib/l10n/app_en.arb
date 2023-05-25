@@ -11,6 +11,8 @@
     "save": "Save",
     "about": "About the Application",
     "you_are_my_assistant": "You are my personal assistant",
+    "translation_review_title": "Translation Review Expert",
+    "word_class_engineer_title": "World Class Engineer",
     "prompt_number": "Prompt {number}",
       "default_prompt_category": "Default",
   "assistant": "Assistant",

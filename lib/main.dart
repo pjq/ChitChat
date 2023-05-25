@@ -30,14 +30,14 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
         fontFamily:
         Constants.fontFamilies.join(', '), // Use the new font families
       ),
       initialRoute: '/',
       routes: {
         '/': (context) {
-          if (Utils.isBigScreen()) {
+          if (Utils.isBigScreen(context)) {
             return ChatScreenWithPrompt();
           } else {
             return ChatScreen(settings: settings);

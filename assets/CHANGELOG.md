@@ -1,3 +1,5 @@
+## May 25, 2023
+- Update the theme to purple
 ## May 19, 2023
 - Support delete prompt item.
 - Move the PromptListScreen to the LeftPanel of ChatScreen

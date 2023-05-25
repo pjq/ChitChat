@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:chitchat/models/colors.dart';
 import 'package:chitchat/utils/log_utils.dart';
 import 'package:chitchat/models/global_data.dart';
 import 'package:chitchat/models/prompt.dart';
@@ -67,6 +68,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   final StreamController<ChatMessage> _messageController =
       StreamController<ChatMessage>.broadcast();
 
+  final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -84,6 +87,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
               _messages.last, currentPrompt.id);
           _speak(_messages.last.content);
         } else {
+          if (_messages.last.content.startsWith("...")) {
+            _messages.last.content = "";
+          }
+
           _messages.last.content += data.content;
           _listViewScrollToBottom();
         }
@@ -321,6 +328,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     super.dispose();
     _streamSubscription?.cancel();
     _messageController.close();
+    _focusNode.dispose();
   }
 
   @override
@@ -428,7 +436,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     if (Constants.useStream) {
       //add as a placeholder for the stream message.
       final messageSend =
-          ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: "");
+          ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: "...");
       _messages.add(messageSend);
     }
 
@@ -487,13 +495,16 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   // Add a new method to switch to a selected prompt channel.
   void switchToPromptChannel(Prompt promptChannel) {
     currentPrompt = promptChannel;
+    LogUtils.info("currentPrompt: $currentPrompt");
     setState(() {
       appTitle = "$defaultAppTitle(${currentPrompt.title})";
       _messages.clear();
-      _messages.addAll(_history!.getMessagesForPromptChannel(currentPrompt.id));
+      if (null != _history) {
+        _messages
+            .addAll(_history!.getMessagesForPromptChannel(currentPrompt.id));
+      }
       _listViewScrollToBottom();
       LogUtils.info("history size: ${_messages.length}");
-      LogUtils.info("currentPrompt: $currentPrompt");
     });
   }
 
@@ -526,7 +537,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: !Utils.isBigScreen()? IconButton(
+          leading: !Utils.isBigScreen(context)? IconButton(
             icon: const Icon(Icons.list),
             onPressed: () async {
               await Navigator.push(
@@ -570,22 +581,23 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
               return Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-                      // separatorBuilder: (BuildContext context, int index) =>
-                      //     Divider(thickness: 1.0,color: Colors.blueAccent ,),
-                      controller: _chatListController,
-                      itemCount: _messages.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final ChatMessage message = _messages[index];
-                        return ChatMessageWidgetMarkdown(
-                          message: message,
-                          chatService: this,
-                        );
-                      },
+                    child: Container(
+                      color: MyColors.bg100, // Set the background color here
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                        controller: _chatListController,
+                        itemCount: _messages.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final ChatMessage message = _messages[index];
+                          return ChatMessageWidgetMarkdown(
+                            message: message,
+                            chatService: this,
+                          );
+                        },
+                      ),
                     ),
                   ),
+
                   BottomAppBar(
                     child: Container(
                       // height: 60,
@@ -594,39 +606,58 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                       child: Row(
                         children: [
                           Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              decoration: InputDecoration(
-                                hintText: AppLocalizations.of(context)!
-                                    .type_a_message,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide.none,
-                                ),
-                                filled: true,
-                                fillColor: Colors.grey[200],
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 10,
-                              minLines: 1,
-                              // Allows for multiline input
-                              textInputAction: TextInputAction.newline,
-                              // Allows for newline on "Enter"
-                              onSubmitted: (value) {
-                                if (value.trim().isNotEmpty) {
-                                  _sendMessage(value);
-                                }
+                            child: RawKeyboardListener(
+                              focusNode: _focusNode,
+                              onKey: (event) {
+                                print("event: $event isShiftPressed: ${event.isShiftPressed}");
+                                // if (event is RawKeyEventDataMacOs &&
+                                  if(event.isKeyPressed(LogicalKeyboardKey.enter) &&
+                                    event.isShiftPressed) {
+                                  _controller.value = _controller.value.copyWith(
+                                    text: _controller.value.text + "\n",
+                                    selection: TextSelection.collapsed(offset: _controller.value.selection.end + 1),
+                                  );
+                                  print("new line");
+                                  // return false;
+                                } else if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+                                    if (_controller.text.trim().isNotEmpty) {
+                                      _sendMessage(_controller.text);
+                                    }
+                                  }
+                                // return true;
                               },
+                              child: TextField(
+                                controller: _controller,
+                                decoration: InputDecoration(
+                                  hintText: AppLocalizations.of(context)!.type_a_message,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                ),
+                                keyboardType: TextInputType.multiline,
+                                maxLines: Utils.isBigScreen(context) ? 20 : 10,
+                                minLines: 1,
+                                // textInputAction: TextInputAction.send,
+                                // onSubmitted: (value) {
+                                //   if (value.trim().isNotEmpty) {
+                                //     _sendMessage(value);
+                                //   }
+                                // },
+                              ),
                             ),
                           ),
+
                           const SizedBox(width: 10),
                           IconButton(
                             icon: Icon(Icons.send,
-                                color: _isLoading ? Colors.grey : null),
+                                color: _isLoading ? Colors.grey : MyColors.primary100),
                             onPressed: () => _isLoading
                                 ? null
                                 : _sendMessage(_controller.text),
@@ -634,7 +665,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                           if (_isSpeechToTextAvailable)
                             IconButton(
                               icon: Icon(
-                                _isListening ? Icons.mic_off : Icons.mic,
+                                _isListening ? Icons.mic_off : Icons.mic, color: MyColors.primary100
                               ),
                               onPressed: _toggleListening,
                             ),
@@ -669,7 +700,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: const Icon(Icons.content_copy),
+                leading: const Icon(Icons.content_copy, color: MyColors.primary100),
                 title: Text(loc.copy),
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: message.content));
@@ -678,7 +709,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.share),
+                leading: const Icon(Icons.share, color: MyColors.primary100),
                 title: Text(loc.share),
                 onTap: () {
                   Share.share(message.content);
@@ -686,7 +717,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.translate),
+                leading: const Icon(Icons.translate, color: MyColors.primary100),
                 title: Text(loc.translation),
                 onTap: () {
                   String prompt = Constants.translationPrompt
@@ -704,7 +735,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.book),
+                leading: const Icon(Icons.book, color: MyColors.primary100),
                 title: Text(loc.rephrase),
                 onTap: () {
                   translate(message.content, Constants.rephrasePrompt)
@@ -719,7 +750,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.remove),
+                leading: const Icon(Icons.remove, color: MyColors.primary100),
                 title: Text(loc.delete),
                 onTap: () {
                   delete(message);
@@ -747,36 +778,53 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       );
     });
   }
-}
 
+}
 class ChatMessageWidgetMarkdown extends StatelessWidget {
   final ChatMessage message;
   final IChatService chatService;
 
-  const ChatMessageWidgetMarkdown(
-      {super.key, required this.message, required this.chatService});
+  const ChatMessageWidgetMarkdown({
+    Key? key,
+    required this.message,
+    required this.chatService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    MarkdownStyleSheet markdownStyleSheet =
-        MarkdownStyleSheet.fromTheme(themeData).copyWith(
+    final themeData = Theme.of(context);
+    final markdownStyleSheet = MarkdownStyleSheet.fromTheme(themeData).copyWith(
       p: themeData.textTheme.bodyMedium!.copyWith(fontSize: 16),
     );
 
+    Widget messageIcon;
+    if (this.message.isUser) {
+      messageIcon = Padding(
+        padding: const EdgeInsets.only(right: 8.0),
+        child: Icon(Icons.person, color: MyColors.primary100),
+      );
+    } else {
+      messageIcon = const Padding(
+        padding: EdgeInsets.only(right: 8.0),
+        child: Icon(Icons.cloud, color: MyColors.primary100),
+      );
+    }
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
       child: Row(
-        mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: message.isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          messageIcon,
           Expanded(
             child: Container(
               padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 1.0),
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               decoration: BoxDecoration(
-                color: message.isUser ? Colors.blue[200] : Colors.white,
+                color: message.isUser ? MyColors.bg100 : MyColors.bg200,
                 borderRadius: BorderRadius.circular(4.0),
                 boxShadow: [
                   BoxShadow(
@@ -817,6 +865,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     );
   }
 }
+
 
 abstract class IChatService {
   Future<String> translate(String content, String translationPrompt);
