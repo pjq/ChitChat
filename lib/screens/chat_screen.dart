@@ -87,6 +87,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
               _messages.last, currentPrompt.id);
           _speak(_messages.last.content);
         } else {
+          if (_messages.last.content.startsWith("...")) {
+            _messages.last.content = "";
+          }
+
           _messages.last.content += data.content;
           _listViewScrollToBottom();
         }
@@ -432,7 +436,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     if (Constants.useStream) {
       //add as a placeholder for the stream message.
       final messageSend =
-          ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: "");
+          ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: "...");
       _messages.add(messageSend);
     }
 
@@ -635,7 +639,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                   ),
                                 ),
                                 keyboardType: TextInputType.multiline,
-                                maxLines: 10,
+                                maxLines: Utils.isBigScreen() ? 20 : 10,
                                 minLines: 1,
                                 // textInputAction: TextInputAction.send,
                                 // onSubmitted: (value) {
@@ -693,7 +697,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: const Icon(Icons.content_copy),
+                leading: const Icon(Icons.content_copy, color: MyColors.primary100),
                 title: Text(loc.copy),
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: message.content));
@@ -702,7 +706,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.share),
+                leading: const Icon(Icons.share, color: MyColors.primary100),
                 title: Text(loc.share),
                 onTap: () {
                   Share.share(message.content);
@@ -710,7 +714,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.translate),
+                leading: const Icon(Icons.translate, color: MyColors.primary100),
                 title: Text(loc.translation),
                 onTap: () {
                   String prompt = Constants.translationPrompt
@@ -728,7 +732,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.book),
+                leading: const Icon(Icons.book, color: MyColors.primary100),
                 title: Text(loc.rephrase),
                 onTap: () {
                   translate(message.content, Constants.rephrasePrompt)
@@ -743,7 +747,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.remove),
+                leading: const Icon(Icons.remove, color: MyColors.primary100),
                 title: Text(loc.delete),
                 onTap: () {
                   delete(message);
@@ -794,17 +798,17 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     if (this.message.isUser) {
       messageIcon = Padding(
         padding: const EdgeInsets.only(right: 8.0),
-        child: Icon(Icons.person, color: MyColors.primary200),
+        child: Icon(Icons.person, color: MyColors.primary100),
       );
     } else {
       messageIcon = const Padding(
         padding: EdgeInsets.only(right: 8.0),
-        child: Icon(Icons.cloud, color: MyColors.primary200),
+        child: Icon(Icons.cloud, color: MyColors.primary100),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
       child: Row(
         mainAxisAlignment: message.isUser
             ? MainAxisAlignment.end

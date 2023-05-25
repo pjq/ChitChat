@@ -66,7 +66,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
     // widget.promptStorage.savePrompts(_prompts);
     showDialog<Prompt>(
       context: context,
-      builder: (context) => _editPromptDialog(newPrompt),
+      builder: (context) => _editPromptDialog(newPrompt, true),
     );
     // _editPromptDialog(newPrompt);
   }
@@ -76,6 +76,18 @@ class _PromptListScreenState extends State<PromptListScreen> {
       _prompts[index] = updatedPrompt;
       widget.promptStorage.savePrompts(_prompts);
     });
+  }
+
+  void _onSelect(Prompt selected){
+    widget.promptStorage.selectPrompt(_prompts,selected.id);
+    setState(() {
+      selected.selected = true;
+    });
+    widget.onSelectedPrompt(selected);
+    if(!Utils.isBigScreen()){
+      //if it's phone then need to pop
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -97,15 +109,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
             subtitle: Text(_prompts[index].content, maxLines: 2,),
             tileColor: _prompts[index].selected ? MyColors.accent100 : MyColors.primary300,
             onTap: () {
-              widget.promptStorage.selectPrompt(_prompts, _prompts[index].id);
-              setState(() {
-                _prompts[index].selected = true;
-              });
-              widget.onSelectedPrompt(_prompts[index]);
-              if(!Utils.isBigScreen()){
-                //if it's phone then need to pop
-                Navigator.pop(context);
-              }
+              _onSelect(_prompts[index]);
             },
               onLongPress: () async {
                 showModalBottomSheet(
@@ -119,7 +123,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
                           Navigator.pop(context);
                           final result = showDialog<Prompt>(
                             context: context,
-                            builder: (context) => _editPromptDialog(_prompts[index]),
+                            builder: (context) => _editPromptDialog(_prompts[index], false),
                           );
                           result.then((prompt) {
                             if (prompt != null) {
@@ -150,7 +154,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
     );
   }
 
-  Widget _editPromptDialog(Prompt currentPrompt) {
+  Widget _editPromptDialog(Prompt currentPrompt, bool newAdd) {
     final TextEditingController titleController =
     TextEditingController(text: currentPrompt.title);
     final TextEditingController contentController =
@@ -200,8 +204,15 @@ class _PromptListScreenState extends State<PromptListScreen> {
               category: categoryController.text,
               selected: currentPrompt.selected,
             );
+
             _updatePrompt(updatedPrompt);
             Navigator.pop(context);
+
+            //if add new prompt, set to selected default.
+            if (newAdd) {
+              updatedPrompt.selected = true;
+              _onSelect(updatedPrompt);
+            }
           },
           child: Text(loc.save),
         ),
