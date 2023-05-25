@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) {
-          if (Utils.isBigScreen()) {
+          if (Utils.isBigScreen(context)) {
             return ChatScreenWithPrompt();
           } else {
             return ChatScreen(settings: settings);

@@ -102,7 +102,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
       selected.selected = true;
     });
     widget.onSelectedPrompt(selected);
-    if(!Utils.isBigScreen()){
+    if(!Utils.isBigScreen(context)){
       //if it's phone then need to pop
       Navigator.pop(context);
     }
@@ -184,8 +184,8 @@ class _PromptListScreenState extends State<PromptListScreen> {
       title: Text(loc.edit_prompt),
       contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
       content: SizedBox(
-        height: Utils.isBigScreen()? 480.0: null, // Set this property to a larger value
-        width: Utils.isBigScreen()? 640.0: null, // Set this property to a larger value
+        height: Utils.isBigScreen(context)? 480.0: null, // Set this property to a larger value
+        width: Utils.isBigScreen(context)? 640.0: null, // Set this property to a larger value
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -196,7 +196,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
               TextField(
                 controller: contentController,
                 maxLines: null, // Set this property to null or a higher number
-                minLines: Utils.isBigScreen()?20:2,
+                minLines: Utils.isBigScreen(context)?20:2,
                 decoration: InputDecoration(labelText: loc.content),
               ),
               // TextField(

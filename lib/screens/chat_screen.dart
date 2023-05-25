@@ -534,7 +534,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: !Utils.isBigScreen()? IconButton(
+          leading: !Utils.isBigScreen(context)? IconButton(
             icon: const Icon(Icons.list),
             onPressed: () async {
               await Navigator.push(
@@ -639,7 +639,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                   ),
                                 ),
                                 keyboardType: TextInputType.multiline,
-                                maxLines: Utils.isBigScreen() ? 20 : 10,
+                                maxLines: Utils.isBigScreen(context) ? 20 : 10,
                                 minLines: 1,
                                 // textInputAction: TextInputAction.send,
                                 // onSubmitted: (value) {
