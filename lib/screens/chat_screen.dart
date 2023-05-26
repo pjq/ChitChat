@@ -609,22 +609,26 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                             child: RawKeyboardListener(
                               focusNode: _focusNode,
                               onKey: (event) {
-                                print("event: $event isShiftPressed: ${event.isShiftPressed}");
-                                // if (event is RawKeyEventDataMacOs &&
-                                  if(event.isKeyPressed(LogicalKeyboardKey.enter) &&
-                                    event.isShiftPressed) {
-                                  _controller.value = _controller.value.copyWith(
+                                final isShiftPressed = event.isShiftPressed;
+                                final isEnterKeyPressed = event.logicalKey ==
+                                    LogicalKeyboardKey.enter;
+                                print("isShiftPressed $isEnterKeyPressed, isEnterKeyPressed $isEnterKeyPressed event:$event");
+
+                                if (isEnterKeyPressed && isShiftPressed) {
+                                  _controller.value =
+                                      _controller.value.copyWith(
                                     text: _controller.value.text + "\n",
-                                    selection: TextSelection.collapsed(offset: _controller.value.selection.end + 1),
+                                    selection: TextSelection.collapsed(
+                                        offset:
+                                            _controller.value.selection.end +
+                                                1),
                                   );
                                   print("new line");
-                                  // return false;
-                                } else if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
-                                    if (_controller.text.trim().isNotEmpty) {
-                                      _sendMessage(_controller.text);
-                                    }
+                                } else if (isEnterKeyPressed) {
+                                  if (_controller.text.trim().isNotEmpty) {
+                                    _sendMessage(_controller.text);
                                   }
-                                // return true;
+                                }
                               },
                               child: TextField(
                                 controller: _controller,
@@ -644,12 +648,12 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                 keyboardType: TextInputType.multiline,
                                 maxLines: Utils.isBigScreen(context) ? 20 : 10,
                                 minLines: 1,
-                                // textInputAction: TextInputAction.send,
-                                // onSubmitted: (value) {
-                                //   if (value.trim().isNotEmpty) {
-                                //     _sendMessage(value);
-                                //   }
-                                // },
+                                textInputAction: TextInputAction.send,
+                                onSubmitted: (value) {
+                                  if (value.trim().isNotEmpty) {
+                                    _sendMessage(value);
+                                  }
+                                },
                               ),
                             ),
                           ),
