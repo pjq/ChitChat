@@ -25,4 +25,16 @@ class Utils {
 
     return false;
   }
+
+  static bool isMobile(BuildContext context) {
+    if (kIsWeb) {
+      return false;
+    }
+
+    if (Platform.isIOS || Platform.isAndroid) {
+      return true;
+    }
+
+    return false;
+  }
 }

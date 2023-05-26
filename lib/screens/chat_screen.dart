@@ -86,6 +86,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
           _history?.addMessageWithPromptChannel(
               _messages.last, currentPrompt.id);
           _speak(_messages.last.content);
+          // receive message finished
+          _isLoading = false;
         } else {
           if (_messages.last.content.startsWith("...")) {
             _messages.last.content = "";
@@ -268,6 +270,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _toggleListening() async {
+    if (_isLoading) {
+      return;
+    }
+
     flutterTts.stop();
     Timer? listeningTimeout;
 
@@ -363,7 +369,9 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     );
 
     setState(() {
-      _isLoading = false;
+      if (!Constants.useStream) {
+        _isLoading = false;
+      }
     });
 
     return completion;
@@ -405,6 +413,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _sendMessage(String text) async {
+    if (_isLoading) {
+      return;
+    }
+
     if (_settings!.openaiApiKey.isEmpty) {
       showDialog(
         context: context,
@@ -450,14 +462,15 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       final completion = await _callAPI(messageSend.content);
 
       setState(() {
-        _isLoading = false;
         final messageReceived =
             ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: completion);
         if (!Constants.useStream) {
+          _isLoading = false;
           _messages.add(messageReceived);
           _history?.addMessageWithPromptChannel(messageSend, currentPrompt.id);
           _history?.addMessageWithPromptChannel(
               messageReceived, currentPrompt.id);
+        } else {
         }
       });
 
@@ -617,7 +630,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                 if (isEnterKeyPressed && isShiftPressed) {
                                   _controller.value =
                                       _controller.value.copyWith(
-                                    text: _controller.value.text + "\n",
+                                    text: _controller.value.text + '\n',
                                     selection: TextSelection.collapsed(
                                         offset:
                                             _controller.value.selection.end +
@@ -648,10 +661,12 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                 keyboardType: TextInputType.multiline,
                                 maxLines: Utils.isBigScreen(context) ? 20 : 10,
                                 minLines: 1,
-                                textInputAction: TextInputAction.send,
+                                textInputAction: Utils.isMobile(context)? TextInputAction.send: null,
                                 onSubmitted: (value) {
-                                  if (value.trim().isNotEmpty) {
-                                    _sendMessage(value);
+                                  if (Utils.isMobile(context)) {
+                                    if (value.trim().isNotEmpty) {
+                                      _sendMessage(value);
+                                    }
                                   }
                                 },
                               ),
