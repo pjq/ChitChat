@@ -1,3 +1,6 @@
+## May 26, 2023
+- Press Enter to send message 
+- Press Shift + Enter to input multiple lines on Mac 
 ## May 25, 2023
 - Update the theme to purple
 ## May 19, 2023
