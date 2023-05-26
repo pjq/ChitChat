@@ -27,6 +27,7 @@ import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:chitchat/utils/Utils.dart';
+import 'dart:collection';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, Settings? settings}) : super(key: key);
@@ -70,6 +71,11 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
 
   final FocusNode _focusNode = FocusNode();
 
+  Queue<String> _messageQueue = Queue();
+  bool _isSpeaking = false;
+  static const int wordThreshold = 2;
+  StringBuffer _wordBuffer = StringBuffer();
+
   @override
   void initState() {
     super.initState();
@@ -78,24 +84,25 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
 
     _streamSubscription = _messageController.stream.listen((data) {
       setState(() {
+        _processData(data);
         // LogUtils.info("recv: ${_isLoading}, ${data.content}");
         //save to chat history
-        if (data.isStop) {
-          _history?.addMessageWithPromptChannel(
-              _messages.elementAt(_messages.length - 2), currentPrompt.id);
-          _history?.addMessageWithPromptChannel(
-              _messages.last, currentPrompt.id);
-          _speak(_messages.last.content);
-          // receive message finished
-          _isLoading = false;
-        } else {
-          if (_messages.last.content.startsWith("...")) {
-            _messages.last.content = "";
-          }
-
-          _messages.last.content += data.content;
-          _listViewScrollToBottom();
-        }
+        // if (data.isStop) {
+        //   _history?.addMessageWithPromptChannel(
+        //       _messages.elementAt(_messages.length - 2), currentPrompt.id);
+        //   _history?.addMessageWithPromptChannel(
+        //       _messages.last, currentPrompt.id);
+        //   _speak(_messages.last.content);
+        //   // receive message finished
+        //   _isLoading = false;
+        // } else {
+        //   if (_messages.last.content.startsWith("...")) {
+        //     _messages.last.content = "";
+        //   }
+        //
+        //   _messages.last.content += data.content;
+        //   _listViewScrollToBottom();
+        // }
       });
     });
 
@@ -122,6 +129,63 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     _chatListController = ScrollController();
     _chatListController.addListener(_onScrollStart);
     _chatListController.addListener(_onScrollEnd);
+  }
+
+
+  void _processData(dynamic data) {
+    if (data.isStop) {
+      _history?.addMessageWithPromptChannel(
+          _messages.elementAt(_messages.length - 2), currentPrompt.id);
+      _history?.addMessageWithPromptChannel(
+          _messages.last, currentPrompt.id);
+      // _speak(_messages.last.content);
+      // receive message finished
+      _isLoading = false;
+
+      // Process the remaining words in the buffer
+      if (_wordBuffer.isNotEmpty) {
+        _messageQueue.add(_wordBuffer.toString());
+        _wordBuffer.clear();
+
+        if (!_isSpeaking) {
+          _processQueue();
+        }
+      }
+
+    } else {
+      if (_messages.last.content.startsWith("...")) {
+        _messages.last.content = "";
+        _messageQueue.clear();
+      }
+
+      _messages.last.content += data.content;
+
+      // Call _processQueue without blocking the UI
+      if (true == _settings?.ttsEnable) {
+        _wordBuffer.write(data.content);
+
+        // If the number of words in the buffer reaches the threshold
+        if (RegExp(r'(\,|\，|\"|\?|\.|\:|\;|\!|\-|\(|\)|[\u3000-\u303f\u3002\uff1b\uff0c\uff1a\uff1f])').allMatches(_wordBuffer.toString()).length >= wordThreshold) {
+          // Enqueue the words and clear the buffer
+          _messageQueue.add(_wordBuffer.toString());
+          _wordBuffer.clear();
+
+          // Call _processQueue without blocking the UI
+          if (!_isSpeaking) {
+            _processQueue();
+          }
+        }
+      }
+
+      _listViewScrollToBottom();
+    }
+  }
+
+  void _processQueue() async {
+    while (_messageQueue.isNotEmpty) {
+      String messagePart = _messageQueue.removeFirst();
+      await _speak(messagePart);
+    }
   }
 
   void _onScrollStart() {
@@ -223,6 +287,14 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     GlobalData().ttsLanguages.addAll(ttsLanguages.toSet().toList());
     GlobalData().sttLocaleNames.addAll(sttLocaleNames.toSet().toList());
 
+    flutterTts.setCompletionHandler(() {
+      _isSpeaking = false;
+
+      // Process the remaining queue when the current speech is finished
+      _processQueue();
+    });
+
+
     updateTTSAndSTT();
   }
 
@@ -322,12 +394,21 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     }
   }
 
-  void _speak(String text) async {
+  // void _speak(String text) async {
+  //   if (false == _settings?.ttsEnable) return;
+  //
+  //   LogUtils.debug("speak start");
+  //   await flutterTts.speak(text);
+  // }
+
+  Future<void> _speak(String text) async {
     if (false == _settings?.ttsEnable) return;
 
     LogUtils.debug("speak start");
+    _isSpeaking = true;
     await flutterTts.speak(text);
   }
+
 
   @override
   void dispose() {
