@@ -86,6 +86,20 @@ Or with one command line
 CURRENT_VERSION=1.1.16 && PLATFORM=mac && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM && PLATFORM=android && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM
 ```
 
+#### Build dmg for Mac
+```shell
+flutter build macos --release
+hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release/chitchat.app build/macos/Build/Products/Release/chitchat.dmg
+```
+Then you can get the dmg file in `build/macos/Build/Products/Release/chitchat.dmg`
+
+#### Build apk for Android
+```shell
+flutter build apk  --release
+flutter build appbundle  --release
+```
+Then you can find the apk/aab file in `build/app/outputs/flutter-apk/*.apk,build/app/outputs/bundle/release/*.aab`
+
 ### Generate l10n by Call GPT 3.5 Turbo API
 
 ```shell
