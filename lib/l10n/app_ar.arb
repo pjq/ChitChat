@@ -52,5 +52,6 @@
   "copied_to_clipboard": "تم النسخ إلى الحافظة",
   "code_copied_to_clipboard": "تم نسخ الرمز إلى الحافظة",
   "message_deleted": "تم حذف الرسالة",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "تمكين وضع التدفق"
 }

@@ -27,6 +27,7 @@ class ChatService {
       settings.proxyUrl,
       settings.baseUrl,
       settings.selectedModel,
+      settings.streamModeEnable,
     );
     // final completion = response['choices'][0]['message']['content'];
     LogUtils.info(response);
@@ -45,6 +46,7 @@ class ChatService {
       settings.proxyUrl,
       settings.baseUrl,
       settings.selectedModel,
+      settings.streamModeEnable,
     );
     LogUtils.info(response);
 
@@ -59,6 +61,7 @@ class ChatService {
     String proxy,
     String baseUrl,
       String aiModel,
+      bool useStream,
   ) async {
     LogUtils.info("getCompletion");
 
@@ -79,8 +82,6 @@ class ChatService {
     if (content.isNotEmpty) {
       chatMessages.add({"role": "user", "content": content});
     }
-
-    bool useStream = Constants.useStream;
 
     if (baseUrl.contains("localhost")) {
       // useStream = false;

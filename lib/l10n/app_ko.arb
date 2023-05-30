@@ -52,5 +52,6 @@
   "copied_to_clipboard": "클립보드에 복사되었습니다.",
   "code_copied_to_clipboard": "코드가 클립보드에 복사되었습니다.",
   "message_deleted": "메시지가 삭제되었습니다.",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "스트림 모드 활성화"
 }

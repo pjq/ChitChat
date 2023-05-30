@@ -52,5 +52,6 @@
   "copied_to_clipboard": "Copiato negli Appunti",
   "code_copied_to_clipboard": "Codice copiato negli Appunti",
   "message_deleted": "Messaggio eliminato",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "Abilita la modalità streaming"
 }

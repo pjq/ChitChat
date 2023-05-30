@@ -52,5 +52,6 @@
   "copied_to_clipboard": "已複製到剪貼板",
   "code_copied_to_clipboard": "代碼已複製到剪貼板",
   "message_deleted": "訊息已刪除",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "啟用串流模式"
 }

@@ -52,5 +52,6 @@
   "copied_to_clipboard": "Copiado para a área de transferência",
   "code_copied_to_clipboard": "Código copiado para a área de transferência",
   "message_deleted": "Mensagem excluída",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "Ativar Modo Stream"
 }

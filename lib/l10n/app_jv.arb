@@ -52,5 +52,6 @@
   "copied_to_clipboard": "Salinan wis disalin menyang clipboard",
   "code_copied_to_clipboard": "Kode wis disalin menyang clipboard",
   "message_deleted": "Pesen wis dihapus",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "Aktifkan Mode Aliran"
 }

@@ -51,5 +51,6 @@
   "copied_to_clipboard": "ক্লিপবোর্ডে কপি করা হয়েছে",
   "code_copied_to_clipboard": "কোড ক্লিপবোর্ডে কপি করা হয়েছে",
   "message_deleted": "বার্তা মুছে ফেলা হয়েছে",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "স্ট্রিম মোড সক্ষম করুন"
 }
