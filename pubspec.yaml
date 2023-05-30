@@ -45,7 +45,7 @@ dependencies:
 
   # Added velocity package to make Flutter development easier and more joyful by using this link -
   # https://pub.dev/packages/velocity_x
-  velocity_x: ^3.6.0
+  velocity_x: ^4.1.0
   flutter_markdown: ^0.6.14
   about: ^2.1.1
   share_plus: ^6.3.1
@@ -55,7 +55,7 @@ dependencies:
   flutter_keyboard_visibility: ^5.4.0
   flutter_tts: ^3.6.3
   speech_to_text: ^6.1.1
-  intl: ^0.17.0
+  intl: ^0.18.0
   flutter_localizations: 
     sdk: flutter
   # Add the package_info plugin
