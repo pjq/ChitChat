@@ -18,7 +18,7 @@ class ChatService {
     String translationPrompt,
     Settings settings,
   ) async {
-    apiKey = settings?.openaiApiKey;
+    apiKey = settings.openaiApiKey;
     final response = await getCompletionRaw(
       "",
       translationPrompt,
