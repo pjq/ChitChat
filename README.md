@@ -111,6 +111,11 @@ cd lib/l10n
 python3 ../../tools/l10n.py --file app_en.arb;
 ```
 
+If need to `regenerate` the full translation, please add `--full_translation`, otherwise it will only generate the new strings.
+```shell
+cd lib/l10n
+python3 ../../tools/l10n.py --file app_en.arb --full_translation;
+```
 
 ### Screenshots
 

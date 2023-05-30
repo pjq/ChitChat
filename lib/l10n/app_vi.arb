@@ -51,5 +51,6 @@
   "copied_to_clipboard": "Đã sao chép vào bộ nhớ tạm",
   "code_copied_to_clipboard": "Mã đã được sao chép vào bộ nhớ tạm",
   "message_deleted": "Tin nhắn đã bị xóa",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "Kích hoạt chế độ Stream"
 }

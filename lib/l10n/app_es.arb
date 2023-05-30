@@ -51,5 +51,7 @@
   "copied_to_clipboard": "Copiado al portapapeles",
   "code_copied_to_clipboard": "Código copiado al portapapeles",
   "message_deleted": "Mensaje eliminado",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "@@locale": "es",
+  "enable_stream_mode": "Activar Modo Stream"
 }

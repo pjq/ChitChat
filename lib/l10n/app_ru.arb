@@ -52,5 +52,6 @@
   "copied_to_clipboard": "Скопировано в буфер обмена",
   "code_copied_to_clipboard": "Код скопирован в буфер обмена",
   "message_deleted": "Сообщение удалено",
-  "app_name": "ChitChat"
+  "app_name": "ChitChat",
+  "enable_stream_mode": "Включить режим потока"
 }
