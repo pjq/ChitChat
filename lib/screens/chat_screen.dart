@@ -450,7 +450,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     );
 
     setState(() {
-      if (!Constants.useStream) {
+      if (!_settings!.streamModeEnable) {
         _isLoading = false;
       }
     });
@@ -526,7 +526,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     final messageSend = ChatMessage(role: ChatMessage.ROLE_USER, content: text);
     _messages.add(messageSend);
 
-    if (Constants.useStream) {
+    if (_settings!.streamModeEnable) {
       //add as a placeholder for the stream message.
       final messageSend =
           ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: "...");
@@ -545,7 +545,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       setState(() {
         final messageReceived =
             ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: completion);
-        if (!Constants.useStream) {
+        if (!_settings!.streamModeEnable) {
           _isLoading = false;
           _messages.add(messageReceived);
           _history?.addMessageWithPromptChannel(messageSend, currentPrompt.id);
@@ -558,7 +558,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       _listViewScrollToBottom();
     } catch (e) {
       LogUtils.error(e.toString());
-      if (Constants.useStream) {
+      if (_settings!.streamModeEnable) {
         _messages.removeLast();
       }
       setState(() {

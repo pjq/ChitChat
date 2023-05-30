@@ -42,6 +42,14 @@ class Settings {
     prefs.setBool(Constants.ttsEnableKey, value);
   }
 
+  bool get streamModeEnable =>
+      prefs.getBool(Constants.streamModeEnableKey) ??
+          Constants.defaultStreamModeEnable;
+
+  set streamModeEnable(bool value) {
+    prefs.setBool(Constants.streamModeEnableKey, value);
+  }
+
   // new property for proxy settings
   String get proxyUrl => prefs.getString(Constants.proxyUrlKey) ?? '';
 

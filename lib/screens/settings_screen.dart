@@ -33,6 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late bool _continueConversationEnable;
   late bool _localCacheEnable;
   late bool _ttsEnable;
+  late bool _streamModeEnable;
 
   late String? _ttsSelectedLanguage;
   late LocaleName? _sttSelectedLanguage;
@@ -66,6 +67,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Constants.defaultLocalCacheEnable;
     _ttsEnable = widget.prefs.getBool(Constants.ttsEnableKey) ??
         Constants.defaultTtsEnable;
+    _streamModeEnable = widget.prefs.getBool(Constants.streamModeEnableKey) ??
+        Constants.defaultStreamModeEnable;
 
     _proxyUrlController = TextEditingController(
         text: widget.prefs.getString(Constants.proxyUrlKey));
@@ -110,12 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Constants.continueConversationEnableKey, _continueConversationEnable);
     widget.prefs.setBool(Constants.localCacheEnableKey, _localCacheEnable);
     widget.prefs.setBool(Constants.ttsEnableKey, _ttsEnable);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(loc.settings_saved),
-        duration: const Duration(milliseconds: 1000),
-      ),
-    );
+    widget.prefs.setBool(Constants.streamModeEnableKey, _streamModeEnable);
     widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
     widget.prefs.setString(Constants.baseUrlKey, _baseUrlController.text);
 
@@ -126,6 +124,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       widget.prefs.setString(
           Constants.sttSelectedLanguageKey, _sttSelectedLanguage!.localeId);
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(loc.settings_saved),
+        duration: const Duration(milliseconds: 1000),
+      ),
+    );
 
     if (back) {
       Navigator.pop(context);
@@ -189,6 +194,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: loc.openAIApiKey,
                 passwordField: true,
               ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _baseUrlController, // add text field for baseURL
+                label: loc.openAIBaseUrl,
+              ),
               // const SizedBox(height: 16),
               // _buildTextField(
               //   enable: false,
@@ -207,6 +217,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Text(loc.selectModel),
                   _buildModelDropdown(),
                 ],
+              ),
+              CheckboxListTile(
+                title: Text(loc.enable_stream_mode),
+                value: _streamModeEnable,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                onChanged: (value) {
+                  setState(() {
+                    _streamModeEnable = value!;
+                    _saveSettings(false);
+                  });
+                },
               ),
               // const SizedBox(height: 16),
               CheckboxListTile(
@@ -280,11 +301,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildTextField(
                 controller: _proxyUrlController, // add text field for proxy URL
                 label: loc.proxyUrl,
-              ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                controller: _baseUrlController, // add text field for proxy URL
-                label: loc.openAIBaseUrl,
               ),
               const SizedBox(height: 16),
               ElevatedButton(

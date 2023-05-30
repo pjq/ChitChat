@@ -19,6 +19,7 @@
   "type_a_message": "Type a message",
    "settings": "Settings",
    "settings_saved": "Settings saved",
+    "enable_stream_mode": "Enable Stream Mode",
     "openAIApiKey": "OpenAI API Key",
     "promptString": "Prompt String",
     "temperatureValue": "Temperature Value(0-1.0)",

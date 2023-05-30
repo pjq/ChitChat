@@ -7,6 +7,7 @@ class Constants {
   static const String localCacheEnableKey = 'local_cache_enable';
   static const String ttsEnableKey = 'tts_enable';
   static const String cacheHistoryKey = "chat_history";
+  static const String streamModeEnableKey = 'stream_mode_enable';
 
   static const String ttsSelectedLanguageKey = 'ttsSelectedLanguage';
   static const String sttSelectedLanguageKey = 'sttSelectedLanguage';
@@ -18,6 +19,7 @@ class Constants {
   static const bool defaultContinueConversationEnable = false;
   static const bool defaultLocalCacheEnable = true;
   static const bool defaultTtsEnable= false;
+  static const bool defaultStreamModeEnable= true;
 
   static const List<String> fontFamilies = [
     'Noto Sans',
@@ -46,8 +48,6 @@ class Constants {
 
   //animation duration
   static int scrollDuration = 100;
-
-  static bool useStream = true;
 
   static String cachePromptKey ="prompt_list";
 
