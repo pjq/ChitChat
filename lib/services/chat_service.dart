@@ -140,6 +140,9 @@ class ChatService {
     response.transform(utf8.decoder).listen((event) {
       //{"id":"chatcmpl-6ttclp0wSdVFsT9Usl0yvuwNkvLzJ","object":"chat.completion.chunk","created":1678779879,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":" today"},"index":0,"finish_reason":null}]}
       // LogUtils.info("${event}");
+      //fix the azure openai proxy convert format error, it include: ,"usage":null
+      //data: {"id":"chatcmpl-7M6BzWVFvzBP1l80lRbaysWNUfBvS","object":"chat.completion.chunk","created":1685501375,"model":"gpt-35-turbo","choices":[{"index":0,"finish_reason":null,"delta":{"content":" with"}}],"usage":null}
+      event=event.replaceAll(",\"usage\":null", "");
       event = lastTruncatedMessage + event;
       List<String> itemList = event.split("]}");
       lastTruncatedMessage = itemList.last;
