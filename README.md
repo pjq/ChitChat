@@ -119,10 +119,10 @@ python3 ../../tools/l10n.py --file app_en.arb --full_translation;
 
 ### Screenshots
 
-<img src="screenshots/all_in.png" alt="Mac/iOS/Android Screenshot" style="width:50%;">
-<img src="screenshots/chat.png" alt="Screenshot of Chat Screen" style="width:50%;">
-<img src="screenshots/settings.png" alt="Screenshot of Settings Screen" style="width:50%;">
-<img src="screenshots/actions.png" alt="Screenshot of Actions Menu" style="width:50%;">
+<img src="website/screenshots/all_in.png" alt="Mac/iOS/Android Screenshot" style="width:50%;">
+<img src="website/screenshots/chat.png" alt="Screenshot of Chat Screen" style="width:50%;">
+<img src="website/screenshots/settings.png" alt="Screenshot of Settings Screen" style="width:50%;">
+<img src="website/screenshots/actions.png" alt="Screenshot of Actions Menu" style="width:50%;">
 
 ### Getting Started
 

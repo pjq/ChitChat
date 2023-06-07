@@ -8,14 +8,27 @@
 body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
-  color: #333;
+  color: #4a4a4a; /* text100 */
+  background-color: #f5f3f7; /* bg100 */
 }
 
 /* Header and navigation */
-header {
-  background: #007BFF;
+headerX {
+  background: #8b5fbf; /* primary100 */
   padding: 1rem;
 }
+
+
+header {
+  background: #8b5fbf;
+  padding: 1rem;
+  position: fixed; /* Make the header fixed position */
+  top: 0; /* Align the header with the top of the page */
+  left: 0; /* Align the header with the left of the page */
+  width: 100%; /* Set the header to full width */
+  z-index: 1000; /* Ensure the header stays above other elements */
+}
+
 
 nav {
   display: flex;
@@ -26,7 +39,7 @@ nav {
 nav a.logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #fff;
+  color: #ffffff; /* primary300 */
   text-decoration: none;
 }
 
@@ -41,7 +54,7 @@ nav ul li {
 
 nav ul li a {
   text-decoration: none;
-  color: #fff;
+  color: #ffffff; /* primary300 */
   padding: 0.5rem 1rem;
   font-size: 1rem;
 }
@@ -49,10 +62,13 @@ nav ul li a {
 /* Main content */
 main {
   padding: 1rem;
+  padding-top: calc(1rem + 60px); /* Add padding to account for the fixed header height */
 }
+
 
 h1, h2 {
   margin-bottom: 1rem;
+  color: #61398f; /* primary200 */
 }
 
 p {
@@ -70,15 +86,13 @@ ul li {
 
 /* Screenshots */
 #screenshots img {
-  display: block;
-  max-width: 100%;
+  max-width: 50%;
   height: auto;
-  margin-bottom: 1rem;
 }
 
 /* Download section */
 #downloads {
-  background: #f4f4f4;
+  background: #e9e4ed; /* bg200 */
   padding: 1rem;
 }
 
@@ -91,40 +105,29 @@ ul li {
 
 /* Contact Us */
 footer {
-  background: #007BFF;
-  color: #fff;
+  background: #8b5fbf; /* primary100 */
+  color: #ffffff; /* primary300 */
   padding: 1rem;
   text-align: center;
 }
 
 footer a {
-  color: #fff;
+  color: #ffffff; /* primary300 */
   text-decoration: underline;
 }
 
 .carousel {
-  overflow: hidden;
-  width: 100%;
-  position: relative;
+  overflow-x: scroll;
+  white-space: nowrap;
+  width: 50%;
 }
 
 .slides {
-  display: flex;
-  animation: scroll 9s linear infinite;
-  font-size: 0; /* This removes unwanted space between the images */
+  display: inline-block;
 }
 
 .slides img {
-  max-width: 50%;
+  width: 50%; /* Set the width to 100% */
   height: auto;
-}
-
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-100%);
-  }
+  transform: scale(1.0); /* Scale the image down to 50% of its original size */
 }
