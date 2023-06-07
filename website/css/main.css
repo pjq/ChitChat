@@ -112,7 +112,7 @@ footer a {
 .carousel {
   overflow-x: scroll;
   white-space: nowrap;
-  width: 50%;
+  width: 80%;
 }
 
 .slides {
