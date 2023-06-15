@@ -1,0 +1,126 @@
+/* Reset some default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #4a4a4a; /* text100 */
+  background-color: #f5f3f7; /* bg100 */
+}
+
+header {
+  background: #8b5fbf;
+  padding: 1rem;
+  position: fixed; /* Make the header fixed position */
+  top: 0; /* Align the header with the top of the page */
+  left: 0; /* Align the header with the left of the page */
+  width: 100%; /* Set the header to full width */
+  z-index: 1000; /* Ensure the header stays above other elements */
+}
+
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff; /* primary300 */
+  text-decoration: none;
+}
+
+nav ul {
+  display: flex;
+}
+
+nav ul li {
+  list-style: none;
+  margin-left: 1rem;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #ffffff; /* primary300 */
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+/* Main content */
+main {
+  padding: 1rem;
+  padding-top: calc(1rem + 60px); /* Add padding to account for the fixed header height */
+}
+
+
+h1, h2 {
+  margin-bottom: 1rem;
+  color: #61398f; /* primary200 */
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+ul {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+ul li {
+  margin-bottom: 0.5rem;
+}
+
+/* Screenshots */
+#screenshots img {
+  max-width: 50%;
+  height: auto;
+}
+
+/* Download section */
+#downloads {
+  background: #e9e4ed; /* bg200 */
+  padding: 1rem;
+}
+
+.download-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Contact Us */
+footer {
+  background: #8b5fbf; /* primary100 */
+  color: #ffffff; /* primary300 */
+  padding: 1rem;
+  text-align: center;
+}
+
+footer a {
+  color: #ffffff; /* primary300 */
+  text-decoration: underline;
+}
+
+.carousel {
+  overflow-x: scroll;
+  white-space: nowrap;
+  width: 80%;
+}
+
+.slides {
+  display: inline-block;
+}
+
+.slides img {
+  width: 50%; /* Set the width to 100% */
+  height: auto;
+  transform: scale(1.0); /* Scale the image down to 50% of its original size */
+}
