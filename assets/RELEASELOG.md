@@ -1,3 +1,5 @@
+## June 15, 2023
+- Support gpt-3.5-turbo-0613, gpt-4-0613
 ## May 26, 2023
 - Press Enter to send message
 - Press Shift + Enter to input multiple lines on Mac
