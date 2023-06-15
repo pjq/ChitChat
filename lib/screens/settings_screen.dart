@@ -368,7 +368,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildModelDropdown() {
-    List<String> models = ["gpt-3.5-turbo", "gpt-4"];
+    List<String> models = ["gpt-3.5-turbo","gpt-3.5-turbo-0613","gpt-4","gpt-4-0613"];
 
     return DropdownButton<String>(
       value: _selectedModel,
