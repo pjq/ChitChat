@@ -100,6 +100,27 @@ flutter build appbundle  --release
 ```
 Then you can find the apk/aab file in `build/app/outputs/flutter-apk/*.apk,build/app/outputs/bundle/release/*.aab`
 
+#### Build for web
+```shell
+flutter build web 
+```
+And the web files will be in 
+```shell
+build/web
+```
+
+And update the base href in build/web/inde.html to "./"
+```html
+<base href="./">
+```
+
+#### Deploy the website
+```shell
+cp -a build/web website/
+scp -r website/* ${host}:/mnt/backup_ssf/chitchat/
+```
+
+
 ### Generate l10n by Call GPT 3.5 Turbo API
 
 ```shell
