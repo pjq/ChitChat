@@ -1,5 +1,4 @@
 # Introducing ChitChat App 🎉
-
 ChitChat is a powerful and easy-to-use app that allows you to connect with AI models such as GPT-3.5-turbo and GPT-4 for engaging and productive conversations. Here's what makes ChitChat your ultimate AI chat collaborator:
 
 - 💬 **Multiple AI Models**: Choose between gpt-3.5-turbo or GPT-4 for personalized and dynamic conversations.
@@ -15,6 +14,7 @@ ChitChat is a powerful and easy-to-use app that allows you to connect with AI mo
 - 📤 **Easy Sharing**: Conveniently copy or share your conversations with others.
 
 Discover the power of engaging, AI-driven conversations with **ChitChat App**! Download now and start chatting! 🚀
+- [ChitChat App](https://chitchat.pjq.me)
 
 It is built with Flutter and supports platforms
 - Android
