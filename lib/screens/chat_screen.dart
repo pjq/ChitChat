@@ -129,8 +129,24 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     _chatListController = ScrollController();
     _chatListController.addListener(_onScrollStart);
     _chatListController.addListener(_onScrollEnd);
-  }
 
+    _chatListController.addListener(() {
+      if (_chatListController.position.atEdge) {
+        if (_chatListController.position.pixels == 0)
+          LogUtils.info("You are at the top of the scroll view");
+        else {
+          setState(() {
+            _autoScrollEnabled = true;
+          });
+          LogUtils.info("You are at the bottom of the scroll view");
+        }
+      } else {
+        setState(() {
+          _autoScrollEnabled = false;
+        });
+      }
+    });
+  }
 
   void _processData(dynamic data) {
     if (data.isStop) {
@@ -299,6 +315,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void updateTTSAndSTT() {
+    LogUtils.debug("updateTTSAndSTT");
+
     if (GlobalData().ttsLanguages.isNotEmpty) {
       String ttsSelectedLanguage =
           _settings?.prefs.getString(Constants.ttsSelectedLanguageKey) ??
@@ -329,6 +347,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
         _isSpeechToTextAvailable = false;
       });
     }
+
+    LogUtils.debug("updateTTSAndSTT end");
   }
 
 
@@ -537,7 +557,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       setState(() {
         _isLoading = true;
         _controller.clear();
-        _controller.text = "";
+        // _controller.text = "";
       });
 
       final completion = await _callAPI(messageSend.content);
@@ -628,6 +648,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
         }
+        print('onTap');
       },
       child: Scaffold(
         appBar: AppBar(

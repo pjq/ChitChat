@@ -1,3 +1,7 @@
+## July 14, 2023
+- Integrate 3rd party OpenAI SDK.
+- Support Web version.
+- Tweak Auto-Scroll.
 ## June 15, 2023
 - Support gpt-3.5-turbo-0613, gpt-4-0613
 ## May 26, 2023
