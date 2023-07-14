@@ -103,6 +103,7 @@ class ChatService {
       chatMessages.add(OpenAIChatCompletionChoiceMessageModel(role: OpenAIChatMessageRole.user, content: content));
     }
 
+    print("useStream:$useStream");
     if(useStream) {
       Stream<OpenAIStreamChatCompletionModel> chatStream = OpenAI.instance.chat.createStream(
         model: aiModel,
@@ -211,7 +212,7 @@ class ChatService {
     }
     LogUtils.info(url);
 
-    client?.connectionTimeout = const Duration(seconds:60);
+    client.connectionTimeout = const Duration(seconds:60);
     final request = await client.postUrl(Uri.parse('$url/v1/chat/completions'));
     request.headers.contentType = ContentType.json;
     request.headers.set('Authorization', 'Bearer $apiKey');
