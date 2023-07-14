@@ -297,11 +297,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               //   onPressed: _clearChatHistory,
               //   child: Text(loc.clearChatHistory),
               // ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                controller: _proxyUrlController, // add text field for proxy URL
-                label: loc.proxyUrl,
-              ),
+              // const SizedBox(height: 16),
+              // _buildTextField(
+              //   controller: _proxyUrlController, // add text field for proxy URL
+              //   label: loc.proxyUrl,
+              // ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _showAbout,

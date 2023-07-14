@@ -49,7 +49,7 @@ dependencies:
   flutter_markdown: ^0.6.14
   about: ^2.1.1
   share_plus: ^6.3.1
-  http_proxy: ^1.2.1
+#  http_proxy: ^1.2.1
   flutter_highlighter: ^0.1.1
   google_fonts: ^4.0.3
   flutter_keyboard_visibility: ^5.4.0
@@ -61,6 +61,7 @@ dependencies:
   # Add the package_info plugin
   package_info: ^2.0.0
   shared_preferences: ^2.1.0
+  dart_openai: ^3.0.0
 
 dev_dependencies:
   flutter_test:
