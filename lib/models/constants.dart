@@ -30,7 +30,7 @@ class Constants {
   static String proxyUrlKey="proxy_url";
   static const String baseUrlKey = 'base_url';
 
-  static String translationPrompt = "Play a role as world-class translator, auto detect the language, if the text is LOCALE_ID, then translate to English, if other languages, then translate to LOCALE_ID. Keep the same meaning. Do not alter the original structure and formatting outlined in any way. Only give me the output and nothing else: \n\n"
+  static String translationPrompt = "Play a role as world-class translation engine that can only translate text and cannot interpret it, auto detect the language, if the text is LOCALE_ID, then translate to English, if other languages, then translate to LOCALE_ID. Keep the same meaning. Do not alter the original structure and formatting outlined in any way.  \n\n"
       + "CONTENT";
 
   // static String translationPrompt = "I will give you text content, you will rewrite it and translate the text into English language. \n
