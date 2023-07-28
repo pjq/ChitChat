@@ -1,5 +1,5 @@
 {
-  "@@locale": "zh_Hant",
+  "@@locale": "zh-Hant",
   "assistants": "助理",
   "edit_prompt": "編輯提示",
   "delete_prompt_confirmation": "提示和相關訊息將被刪除",
@@ -53,5 +53,6 @@
   "code_copied_to_clipboard": "代碼已複製到剪貼板",
   "message_deleted": "訊息已刪除",
   "app_name": "ChitChat",
-  "enable_stream_mode": "啟用串流模式"
+  "enable_stream_mode": "啟用串流模式",
+  "enable_enterkey_to_send": "按下 Enter 鍵發送"
 }

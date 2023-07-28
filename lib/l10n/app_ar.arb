@@ -53,5 +53,6 @@
   "code_copied_to_clipboard": "تم نسخ الرمز إلى الحافظة",
   "message_deleted": "تم حذف الرسالة",
   "app_name": "ChitChat",
-  "enable_stream_mode": "تمكين وضع التدفق"
+  "enable_stream_mode": "تمكين وضع التدفق",
+  "enable_enterkey_to_send": "اضغط على مفتاح Enter للإرسال"
 }

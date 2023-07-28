@@ -740,8 +740,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                   );
                                   print("new line");
                                 } else if (isEnterKeyPressed) {
-                                  if (_controller.text.trim().isNotEmpty) {
-                                    _sendMessage(_controller.text);
+                                  if (_settings!.enableEnterKeyToSend) {
+                                    if (_controller.text.trim().isNotEmpty) {
+                                      _sendMessage(_controller.text);
+                                    }
                                   }
                                 }
                               },

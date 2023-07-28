@@ -53,5 +53,6 @@
   "code_copied_to_clipboard": "Codice copiato negli Appunti",
   "message_deleted": "Messaggio eliminato",
   "app_name": "ChitChat",
-  "enable_stream_mode": "Abilita la modalità streaming"
+  "enable_stream_mode": "Abilita la modalità streaming",
+  "enable_enterkey_to_send": "Premi il tasto Invio per inviare"
 }

@@ -42,6 +42,14 @@ class Settings {
     prefs.setBool(Constants.ttsEnableKey, value);
   }
 
+  bool get enableEnterKeyToSend =>
+      prefs.getBool(Constants.enableEnterKeyToSendKey) ??
+          Constants.defaultEnableEnterKeyToSend;
+
+  set enableEnterKeyToSend(bool value) {
+    prefs.setBool(Constants.enableEnterKeyToSendKey, value);
+  }
+
   bool get streamModeEnable =>
       prefs.getBool(Constants.streamModeEnableKey) ??
           Constants.defaultStreamModeEnable;

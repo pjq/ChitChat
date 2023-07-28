@@ -136,6 +136,11 @@ class ChatService {
             messageController.add(chatMessage);
           }
         }
+      }, onDone: () {
+        print('The stream is done');
+        var chatMessage = ChatMessage(
+            role: ChatMessage.ROLE_ASSISTANT, content: ChatMessage.STOP);
+        messageController.add(chatMessage);
       });
 
     } else {
