@@ -1,5 +1,5 @@
 {
-  "@@locale": "zh-Hant",
+  "@@locale": "zh_Hant",
   "assistants": "助理",
   "edit_prompt": "編輯提示",
   "delete_prompt_confirmation": "提示和相關訊息將被刪除",
