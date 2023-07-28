@@ -109,7 +109,7 @@ And the web files will be in
 build/web
 ```
 
-And update the base href in build/web/inde.html to "./"
+And update the base href in build/web/index.html to "./"
 ```html
 <base href="./">
 ```
@@ -120,6 +120,11 @@ cp -a build/web website/
 scp -r website/* ${host}:/mnt/backup_ssf/chitchat/
 ```
 
+#### Build & Deploy Script
+
+```shell
+./deploy.sh user host
+```
 
 ### Generate l10n by Call GPT 3.5 Turbo API
 
