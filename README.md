@@ -83,7 +83,7 @@ echo " git tag -d 1.1.1-mac &&  git push origin --delete 1.1.1-mac &&  git tag 1
 
 Or with one command line
 ```shell
-CURRENT_VERSION=1.1.18 && PLATFORM=mac && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM && PLATFORM=android && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM
+CURRENT_VERSION=1.1.19 && PLATFORM=mac && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM && PLATFORM=android && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM
 ```
 
 #### Build dmg for Mac
