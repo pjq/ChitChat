@@ -518,7 +518,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       return;
     }
 
-    if (_settings!.openaiApiKey.isEmpty) {
+    if (_settings!.openaiApiKey.isEmpty && _settings!.btpKeyJson.isEmpty) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
