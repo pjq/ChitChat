@@ -4,6 +4,7 @@ import 'package:chitchat/utils/log_utils.dart';
 import 'package:chitchat/models/chat_message.dart';
 import 'package:chitchat/models/prompt.dart';
 import 'package:chitchat/models/settings.dart';
+import 'package:chitchat/services/btp_service.dart';
 import 'dart:io';
 
 import 'package:dart_openai/dart_openai.dart';
@@ -11,6 +12,7 @@ import 'package:dart_openai/dart_openai.dart';
 class ChatService {
   late String? apiKey;
   final StreamController<ChatMessage> messageController;
+  bool useBTP = false;
   bool useOpenaiSDK = true;
   ChatService(this.messageController);
 
@@ -19,6 +21,13 @@ class ChatService {
     Settings settings,
   ) async {
     apiKey = settings.openaiApiKey;
+    if (settings.btpJsonKey.length > 10) {
+      useBTP = true;
+      useOpenaiSDK = false;
+    }
+
+    LogUtils.info("useBTP:$useBTP");
+
     final response = await getCompletionRawWithOpenAISDK(
       "",
       translationPrompt,
@@ -39,7 +48,14 @@ class ChatService {
       Settings? settings, PromptStorage? promptStorage) async {
     apiKey = settings?.openaiApiKey;
 
-    if(useOpenaiSDK) {
+    if (settings!.btpJsonKey.length > 10) {
+      useBTP = true;
+      useOpenaiSDK = false;
+    }
+
+    LogUtils.info("useBTP:$useBTP");
+
+    if (useOpenaiSDK) {
       final response = await getCompletionRawWithOpenAISDK(
         content,
         promptStorage?.getSelectedPrompt().content ?? settings!.promptString,
@@ -71,17 +87,17 @@ class ChatService {
   }
 
   Future<String> getCompletionRawWithOpenAISDK(
-      String content,
-      String prompt,
-      double temperatureValue,
-      List<ChatMessage>? latestChat,
-      String proxy,
-      String baseUrl,
-      String aiModel,
-      bool useStream,
-      ) async {
+    String content,
+    String prompt,
+    double temperatureValue,
+    List<ChatMessage>? latestChat,
+    String proxy,
+    String baseUrl,
+    String aiModel,
+    bool useStream,
+  ) async {
     LogUtils.info("getCompletionRawWithOpenAISDK");
-    OpenAI.apiKey= apiKey!;
+    OpenAI.apiKey = apiKey!;
     OpenAI.baseUrl = baseUrl!;
 
     // Build the list of chat messages to include in the request body
@@ -96,23 +112,28 @@ class ChatService {
 
     //add the prompt set as system role
     if (prompt.isNotEmpty) {
-      chatMessages.insert(0, OpenAIChatCompletionChoiceMessageModel(role: OpenAIChatMessageRole.system, content: prompt));
+      chatMessages.insert(
+          0,
+          OpenAIChatCompletionChoiceMessageModel(
+              role: OpenAIChatMessageRole.system, content: prompt));
     }
     // Add the user's message to the list of chat messages
     if (content.isNotEmpty) {
-      chatMessages.add(OpenAIChatCompletionChoiceMessageModel(role: OpenAIChatMessageRole.user, content: content));
+      chatMessages.add(OpenAIChatCompletionChoiceMessageModel(
+          role: OpenAIChatMessageRole.user, content: content));
     }
 
     print("useStream:$useStream");
-    if(useStream) {
-      Stream<OpenAIStreamChatCompletionModel> chatStream = OpenAI.instance.chat.createStream(
+    if (useStream) {
+      Stream<OpenAIStreamChatCompletionModel> chatStream =
+          OpenAI.instance.chat.createStream(
         model: aiModel,
         temperature: temperatureValue,
         messages: chatMessages,
       );
 
       chatStream.listen((chatStreamEvent) {
-        // print(chatStreamEvent); // ...
+        print(chatStreamEvent); // ...
         final finishReason = chatStreamEvent.choices.last.finishReason;
         final role = chatStreamEvent.choices.last.delta.role;
         final returnContent = chatStreamEvent.choices.last.delta.content;
@@ -131,8 +152,8 @@ class ChatService {
           if (null != content) {
             // The chunk message will be here
             // chatMessage.content = content;
-            chatMessage =
-                ChatMessage(role: ChatMessage.ROLE_ASSISTANT, content: returnContent!);
+            chatMessage = ChatMessage(
+                role: ChatMessage.ROLE_ASSISTANT, content: returnContent!);
             messageController.add(chatMessage);
           }
         }
@@ -142,7 +163,6 @@ class ChatService {
             role: ChatMessage.ROLE_ASSISTANT, content: ChatMessage.STOP);
         messageController.add(chatMessage);
       });
-
     } else {
       OpenAIChatCompletionModel chatStream = OpenAI.instance.chat.create(
         model: aiModel,
@@ -162,11 +182,12 @@ class ChatService {
     List<ChatMessage>? latestChat,
     String proxy,
     String baseUrl,
-      String aiModel,
-      bool useStream,
+    String aiModel,
+    bool useStream,
   ) async {
     if (useOpenaiSDK) {
-      return getCompletionRawWithOpenAISDK(content, prompt, temperatureValue, latestChat, proxy, baseUrl, aiModel, useStream);
+      return getCompletionRawWithOpenAISDK(content, prompt, temperatureValue,
+          latestChat, proxy, baseUrl, aiModel, useStream);
     }
 
     LogUtils.info("getCompletion");
@@ -211,32 +232,44 @@ class ChatService {
       };
     }
 
-    String url = "https://api.openai.com";
-    if (baseUrl.isNotEmpty) {
-      url = baseUrl;
-    }
-    LogUtils.info(url);
+    if (useBTP) {
+      Map<String, dynamic> data = {
+        'deployment_id': aiModel.replaceAll(".", ""),
+        'messages': chatMessages,
+      };
+      LogUtils.info(data.toString());
+      BTPService service = new BTPService();
 
-    client.connectionTimeout = const Duration(seconds:60);
-    final request = await client.postUrl(Uri.parse('$url/v1/chat/completions'));
-    request.headers.contentType = ContentType.json;
-    request.headers.set('Authorization', 'Bearer $apiKey');
-    request.write(body);
-    final response = await request.close();
-
-    if (response.statusCode == HttpStatus.ok) {
-      if (useStream) {
-        return await handleStream(response);
-      } else {
-        final String responseString =
-            await response.transform(utf8.decoder).join();
-        final completion =
-            jsonDecode(responseString)['choices'][0]['message']['content'];
-        // return jsonDecode(responseString);
-        return completion;
-      }
+      return service.getCompletionRawByBTP(data);
     } else {
-      throw Exception('Failed to load response');
+      String url = "https://api.openai.com";
+      if (baseUrl.isNotEmpty) {
+        url = baseUrl;
+      }
+      LogUtils.info(url);
+
+      client.connectionTimeout = const Duration(seconds: 60);
+      final request =
+          await client.postUrl(Uri.parse('$url/v1/chat/completions'));
+      request.headers.contentType = ContentType.json;
+      request.headers.set('Authorization', 'Bearer $apiKey');
+      request.write(body);
+      final response = await request.close();
+
+      if (response.statusCode == HttpStatus.ok) {
+        if (useStream) {
+          return await handleStream(response);
+        } else {
+          final String responseString =
+              await response.transform(utf8.decoder).join();
+          final completion =
+              jsonDecode(responseString)['choices'][0]['message']['content'];
+          // return jsonDecode(responseString);
+          return completion;
+        }
+      } else {
+        throw Exception('Failed to load response');
+      }
     }
   }
 
@@ -249,7 +282,7 @@ class ChatService {
       // LogUtils.info("${event}");
       //fix the azure openai proxy convert format error, it include: ,"usage":null
       //data: {"id":"chatcmpl-7M6BzWVFvzBP1l80lRbaysWNUfBvS","object":"chat.completion.chunk","created":1685501375,"model":"gpt-35-turbo","choices":[{"index":0,"finish_reason":null,"delta":{"content":" with"}}],"usage":null}
-      event=event.replaceAll(",\"usage\":null", "");
+      event = event.replaceAll(",\"usage\":null", "");
       event = lastTruncatedMessage + event;
       List<String> itemList = event.split("]}");
       lastTruncatedMessage = itemList.last;

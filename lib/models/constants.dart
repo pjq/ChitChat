@@ -31,6 +31,7 @@ class Constants {
 
   static String proxyUrlKey="proxy_url";
   static const String baseUrlKey = 'base_url';
+  static const String btpKeyJson = 'btpKeyJson';
 
   static String translationPrompt = "Play a role as world-class translation engine that can only translate text and cannot interpret it, auto detect the language, if the text is LOCALE_ID, then translate to English, if other languages, then translate to LOCALE_ID. Keep the same meaning. Do not alter the original structure and formatting outlined in any way.  \n\n"
       + "CONTENT";
@@ -53,7 +54,10 @@ class Constants {
 
   static var defaultPrompt = "You are my personal Assistant";
 
-  static var defaultAIModel = "gpt-3.5-turbo-0613";
+  static var defaultAIModel = "gpt-3.5-turbo";
+
+  static List<String> models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-32k"];
+
 
   // ignore: non_constant_identifier_names
   static int MAX_MESSAGE_COUNT_FOR_CONVERSTAION = 100;
