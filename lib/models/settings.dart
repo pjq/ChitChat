@@ -20,7 +20,7 @@ class Settings {
 
   double get temperatureValue =>
       prefs.getDouble(Constants.temperatureValueKey) ??
-          Constants.defaultTemperatureValue;
+      Constants.defaultTemperatureValue;
 
   set temperatureValue(double value) {
     prefs.setDouble(Constants.temperatureValueKey, value);
@@ -28,15 +28,14 @@ class Settings {
 
   bool get continueConversationEnable =>
       prefs.getBool(Constants.continueConversationEnableKey) ??
-          Constants.defaultContinueConversationEnable;
+      Constants.defaultContinueConversationEnable;
 
   set continueConversationEnable(bool value) {
     prefs.setBool(Constants.continueConversationEnableKey, value);
   }
 
   bool get ttsEnable =>
-      prefs.getBool(Constants.ttsEnableKey) ??
-          Constants.defaultTtsEnable;
+      prefs.getBool(Constants.ttsEnableKey) ?? Constants.defaultTtsEnable;
 
   set ttsEnable(bool value) {
     prefs.setBool(Constants.ttsEnableKey, value);
@@ -50,9 +49,16 @@ class Settings {
     prefs.setBool(Constants.enableEnterKeyToSendKey, value);
   }
 
-  bool get streamModeEnable =>
-      prefs.getBool(Constants.streamModeEnableKey) ??
+  bool get streamModeEnable {
+    String btpKey = prefs.getString(Constants.btpKeyJson) ?? '';
+    if (btpKey.length > 10) {
+      //btp doesn't support stream mode.
+      return false;
+    } else {
+      return prefs.getBool(Constants.streamModeEnableKey) ??
           Constants.defaultStreamModeEnable;
+    }
+  }
 
   set streamModeEnable(bool value) {
     prefs.setBool(Constants.streamModeEnableKey, value);
@@ -60,17 +66,21 @@ class Settings {
 
   // new property for proxy settings
   String get proxyUrl => prefs.getString(Constants.proxyUrlKey) ?? '';
+  String get btpKeyJson => prefs.getString(Constants.btpKeyJson) ?? '';
 
   set proxyUrl(String value) {
     prefs.setString(Constants.proxyUrlKey, value);
   }
 
-  String get baseUrl => prefs.getString(Constants.baseUrlKey) ?? 'https://api.openai.com';
+  String get baseUrl =>
+      prefs.getString(Constants.baseUrlKey) ?? 'https://api.openai.com';
 
-  String get selectedModel => prefs.getString(Constants.selectedModelKey) ?? Constants.defaultAIModel;
+  String get btpJsonKey => prefs.getString(Constants.btpKeyJson) ?? '';
+
+  String get selectedModel =>
+      prefs.getString(Constants.selectedModelKey) ?? Constants.defaultAIModel;
 
   set baseUrl(String value) {
     prefs.setString(Constants.baseUrlKey, value);
   }
-
 }

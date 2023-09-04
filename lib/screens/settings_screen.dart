@@ -17,7 +17,9 @@ class SettingsScreen extends StatefulWidget {
   final SharedPreferences prefs;
   final Function onSettingsChanged;
 
-  const SettingsScreen({Key? key, required this.prefs, required this.onSettingsChanged}) : super(key: key);
+  const SettingsScreen(
+      {Key? key, required this.prefs, required this.onSettingsChanged})
+      : super(key: key);
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -30,6 +32,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController
       _proxyUrlController; // new controller for proxy URL
   late TextEditingController _baseUrlController; //
+  late TextEditingController _btpKeyJson; //
   late bool _continueConversationEnable;
   late bool _localCacheEnable;
   late bool _ttsEnable;
@@ -41,7 +44,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late AppLocalizations loc;
 
   late String _selectedModel;
-
 
   @override
   void initState() {
@@ -79,8 +81,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _baseUrlController = TextEditingController(
         text: widget.prefs.getString(Constants.baseUrlKey));
 
+    _btpKeyJson = TextEditingController(
+        text: widget.prefs.getString(Constants.btpKeyJson));
+
     String? selected = widget.prefs.getString(Constants.ttsSelectedLanguageKey);
-    _ttsSelectedLanguage = (selected != null && selected.isNotEmpty) ? selected : null;
+    _ttsSelectedLanguage =
+        (selected != null && selected.isNotEmpty) ? selected : null;
     LogUtils.debug("$_ttsSelectedLanguage");
 
     if (GlobalData().sttLocaleNames.isNotEmpty) {
@@ -88,8 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           widget.prefs.getString(Constants.sttSelectedLanguageKey);
       _sttSelectedLanguage = GlobalData().sttLocaleNames.firstWhere(
             (element) => savedSttSelectedLanguage == element.localeId,
-            orElse: () =>
-                GlobalData().sttLocaleNames[0], // Set a default value
+            orElse: () => GlobalData().sttLocaleNames[0], // Set a default value
           );
 
       LogUtils.debug("selected: ${_sttSelectedLanguage?.localeId}");
@@ -97,7 +102,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _sttSelectedLanguage = null;
     }
 
-    _selectedModel = widget.prefs.getString(Constants.selectedModelKey) ?? Constants.defaultAIModel;
+    _selectedModel = widget.prefs.getString(Constants.selectedModelKey) ??
+        Constants.defaultAIModel;
+    if (!Constants.models.contains(_selectedModel)) {
+      _selectedModel = Constants.defaultAIModel;
+    }
   }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -120,6 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget.prefs.setBool(Constants.enableEnterKeyToSendKey, _enableEnterKeyToSend);
     widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
     widget.prefs.setString(Constants.baseUrlKey, _baseUrlController.text);
+    widget.prefs.setString(Constants.btpKeyJson, _btpKeyJson.text);
 
     widget.prefs.setString(
         Constants.ttsSelectedLanguageKey, _ttsSelectedLanguage ?? "");
@@ -153,7 +163,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   //   );
   // }
 
-
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -172,7 +181,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     loc = AppLocalizations.of(context)!; // Add this line
@@ -182,7 +190,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () =>_saveSettings(true),
+            onPressed: () => _saveSettings(true),
             tooltip: loc.save,
           ),
         ],
@@ -225,7 +233,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 title: Text(loc.enable_stream_mode),
                 value: _streamModeEnable,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _streamModeEnable = value!;
@@ -237,7 +246,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 title: Text(loc.continueConversation),
                 value: _continueConversationEnable,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _continueConversationEnable = value!;
@@ -248,7 +258,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 title: Text(loc.localCache),
                 value: _localCacheEnable,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _localCacheEnable = value!;
@@ -259,7 +270,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 title: Text(loc.enableTts),
                 value: _ttsEnable,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _ttsEnable = value!;
@@ -317,6 +329,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               //   controller: _proxyUrlController, // add text field for proxy URL
               //   label: loc.proxyUrl,
               // ),
+              const SizedBox(height: 30),
+              _buildTextField(
+                controller: _btpKeyJson, // add text field for baseURL
+                label: "Paste your BTP key.json(Ignore all the above settings)",
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _showAbout,
@@ -344,7 +361,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }).toList(),
       onChanged: (String? newValue) {
         setState(() {
-          if(newValue.isNotEmptyAndNotNull) {
+          if (newValue.isNotEmptyAndNotNull) {
             _ttsSelectedLanguage = newValue!;
             widget.prefs.setString(
                 Constants.ttsSelectedLanguageKey, _ttsSelectedLanguage ?? "");
@@ -383,7 +400,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildModelDropdown() {
-    List<String> models = ["gpt-3.5-turbo","gpt-3.5-turbo-0613","gpt-4","gpt-4-0613"];
+    List<String> models = Constants.models;
 
     return DropdownButton<String>(
       value: _selectedModel,
@@ -402,7 +419,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-
   void _showAbout() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
@@ -418,7 +434,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             'year': DateTime.now().year.toString(),
           },
           applicationLegalese:
-          'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
+              'Copyright © ${Pubspec.authorsName.join(', ')}, {{ year }}',
           applicationDescription: Text(Pubspec.description),
           children: const <Widget>[
             MarkdownPageListTile(
