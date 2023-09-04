@@ -5,6 +5,7 @@ class Constants {
   static const String continueConversationEnableKey =
       'continue_conversation_enable';
   static const String localCacheEnableKey = 'local_cache_enable';
+  static const String enableEnterKeyToSendKey = 'enable_enter_key_to_send';
   static const String ttsEnableKey = 'tts_enable';
   static const String cacheHistoryKey = "chat_history";
   static const String streamModeEnableKey = 'stream_mode_enable';
@@ -18,8 +19,9 @@ class Constants {
   static const double defaultTemperatureValue = 1.0;
   static const bool defaultContinueConversationEnable = false;
   static const bool defaultLocalCacheEnable = true;
-  static const bool defaultTtsEnable= false;
-  static const bool defaultStreamModeEnable= true;
+  static const bool defaultTtsEnable = false;
+  static const bool defaultStreamModeEnable = true;
+  static const bool defaultEnableEnterKeyToSend = true;
 
   static const List<String> fontFamilies = [
     'Noto Sans',

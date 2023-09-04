@@ -53,5 +53,6 @@
   "message_deleted": "Mensaje eliminado",
   "app_name": "ChitChat",
   "@@locale": "es",
-  "enable_stream_mode": "Activar Modo Stream"
+  "enable_stream_mode": "Activar Modo Stream",
+  "enable_enterkey_to_send": "Presione la tecla Enter para enviar"
 }

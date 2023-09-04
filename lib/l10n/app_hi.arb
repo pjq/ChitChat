@@ -53,5 +53,6 @@
   "code_copied_to_clipboard": "कोड क्लिपबोर्ड पर कॉपी हुआ",
   "message_deleted": "संदेश हटाए गए",
   "app_name": "ChitChat",
-  "enable_stream_mode": "स्ट्रीम मोड सक्षम करें"
+  "enable_stream_mode": "स्ट्रीम मोड सक्षम करें",
+  "enable_enterkey_to_send": "भेजने के लिए एंटर कुंजी दबाएं"
 }

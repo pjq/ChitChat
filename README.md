@@ -83,7 +83,7 @@ echo " git tag -d 1.1.1-mac &&  git push origin --delete 1.1.1-mac &&  git tag 1
 
 Or with one command line
 ```shell
-CURRENT_VERSION=1.1.18 && PLATFORM=mac && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM && PLATFORM=android && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM
+CURRENT_VERSION=1.1.19 && PLATFORM=mac && git tag -d $CURRENT_VERSION-$PLATFORM && git push origin :refs/tags/$CURRENT_VERSION-$PLATFORM && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM && PLATFORM=android && git tag -d $CURRENT_VERSION-$PLATFORM && git push origin :refs/tags/$CURRENT_VERSION-$PLATFORM && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM
 ```
 
 #### Build dmg for Mac
@@ -109,7 +109,7 @@ And the web files will be in
 build/web
 ```
 
-And update the base href in build/web/inde.html to "./"
+And update the base href in build/web/index.html to "./"
 ```html
 <base href="./">
 ```
@@ -120,6 +120,11 @@ cp -a build/web website/
 scp -r website/* ${host}:/mnt/backup_ssf/chitchat/
 ```
 
+#### Build & Deploy Script
+
+```shell
+./deploy.sh user host
+```
 
 ### Generate l10n by Call GPT 3.5 Turbo API
 

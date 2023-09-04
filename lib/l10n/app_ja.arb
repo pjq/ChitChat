@@ -53,5 +53,6 @@
   "code_copied_to_clipboard": "コードがクリップボードにコピーされました",
   "message_deleted": "メッセージが削除されました",
   "app_name": "ChitChat",
-  "enable_stream_mode": "ストリームモードを有効にする"
+  "enable_stream_mode": "ストリームモードを有効にする",
+  "enable_enterkey_to_send": "Enterキーを押して送信する"
 }

@@ -53,5 +53,6 @@
   "code_copied_to_clipboard": "Code copié dans le presse-papiers",
   "message_deleted": "Message supprimé",
   "app_name": "ChitChat",
-  "enable_stream_mode": "Activer le mode flux"
+  "enable_stream_mode": "Activer le mode flux",
+  "enable_enterkey_to_send": "Appuyez sur la touche Entrée pour envoyer"
 }

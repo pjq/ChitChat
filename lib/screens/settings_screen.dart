@@ -34,6 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late bool _localCacheEnable;
   late bool _ttsEnable;
   late bool _streamModeEnable;
+  late bool _enableEnterKeyToSend;
 
   late String? _ttsSelectedLanguage;
   late LocaleName? _sttSelectedLanguage;
@@ -69,6 +70,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Constants.defaultTtsEnable;
     _streamModeEnable = widget.prefs.getBool(Constants.streamModeEnableKey) ??
         Constants.defaultStreamModeEnable;
+    _enableEnterKeyToSend = widget.prefs.getBool(Constants.enableEnterKeyToSendKey) ??
+        Constants.defaultEnableEnterKeyToSend;
 
     _proxyUrlController = TextEditingController(
         text: widget.prefs.getString(Constants.proxyUrlKey));
@@ -114,6 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget.prefs.setBool(Constants.localCacheEnableKey, _localCacheEnable);
     widget.prefs.setBool(Constants.ttsEnableKey, _ttsEnable);
     widget.prefs.setBool(Constants.streamModeEnableKey, _streamModeEnable);
+    widget.prefs.setBool(Constants.enableEnterKeyToSendKey, _enableEnterKeyToSend);
     widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
     widget.prefs.setString(Constants.baseUrlKey, _baseUrlController.text);
 
@@ -259,6 +263,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (value) {
                   setState(() {
                     _ttsEnable = value!;
+                    _saveSettings(false);
+                  });
+                },
+              ),
+              CheckboxListTile(
+                title: Text(loc.enable_enterkey_to_send),
+                value: _enableEnterKeyToSend,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                onChanged: (value) {
+                  setState(() {
+                    _enableEnterKeyToSend = value!;
                     _saveSettings(false);
                   });
                 },

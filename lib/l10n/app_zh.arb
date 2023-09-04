@@ -53,5 +53,6 @@
   "code_copied_to_clipboard": "代码已复制到剪贴板",
   "message_deleted": "消息已删除",
   "app_name": "ChitChat",
-  "enable_stream_mode": "启用流模式"
+  "enable_stream_mode": "启用流模式",
+  "enable_enterkey_to_send": "按下回车键发送"
 }

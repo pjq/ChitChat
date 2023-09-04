@@ -20,6 +20,7 @@
    "settings": "Settings",
    "settings_saved": "Settings saved",
     "enable_stream_mode": "Enable Stream Mode",
+    "enable_enterkey_to_send": "Press Enter Key to send",
     "openAIApiKey": "OpenAI API Key",
     "promptString": "Prompt String",
     "temperatureValue": "Temperature Value(0-1.0)",
