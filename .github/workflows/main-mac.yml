@@ -1,0 +1,17 @@
+name: 'Mac Release Build'
+on:
+  push:
+    branches: [ main]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: x64
+      - run: flutter config --enable-macos-desktop
+      - run:  flutter gen-l10n
+      - run: flutter build macos --release

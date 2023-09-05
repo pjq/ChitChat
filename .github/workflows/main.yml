@@ -1,7 +1,7 @@
 name: Flutter Android CI/CD
 on:
   push:
-    branches: [ main ]
+    branches: [ main-disable ]
 
 jobs:
   build:
