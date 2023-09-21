@@ -21,39 +21,55 @@ class ChatService {
     Settings settings,
   ) async {
     apiKey = settings.openaiApiKey;
-    if (settings.btpJsonKey.length > 10) {
-      useBTP = true;
+    useBTP = settings.useBTP;
+    if (useBTP) {
       useOpenaiSDK = false;
     }
 
-    LogUtils.info("useBTP:$useBTP");
+    LogUtils.info("useBTP:$useBTP useOpenaiSDK:$useOpenaiSDK");
 
-    final response = await getCompletionRawWithOpenAISDK(
-      "",
-      translationPrompt,
-      settings.temperatureValue,
-      [],
-      settings.proxyUrl,
-      settings.baseUrl,
-      settings.selectedModel,
-      settings.streamModeEnable,
-    );
-    // final completion = response['choices'][0]['message']['content'];
-    LogUtils.info(response);
 
-    return response;
+    if (useOpenaiSDK) {
+      final response = await getCompletionRawWithOpenAISDK(
+        "",
+        translationPrompt,
+        settings.temperatureValue,
+        [],
+        settings.proxyUrl,
+        settings.baseUrl,
+        settings.selectedModel,
+        settings.streamModeEnable,
+      );
+
+      LogUtils.info(response);
+      return response;
+    } else {
+      final response = await getCompletionRaw(
+        "",
+        translationPrompt,
+        settings!.temperatureValue,
+        [],
+        settings.proxyUrl,
+        settings.baseUrl,
+        settings.selectedModel,
+        settings.streamModeEnable,
+      );
+
+      LogUtils.info(response);
+      return response;
+    }
   }
 
   Future<String> getCompletion(String content, List<ChatMessage>? latestChat,
       Settings? settings, PromptStorage? promptStorage) async {
     apiKey = settings?.openaiApiKey;
 
-    if (settings!.btpJsonKey.length > 10) {
-      useBTP = true;
+    useBTP = settings!.useBTP!;
+    if (useBTP) {
       useOpenaiSDK = false;
     }
 
-    LogUtils.info("useBTP:$useBTP");
+    LogUtils.info("useBTP:$useBTP useOpenaiSDK:$useOpenaiSDK");
 
     if (useOpenaiSDK) {
       final response = await getCompletionRawWithOpenAISDK(

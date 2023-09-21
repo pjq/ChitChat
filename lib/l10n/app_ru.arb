@@ -54,5 +54,7 @@
   "message_deleted": "Сообщение удалено",
   "app_name": "ChitChat",
   "enable_stream_mode": "Включить режим потока",
-  "enable_enterkey_to_send": "Нажмите клавишу Ввод, чтобы отправить"
+  "enable_enterkey_to_send": "Нажмите клавишу Ввод, чтобы отправить",
+  "switch_between_openai_btp": "Вы можете переключаться между службами OpenAI и BTP.",
+  "paste_your_btp_key": "Вставьте свой ключ BTP.json"
 }

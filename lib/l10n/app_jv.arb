@@ -54,5 +54,7 @@
   "message_deleted": "Pesen wis dihapus",
   "app_name": "ChitChat",
   "enable_stream_mode": "Aktifkan Mode Aliran",
-  "enable_enterkey_to_send": "Tekan Tombol Enter kanggo ngirim"
+  "enable_enterkey_to_send": "Tekan Tombol Enter kanggo ngirim",
+  "switch_between_openai_btp": "Sampeyan bisa beralih antara OpenAI lan Layanan BTP.",
+  "paste_your_btp_key": "Tumpangi BTP key.json sampeyan"
 }

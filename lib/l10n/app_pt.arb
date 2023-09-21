@@ -54,5 +54,7 @@
   "message_deleted": "Mensagem excluída",
   "app_name": "ChitChat",
   "enable_stream_mode": "Ativar Modo Stream",
-  "enable_enterkey_to_send": "Pressione a tecla Enter para enviar"
+  "enable_enterkey_to_send": "Pressione a tecla Enter para enviar",
+  "@switch_between_openai_btp": "Você pode alternar entre o OpenAI e o Serviço BTP.",
+  "@paste_your_btp_key": "Insira sua chave BTP.json"
 }

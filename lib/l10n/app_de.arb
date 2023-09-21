@@ -54,5 +54,7 @@
   "message_deleted": "Nachricht gelöscht",
   "app_name": "ChitChat",
   "enable_stream_mode": "Stream-Modus aktivieren",
-  "enable_enterkey_to_send": "Drücken Sie die Eingabetaste, um zu senden"
+  "enable_enterkey_to_send": "Drücken Sie die Eingabetaste, um zu senden",
+  "switch_between_openai_btp": "Sie können zwischen OpenAI und BTP Service wechseln.",
+  "paste_your_btp_key": "Fügen Sie Ihren BTP key.json ein."
 }

@@ -43,16 +43,14 @@ class Settings {
 
   bool get enableEnterKeyToSend =>
       prefs.getBool(Constants.enableEnterKeyToSendKey) ??
-          Constants.defaultEnableEnterKeyToSend;
+      Constants.defaultEnableEnterKeyToSend;
 
   set enableEnterKeyToSend(bool value) {
     prefs.setBool(Constants.enableEnterKeyToSendKey, value);
   }
 
   bool get streamModeEnable {
-    String btpKey = prefs.getString(Constants.btpKeyJson) ?? '';
-    if (btpKey.length > 10) {
-      //btp doesn't support stream mode.
+    if (prefs.getBool(Constants.useBTP) ?? false) {
       return false;
     } else {
       return prefs.getBool(Constants.streamModeEnableKey) ??
@@ -82,5 +80,15 @@ class Settings {
 
   set baseUrl(String value) {
     prefs.setString(Constants.baseUrlKey, value);
+  }
+
+  bool get useOpenAI => prefs.getBool(Constants.useOpenAI) ?? true;
+  set useOpenAI(bool value) {
+    prefs.setBool(Constants.useOpenAI, value);
+  }
+
+  bool get useBTP => prefs.getBool(Constants.useBTP) ?? false;
+  set useBTP(bool value) {
+    prefs.setBool(Constants.useBTP, value);
   }
 }

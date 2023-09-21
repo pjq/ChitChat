@@ -54,5 +54,7 @@
   "message_deleted": "Message supprimé",
   "app_name": "ChitChat",
   "enable_stream_mode": "Activer le mode flux",
-  "enable_enterkey_to_send": "Appuyez sur la touche Entrée pour envoyer"
+  "enable_enterkey_to_send": "Appuyez sur la touche Entrée pour envoyer",
+  "switch_between_openai_btp": "Vous pouvez alterner entre le service OpenAI et le service BTP.",
+  "paste_your_btp_key": "Insérez votre clé BTP.json"
 }

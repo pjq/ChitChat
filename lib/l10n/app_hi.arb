@@ -54,5 +54,7 @@
   "message_deleted": "संदेश हटाए गए",
   "app_name": "ChitChat",
   "enable_stream_mode": "स्ट्रीम मोड सक्षम करें",
-  "enable_enterkey_to_send": "भेजने के लिए एंटर कुंजी दबाएं"
+  "enable_enterkey_to_send": "भेजने के लिए एंटर कुंजी दबाएं",
+  "switch_between_openai_btp": "आप ओपनएआई और बीटीपी सेवा के बीच टॉगल कर सकते हैं।",
+  "paste_your_btp_key": "अपना BTP कुंजी.json संलग्न करें"
 }

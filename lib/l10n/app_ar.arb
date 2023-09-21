@@ -54,5 +54,7 @@
   "message_deleted": "تم حذف الرسالة",
   "app_name": "ChitChat",
   "enable_stream_mode": "تمكين وضع التدفق",
-  "enable_enterkey_to_send": "اضغط على مفتاح Enter للإرسال"
+  "enable_enterkey_to_send": "اضغط على مفتاح Enter للإرسال",
+  "switch_between_openai_btp": "يمكنك التبديل بين خدمة OpenAI وخدمة BTP.",
+  "paste_your_btp_key": "قم بلصق مفتاح BTP الخاص بك.json"
 }

@@ -54,5 +54,7 @@
   "message_deleted": "消息已删除",
   "app_name": "ChitChat",
   "enable_stream_mode": "启用流模式",
-  "enable_enterkey_to_send": "按下回车键发送"
+  "enable_enterkey_to_send": "按下回车键发送",
+  "switch_between_openai_btp": "您可以在OpenAI和BTP服务之间切换。",
+  "paste_your_btp_key": "粘贴您的BTP key.json"
 }

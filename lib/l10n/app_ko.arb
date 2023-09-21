@@ -54,5 +54,7 @@
   "message_deleted": "메시지가 삭제되었습니다.",
   "app_name": "ChitChat",
   "enable_stream_mode": "스트림 모드 활성화",
-  "enable_enterkey_to_send": "Enter 키를 눌러 전송"
+  "enable_enterkey_to_send": "Enter 키를 눌러 전송",
+  "switch_between_openai_btp": "오픈AI와 BTP 서비스 사이를 전환할 수 있습니다.",
+  "paste_your_btp_key": "BTP 키.json을 붙여넣으세요."
 }

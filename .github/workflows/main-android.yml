@@ -1,4 +1,4 @@
-name: Flutter Android CI/CD
+name: Android CI/CD
 on:
   push:
     branches: [ main-disable ]

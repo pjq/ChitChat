@@ -38,6 +38,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late bool _ttsEnable;
   late bool _streamModeEnable;
   late bool _enableEnterKeyToSend;
+  late bool _useOpenAI;
+  late bool _useBTP;
 
   late String? _ttsSelectedLanguage;
   late LocaleName? _sttSelectedLanguage;
@@ -72,8 +74,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Constants.defaultTtsEnable;
     _streamModeEnable = widget.prefs.getBool(Constants.streamModeEnableKey) ??
         Constants.defaultStreamModeEnable;
-    _enableEnterKeyToSend = widget.prefs.getBool(Constants.enableEnterKeyToSendKey) ??
-        Constants.defaultEnableEnterKeyToSend;
+    _enableEnterKeyToSend =
+        widget.prefs.getBool(Constants.enableEnterKeyToSendKey) ??
+            Constants.defaultEnableEnterKeyToSend;
 
     _proxyUrlController = TextEditingController(
         text: widget.prefs.getString(Constants.proxyUrlKey));
@@ -107,6 +110,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!Constants.models.contains(_selectedModel)) {
       _selectedModel = Constants.defaultAIModel;
     }
+
+    _useOpenAI = widget.prefs.getBool(Constants.useOpenAI) ?? true;
+    _useBTP = widget.prefs.getBool(Constants.useBTP) ?? false;
   }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -126,7 +132,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget.prefs.setBool(Constants.localCacheEnableKey, _localCacheEnable);
     widget.prefs.setBool(Constants.ttsEnableKey, _ttsEnable);
     widget.prefs.setBool(Constants.streamModeEnableKey, _streamModeEnable);
-    widget.prefs.setBool(Constants.enableEnterKeyToSendKey, _enableEnterKeyToSend);
+    widget.prefs
+        .setBool(Constants.enableEnterKeyToSendKey, _enableEnterKeyToSend);
     widget.prefs.setString(Constants.proxyUrlKey, _proxyUrlController.text);
     widget.prefs.setString(Constants.baseUrlKey, _baseUrlController.text);
     widget.prefs.setString(Constants.btpKeyJson, _btpKeyJson.text);
@@ -150,6 +157,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       Navigator.pop(context);
     }
     widget.onSettingsChanged();
+
+    LogUtils.debug("useOpenAI: $_useOpenAI, useBTP: $_useBTP");
+    widget.prefs.setBool(Constants.useOpenAI, _useOpenAI);
+    widget.prefs.setBool(Constants.useBTP, _useBTP);
   }
 
   // void _clearChatHistory() {
@@ -282,7 +293,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CheckboxListTile(
                 title: Text(loc.enable_enterkey_to_send),
                 value: _enableEnterKeyToSend,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 onChanged: (value) {
                   setState(() {
                     _enableEnterKeyToSend = value!;
@@ -329,10 +341,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
               //   controller: _proxyUrlController, // add text field for proxy URL
               //   label: loc.proxyUrl,
               // ),
+
+              Container(
+                child: Column(
+                  children: [
+                    Text(loc.switch_between_openai_btp),
+                    CheckboxListTile(
+                      title: Text('OpenAI'),
+                      value: _useOpenAI,
+                      onChanged: (value) {
+                        setState(() {
+                          _useOpenAI = value!;
+                          _useBTP = !_useOpenAI;
+                          _saveSettings(false);
+                        });
+                      },
+                    ),
+                    CheckboxListTile(
+                      title: Text('BTP'),
+                      value: _useBTP,
+                      onChanged: (value) {
+                        setState(() {
+                          _useBTP = value!;
+                          _useOpenAI = !_useBTP;
+                          _saveSettings(false);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
               const SizedBox(height: 30),
-              _buildTextField(
+              TextField(
                 controller: _btpKeyJson, // add text field for baseURL
-                label: "Paste your BTP key.json(Ignore all the above settings)",
+                decoration: InputDecoration(
+                  labelText: loc.paste_your_btp_key,
+                ),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
               ),
               const SizedBox(height: 16),
               ElevatedButton(

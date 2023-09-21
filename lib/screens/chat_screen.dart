@@ -727,7 +727,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                 final isShiftPressed = event.isShiftPressed;
                                 final isEnterKeyPressed = event.logicalKey ==
                                     LogicalKeyboardKey.enter;
-                                print("isShiftPressed $isEnterKeyPressed, isEnterKeyPressed $isEnterKeyPressed event:$event");
+                                // print("isShiftPressed $isEnterKeyPressed, isEnterKeyPressed $isEnterKeyPressed event:$event");
 
                                 if (isEnterKeyPressed && isShiftPressed) {
                                   _controller.value =

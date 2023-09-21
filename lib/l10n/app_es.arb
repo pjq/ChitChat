@@ -54,5 +54,7 @@
   "app_name": "ChitChat",
   "@@locale": "es",
   "enable_stream_mode": "Activar Modo Stream",
-  "enable_enterkey_to_send": "Presione la tecla Enter para enviar"
+  "enable_enterkey_to_send": "Presione la tecla Enter para enviar",
+  "switch_between_openai_btp": "Puedes alternar entre OpenAI y el servicio BTP.",
+  "paste_your_btp_key": "Inserta tu clave BTP.json"
 }
