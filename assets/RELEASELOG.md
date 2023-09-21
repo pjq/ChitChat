@@ -1,3 +1,5 @@
+## Sept. 21, 2023
+- BTP LLM Integration
 ## July 28, 2023
 - Add setting for "Press Enter Key to send".
 ## July 14, 2023
