@@ -1,6 +1,7 @@
 name: Android/Linux Release
 on:
   push:
+    branches: [ main]
     tags:
       - '*android'
 
@@ -17,7 +18,8 @@ jobs:
           java-version: '11'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.7'
+          channel: 'stable'
+#          flutter-version: '3.7.7'
       - run: flutter pub get
       - run:  flutter gen-l10n
       #      - run: flutter test
