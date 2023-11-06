@@ -48,6 +48,6 @@ build_deploy_android() {
 
 check_args "$@"
 
-build_deploy_mac "$@"
+#build_deploy_mac "$@"
 build_deploy_web "$@"
-build_deploy_android "$@"
+#build_deploy_android "$@"
