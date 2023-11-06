@@ -1,3 +1,6 @@
+## Nov. 6, 2023
+- Sort the the prompt list by id
+- Fix the duplicate history cache
 ## Sept. 21, 2023
 - BTP LLM Integration
 ## July 28, 2023
