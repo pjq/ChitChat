@@ -102,7 +102,7 @@ class BTPService {
       LogUtils.info("getCompletionRawByBTP: $completion");
       return completion;
     } else {
-      throw Exception('Failed to load token');
+      throw Exception(response.body);
     }
   }
 }

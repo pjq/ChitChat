@@ -149,15 +149,20 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _processData(dynamic data) {
-    if (data.isStop) {
-      LogUtils.info("_processData, isStop is true, cache history");
-      if (!_history!.messages
-          .contains(_messages.elementAt(_messages.length - 2))) {
-        _history?.addMessageWithPromptChannel(
-            _messages.elementAt(_messages.length - 2), currentPrompt.id);
-      }
-      if (!_history!.messages.contains(_messages.last)) {
-        _history?.addMessageWithPromptChannel(_messages.last, currentPrompt.id);
+    if (data.isStop || data.isError) {
+      LogUtils.info("_processData, isStop || isError is true, cache history");
+      if (data.isStop) {
+        if (!_history!.messages
+            .contains(_messages.elementAt(_messages.length - 2))) {
+          _history?.addMessageWithPromptChannel(
+              _messages.elementAt(_messages.length - 2), currentPrompt.id);
+        }
+        if (!_history!.messages.contains(_messages.last)) {
+          _history?.addMessageWithPromptChannel(_messages.last, currentPrompt.id);
+        }
+      } else if (data.isError) {
+         // showToast(data.content);
+         _messages.last.content = data.content;
       }
       // _speak(_messages.last.content);
       // receive message finished
@@ -591,7 +596,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(loc.failed_to_send_message),
+            Text(loc.failed_to_send_message + "\n" + e.toString()),
             TextButton(
               child: Text(loc.retry),
               onPressed: () => _sendMessage(messageSend.content),

@@ -28,7 +28,6 @@ class ChatService {
 
     LogUtils.info("useBTP:$useBTP useOpenaiSDK:$useOpenaiSDK");
 
-
     if (useOpenaiSDK) {
       final response = await getCompletionRawWithOpenAISDK(
         "",
@@ -139,54 +138,72 @@ class ChatService {
           role: OpenAIChatMessageRole.user, content: content));
     }
 
-    print("useStream:$useStream");
+    LogUtils.info("useStream:$useStream");
     if (useStream) {
-      Stream<OpenAIStreamChatCompletionModel> chatStream =
-          OpenAI.instance.chat.createStream(
-        model: aiModel,
-        temperature: temperatureValue,
-        messages: chatMessages,
-      );
+      try {
+        Stream<OpenAIStreamChatCompletionModel> chatStream =
+            OpenAI.instance.chat.createStream(
+          model: aiModel,
+          temperature: temperatureValue,
+          messages: chatMessages,
+        );
+        LogUtils.info("createStream");
 
-      chatStream.listen((chatStreamEvent) {
-        print(chatStreamEvent); // ...
-        final finishReason = chatStreamEvent.choices.last.finishReason;
-        final role = chatStreamEvent.choices.last.delta.role;
-        final returnContent = chatStreamEvent.choices.last.delta.content;
-        ChatMessage chatMessage;
-        if (ChatMessage.STOP == finishReason) {
-          // reach the stop item
-          chatMessage = ChatMessage(
+        chatStream.listen((chatStreamEvent) {
+          LogUtils.info("listen:" + chatStreamEvent.toString()); // ...
+          final finishReason = chatStreamEvent.choices.last.finishReason;
+          final role = chatStreamEvent.choices.last.delta.role;
+          final returnContent = chatStreamEvent.choices.last.delta.content;
+          ChatMessage chatMessage;
+          if (ChatMessage.STOP == finishReason) {
+            // reach the stop item
+            chatMessage = ChatMessage(
+                role: ChatMessage.ROLE_ASSISTANT, content: ChatMessage.STOP);
+            messageController.add(chatMessage);
+            return;
+          }
+          if (ChatMessage.ROLE_ASSISTANT == role) {
+            // it's the first data.
+            // LogUtils.info("role is assistant");
+          } else {
+            if (null != content) {
+              // The chunk message will be here
+              // chatMessage.content = content;
+              chatMessage = ChatMessage(
+                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!);
+              messageController.add(chatMessage);
+            }
+          }
+        }, onError: (error) {
+          // Handle the error here
+          LogUtils.info('An error occurred: $error');
+          var chatMessage = ChatMessage(
+              role: ChatMessage.ERROR, content: error.message);
+          messageController.add(chatMessage);
+        }, onDone: () {
+          LogUtils.info('The stream is done');
+          var chatMessage = ChatMessage(
               role: ChatMessage.ROLE_ASSISTANT, content: ChatMessage.STOP);
           messageController.add(chatMessage);
-          return;
-        }
-        if (ChatMessage.ROLE_ASSISTANT == role) {
-          // it's the first data.
-          // LogUtils.info("role is assistant");
-        } else {
-          if (null != content) {
-            // The chunk message will be here
-            // chatMessage.content = content;
-            chatMessage = ChatMessage(
-                role: ChatMessage.ROLE_ASSISTANT, content: returnContent!);
-            messageController.add(chatMessage);
-          }
-        }
-      }, onDone: () {
-        print('The stream is done');
+        });
+      } catch (error) {
+        LogUtils.info('An error occurred while creating the stream: $error');
         var chatMessage = ChatMessage(
-            role: ChatMessage.ROLE_ASSISTANT, content: ChatMessage.STOP);
+            role: ChatMessage.ERROR, content: error.toString());
         messageController.add(chatMessage);
-      });
+      }
     } else {
-      OpenAIChatCompletionModel chatStream = OpenAI.instance.chat.create(
-        model: aiModel,
-        temperature: temperatureValue,
-        messages: chatMessages,
-      ) as OpenAIChatCompletionModel;
-      //
-      return chatStream.choices[0].message.content;
+      try {
+        OpenAIChatCompletionModel chatStream = OpenAI.instance.chat.create(
+          model: aiModel,
+          temperature: temperatureValue,
+          messages: chatMessages,
+        ) as OpenAIChatCompletionModel;
+        //
+        return chatStream.choices[0].message.content;
+      } catch (error) {
+        return error.toString();
+      }
     }
     return "";
   }

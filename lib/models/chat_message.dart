@@ -8,6 +8,7 @@ class ChatMessage {
   static const String ROLE_USER = 'user';
   // ignore: constant_identifier_names
   static const String ROLE_ASSISTANT = 'assistant';
+  static const String ERROR = 'error';
   // ignore: constant_identifier_names
   static const String DONE = '[DONE]';
   // ignore: non_constant_identifier_names
@@ -25,6 +26,7 @@ class ChatMessage {
   bool get isUser => role == ROLE_USER;
 
   bool get isStop => content.contains(STOP);
+  bool get isError => role.contains(ERROR);
 
   Map<String, dynamic> toJson() => {
         'role': role,
