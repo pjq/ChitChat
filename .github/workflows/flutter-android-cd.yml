@@ -18,9 +18,9 @@ jobs:
         with:
           java-version: "12.x"
       - name: Setup Flutter
-        uses: subosito/flutter-action@v1
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: "1.17.5"
+          channel: 'stable'
 
       - name: Decode android/release.keystore
         run: echo "${{ secrets.KEY_STORE_RELEASE}}" | base64 --decode > android/release.keystore

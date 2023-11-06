@@ -274,7 +274,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
       // if doesn't exist,save it.
       widget.promptStorage.savePrompts(_prompts);
       setState(() {
-        _prompts.add(updatedPrompt);
+        _prompts.insert(0, updatedPrompt);
       });
     }
   }
