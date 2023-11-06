@@ -150,10 +150,15 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
 
   void _processData(dynamic data) {
     if (data.isStop) {
-      _history?.addMessageWithPromptChannel(
-          _messages.elementAt(_messages.length - 2), currentPrompt.id);
-      _history?.addMessageWithPromptChannel(
-          _messages.last, currentPrompt.id);
+      LogUtils.info("_processData, isStop is true, cache history");
+      if (!_history!.messages
+          .contains(_messages.elementAt(_messages.length - 2))) {
+        _history?.addMessageWithPromptChannel(
+            _messages.elementAt(_messages.length - 2), currentPrompt.id);
+      }
+      if (!_history!.messages.contains(_messages.last)) {
+        _history?.addMessageWithPromptChannel(_messages.last, currentPrompt.id);
+      }
       // _speak(_messages.last.content);
       // receive message finished
       _isLoading = false;
@@ -167,7 +172,6 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
           _processQueue();
         }
       }
-
     } else {
       if (_messages.last.content.startsWith("...")) {
         _messages.last.content = "";
@@ -181,7 +185,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
         _wordBuffer.write(data.content);
 
         // If the number of words in the buffer reaches the threshold
-        if (RegExp(r'(\,|\，|\"|\?|\.|\:|\;|\!|\-|\(|\)|[\u3000-\u303f\u3002\uff1b\uff0c\uff1a\uff1f])').allMatches(_wordBuffer.toString()).length >= wordThreshold) {
+        if (RegExp(r'(\,|\，|\"|\?|\.|\:|\;|\!|\-|\(|\)|[\u3000-\u303f\u3002\uff1b\uff0c\uff1a\uff1f])')
+                .allMatches(_wordBuffer.toString())
+                .length >=
+            wordThreshold) {
           // Enqueue the words and clear the buffer
           _messageQueue.add(_wordBuffer.toString());
           _wordBuffer.clear();
@@ -310,7 +317,6 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       _processQueue();
     });
 
-
     updateTTSAndSTT();
   }
 
@@ -350,7 +356,6 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
 
     LogUtils.debug("updateTTSAndSTT end");
   }
-
 
   void showToast(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -428,7 +433,6 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     _isSpeaking = true;
     await flutterTts.speak(text);
   }
-
 
   @override
   void dispose() {
@@ -571,8 +575,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
           _history?.addMessageWithPromptChannel(messageSend, currentPrompt.id);
           _history?.addMessageWithPromptChannel(
               messageReceived, currentPrompt.id);
-        } else {
-        }
+        } else {}
       });
 
       _listViewScrollToBottom();
@@ -652,26 +655,28 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: !Utils.isBigScreen(context)? IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PromptListScreen(
-                    onSelectedPrompt: (prompt) {
-                      LogUtils.info("selected: $prompt");
-                      setState(() {
-                        switchToPromptChannel(prompt);
-                      });
-                    },
-                    promptStorage: promptStorage,
-                    history: _history!,
-                  ),
-                ),
-              );
-            },
-          ): null,
+          leading: !Utils.isBigScreen(context)
+              ? IconButton(
+                  icon: const Icon(Icons.list),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PromptListScreen(
+                          onSelectedPrompt: (prompt) {
+                            LogUtils.info("selected: $prompt");
+                            setState(() {
+                              switchToPromptChannel(prompt);
+                            });
+                          },
+                          promptStorage: promptStorage,
+                          history: _history!,
+                        ),
+                      ),
+                    );
+                  },
+                )
+              : null,
           title: Text(appTitle),
           actions: [
             IconButton(
@@ -699,7 +704,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                     child: Container(
                       color: MyColors.bg100, // Set the background color here
                       child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 0.0),
                         controller: _chatListController,
                         itemCount: _messages.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -712,7 +718,6 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                       ),
                     ),
                   ),
-
                   BottomAppBar(
                     child: Container(
                       // height: 60,
@@ -750,7 +755,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                               child: TextField(
                                 controller: _controller,
                                 decoration: InputDecoration(
-                                  hintText: AppLocalizations.of(context)!.type_a_message,
+                                  hintText: AppLocalizations.of(context)!
+                                      .type_a_message,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(4),
                                     borderSide: BorderSide.none,
@@ -765,7 +771,9 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                 keyboardType: TextInputType.multiline,
                                 maxLines: Utils.isBigScreen(context) ? 20 : 10,
                                 minLines: 1,
-                                textInputAction: Utils.isMobile(context)? TextInputAction.send: null,
+                                textInputAction: Utils.isMobile(context)
+                                    ? TextInputAction.send
+                                    : null,
                                 onSubmitted: (value) {
                                   if (Utils.isMobile(context)) {
                                     if (value.trim().isNotEmpty) {
@@ -776,11 +784,12 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                               ),
                             ),
                           ),
-
                           const SizedBox(width: 10),
                           IconButton(
                             icon: Icon(Icons.send,
-                                color: _isLoading ? Colors.grey : MyColors.primary100),
+                                color: _isLoading
+                                    ? Colors.grey
+                                    : MyColors.primary100),
                             onPressed: () => _isLoading
                                 ? null
                                 : _sendMessage(_controller.text),
@@ -788,8 +797,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                           if (_isSpeechToTextAvailable)
                             IconButton(
                               icon: Icon(
-                                _isListening ? Icons.mic_off : Icons.mic, color: MyColors.primary100
-                              ),
+                                  _isListening ? Icons.mic_off : Icons.mic,
+                                  color: MyColors.primary100),
                               onPressed: _toggleListening,
                             ),
                           if (_isLoading)
@@ -823,7 +832,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: const Icon(Icons.content_copy, color: MyColors.primary100),
+                leading:
+                    const Icon(Icons.content_copy, color: MyColors.primary100),
                 title: Text(loc.copy),
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: message.content));
@@ -840,7 +850,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.translate, color: MyColors.primary100),
+                leading:
+                    const Icon(Icons.translate, color: MyColors.primary100),
                 title: Text(loc.translation),
                 onTap: () {
                   String prompt = Constants.translationPrompt
@@ -901,8 +912,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       );
     });
   }
-
 }
+
 class ChatMessageWidgetMarkdown extends StatelessWidget {
   final ChatMessage message;
   final IChatService chatService;
@@ -936,16 +947,15 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
       child: Row(
-        mainAxisAlignment: message.isUser
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
+        mainAxisAlignment:
+            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           messageIcon,
           Expanded(
             child: Container(
               padding:
-              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               decoration: BoxDecoration(
                 color: message.isUser ? MyColors.bg100 : MyColors.bg200,
                 borderRadius: BorderRadius.circular(4.0),
@@ -988,7 +998,6 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
     );
   }
 }
-
 
 abstract class IChatService {
   Future<String> translate(String content, String translationPrompt);

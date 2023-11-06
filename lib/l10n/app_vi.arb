@@ -56,5 +56,6 @@
   "enable_enterkey_to_send": "Nhấn phím Enter để gửi",
   "@@locale": "vi",
   "switch_between_openai_btp": "Bạn có thể chuyển đổi giữa OpenAI và Dịch vụ BTP.",
-  "paste_your_btp_key": "Dán khóa BTP key.json của bạn"
+  "paste_your_btp_key": "Dán khóa BTP key.json của bạn",
+  "you_are_my_world_class_assistant": "Bạn là trợ lí cá nhân hàng đầu thế giới"
 }

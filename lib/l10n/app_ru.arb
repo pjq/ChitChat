@@ -56,5 +56,6 @@
   "enable_stream_mode": "Включить режим потока",
   "enable_enterkey_to_send": "Нажмите клавишу Ввод, чтобы отправить",
   "switch_between_openai_btp": "Вы можете переключаться между службами OpenAI и BTP.",
-  "paste_your_btp_key": "Вставьте свой ключ BTP.json"
+  "paste_your_btp_key": "Вставьте свой ключ BTP.json",
+  "you_are_my_world_class_assistant": "Ты мировой персональный ассистент"
 }

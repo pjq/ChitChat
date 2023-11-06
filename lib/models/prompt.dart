@@ -74,6 +74,7 @@ class PromptStorage {
     final List<dynamic> data = jsonDecode(json);
     final List<Prompt> prompts =
     data.map((item) => Prompt.fromJson(item)).toList(growable: false);
+    prompts.sort((a, b) => b.id.compareTo(a.id));
 
     return prompts;
   }

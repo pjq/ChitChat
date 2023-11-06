@@ -56,5 +56,8 @@
   "enable_stream_mode": "Ativar Modo Stream",
   "enable_enterkey_to_send": "Pressione a tecla Enter para enviar",
   "@switch_between_openai_btp": "Você pode alternar entre o OpenAI e o Serviço BTP.",
-  "@paste_your_btp_key": "Insira sua chave BTP.json"
+  "@paste_your_btp_key": "Insira sua chave BTP.json",
+  "you_are_my_world_class_assistant": "Você é uma assistente pessoal de classe mundial",
+  "switch_between_openai_btp": "Você pode alternar entre o OpenAI e o Serviço BTP.",
+  "paste_your_btp_key": "Insira sua chave BTP.json"
 }

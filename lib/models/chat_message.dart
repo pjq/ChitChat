@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:chitchat/models/constants.dart';
+import 'package:chitchat/utils/log_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatMessage {
@@ -106,6 +107,7 @@ class ChatHistory {
 
   // Modify the `addMessage` method to support a specific prompt channel.
   void addMessageWithPromptChannel(ChatMessage message, String promptChannel) {
+    LogUtils.info("addMessageWithPromptChannel:$message");
     _messages.add(message);
     _saveHistoryWithPromptChannel(promptChannel);
   }

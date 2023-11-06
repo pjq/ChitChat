@@ -56,5 +56,6 @@
   "enable_enterkey_to_send": "পাঠান Enter চাবি চাপুন",
   "@@locale": "bn",
   "switch_between_openai_btp": "আপনি OpenAI এবং BTP সার্ভিস মধ্যে পাল্টানো যাবে।",
-  "paste_your_btp_key": "আপনার BTP কী.জনসন পেস্ট করুন।"
+  "paste_your_btp_key": "আপনার BTP কী.জনসন পেস্ট করুন।",
+  "you_are_my_world_class_assistant": "তুমি বিশ্বমানের ব্যক্তিগত সহকারী"
 }

@@ -1,4 +1,3 @@
-
 // ignore_for_file: library_private_types_in_public_api
 
 import 'dart:math';
@@ -19,7 +18,10 @@ class PromptListScreen extends StatefulWidget {
   final ChatHistory history;
 
   const PromptListScreen(
-      {required this.onSelectedPrompt, required this.promptStorage, required this.history, super.key});
+      {required this.onSelectedPrompt,
+      required this.promptStorage,
+      required this.history,
+      super.key});
 
   @override
   _PromptListScreenState createState() => _PromptListScreenState();
@@ -33,22 +35,23 @@ class _PromptListScreenState extends State<PromptListScreen> {
   void initState() {
     super.initState();
     _prompts = _prompts.addAllT(widget.promptStorage.loadPrompts());
+
   }
 
   String _generatePromptId() {
-   return  (DateTime.now().millisecondsSinceEpoch+ Random().nextInt(999)).toString();
+    return (DateTime.now().millisecondsSinceEpoch + Random().nextInt(999))
+        .toString();
   }
 
   void _addDefaultPrompt() {
     List<Prompt> allPrompts = widget.promptStorage.loadPrompts();
     if (allPrompts.isEmpty) {
-
       setState(() {
         //init the predefined prompts
         Prompt newPrompt = Prompt(
           id: _generatePromptId(),
           title: loc.default_prompt_category,
-          content: loc.you_are_my_assistant,
+          content: loc.you_are_my_world_class_assistant,
           category: loc.default_prompt_category,
           selected: true,
         );
@@ -66,7 +69,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
         newPrompt = Prompt(
           id: _generatePromptId(),
           title: loc.word_class_engineer_title,
-          content:  Constants.word_class_engineer_prompt,
+          content: Constants.word_class_engineer_prompt,
           category: loc.default_prompt_category,
           selected: false,
         );
@@ -102,13 +105,13 @@ class _PromptListScreenState extends State<PromptListScreen> {
     });
   }
 
-  void _onSelect(Prompt selected){
-    widget.promptStorage.selectPrompt(_prompts,selected.id);
+  void _onSelect(Prompt selected) {
+    widget.promptStorage.selectPrompt(_prompts, selected.id);
     setState(() {
       selected.selected = true;
     });
     widget.onSelectedPrompt(selected);
-    if(!Utils.isBigScreen(context)){
+    if (!Utils.isBigScreen(context)) {
       //if it's phone then need to pop
       Navigator.pop(context);
     }
@@ -127,47 +130,58 @@ class _PromptListScreenState extends State<PromptListScreen> {
         itemCount: _prompts.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(_prompts[index].title, maxLines: 1,),
+            title: Text(
+              _prompts[index].title,
+              maxLines: 1,
+            ),
             isThreeLine: true,
             textColor: MyColors.text100,
-            subtitle: Text(_prompts[index].content, maxLines: 2,),
-            tileColor: _prompts[index].selected ? MyColors.accent100 : MyColors.primary300,
+            subtitle: Text(
+              _prompts[index].content,
+              maxLines: 2,
+            ),
+            tileColor: _prompts[index].selected
+                ? MyColors.accent100
+                : MyColors.primary300,
             onTap: () {
               _onSelect(_prompts[index]);
             },
-              onLongPress: () async {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => Wrap(
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.edit, color:MyColors.primary100),
-                        title: Text(loc.edit_prompt),
-                        onTap: () {
-                          Navigator.pop(context);
-                          final result = showDialog<Prompt>(
-                            context: context,
-                            builder: (context) => _editPromptDialog(_prompts[index], false),
-                          );
-                          result.then((prompt) {
-                            if (prompt != null) {
-                              _editPrompt(index, prompt);
-                            }
-                          });
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.delete, color:MyColors.primary100),
-                        title: Text(loc.delete),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _deletePrompt(index);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
+            onLongPress: () async {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => Wrap(
+                  children: [
+                    ListTile(
+                      leading:
+                          const Icon(Icons.edit, color: MyColors.primary100),
+                      title: Text(loc.edit_prompt),
+                      onTap: () {
+                        Navigator.pop(context);
+                        final result = showDialog<Prompt>(
+                          context: context,
+                          builder: (context) =>
+                              _editPromptDialog(_prompts[index], false),
+                        );
+                        result.then((prompt) {
+                          if (prompt != null) {
+                            _editPrompt(index, prompt);
+                          }
+                        });
+                      },
+                    ),
+                    ListTile(
+                      leading:
+                          const Icon(Icons.delete, color: MyColors.primary100),
+                      title: Text(loc.delete),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _deletePrompt(index);
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
@@ -180,18 +194,22 @@ class _PromptListScreenState extends State<PromptListScreen> {
 
   Widget _editPromptDialog(Prompt currentPrompt, bool newAdd) {
     final TextEditingController titleController =
-    TextEditingController(text: currentPrompt.title);
+        TextEditingController(text: currentPrompt.title);
     final TextEditingController contentController =
-    TextEditingController(text: currentPrompt.content);
+        TextEditingController(text: currentPrompt.content);
     final TextEditingController categoryController =
-    TextEditingController(text: currentPrompt.category);
+        TextEditingController(text: currentPrompt.category);
 
     return AlertDialog(
       title: Text(loc.edit_prompt),
       contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
       content: SizedBox(
-        height: Utils.isBigScreen(context)? 480.0: null, // Set this property to a larger value
-        width: Utils.isBigScreen(context)? 640.0: null, // Set this property to a larger value
+        height: Utils.isBigScreen(context)
+            ? 480.0
+            : null, // Set this property to a larger value
+        width: Utils.isBigScreen(context)
+            ? 640.0
+            : null, // Set this property to a larger value
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -202,7 +220,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
               TextField(
                 controller: contentController,
                 maxLines: null, // Set this property to null or a higher number
-                minLines: Utils.isBigScreen(context)?20:2,
+                minLines: Utils.isBigScreen(context) ? 20 : 2,
                 decoration: InputDecoration(labelText: loc.content),
               ),
               // TextField(
@@ -260,6 +278,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
       });
     }
   }
+
   void _deletePrompt(int index) {
     showDialog(
       context: context,
@@ -274,13 +293,14 @@ class _PromptListScreenState extends State<PromptListScreen> {
           TextButton(
             onPressed: () {
               setState(() {
-               if( _prompts[index].selected ) {
-                 // if remove the selected prompt, then reset to the first prompt
-                 widget.promptStorage.selectPrompt(_prompts, _prompts[0].id);
-                 widget.onSelectedPrompt(_prompts[0]);
-               }
+                if (_prompts[index].selected) {
+                  // if remove the selected prompt, then reset to the first prompt
+                  widget.promptStorage.selectPrompt(_prompts, _prompts[0].id);
+                  widget.onSelectedPrompt(_prompts[0]);
+                }
 
-                widget.history.deleteMessageForPromptChannel(_prompts[index].id);
+                widget.history
+                    .deleteMessageForPromptChannel(_prompts[index].id);
                 _prompts.removeAt(index);
               });
               widget.promptStorage.savePrompts(_prompts);

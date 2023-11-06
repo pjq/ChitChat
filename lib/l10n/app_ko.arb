@@ -56,5 +56,6 @@
   "enable_stream_mode": "스트림 모드 활성화",
   "enable_enterkey_to_send": "Enter 키를 눌러 전송",
   "switch_between_openai_btp": "오픈AI와 BTP 서비스 사이를 전환할 수 있습니다.",
-  "paste_your_btp_key": "BTP 키.json을 붙여넣으세요."
+  "paste_your_btp_key": "BTP 키.json을 붙여넣으세요.",
+  "you_are_my_world_class_assistant": "당신은 세계적 수준의 개인 비서입니다"
 }

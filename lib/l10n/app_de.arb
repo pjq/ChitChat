@@ -56,5 +56,6 @@
   "enable_stream_mode": "Stream-Modus aktivieren",
   "enable_enterkey_to_send": "Drücken Sie die Eingabetaste, um zu senden",
   "switch_between_openai_btp": "Sie können zwischen OpenAI und BTP Service wechseln.",
-  "paste_your_btp_key": "Fügen Sie Ihren BTP key.json ein."
+  "paste_your_btp_key": "Fügen Sie Ihren BTP key.json ein.",
+  "you_are_my_world_class_assistant": "Du bist eine erstklassige persönliche Assistentin"
 }

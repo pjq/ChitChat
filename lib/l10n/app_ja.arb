@@ -56,5 +56,6 @@
   "enable_stream_mode": "ストリームモードを有効にする",
   "enable_enterkey_to_send": "Enterキーを押して送信する",
   "switch_between_openai_btp": "OpenAIとBTPサービスの切り替えができます。",
-  "paste_your_btp_key": "BTPキー.jsonを貼り付けてください。"
+  "paste_your_btp_key": "BTPキー.jsonを貼り付けてください。",
+  "you_are_my_world_class_assistant": "あなたは世界クラスの個人アシスタントです"
 }

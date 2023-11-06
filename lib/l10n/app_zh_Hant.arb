@@ -1,5 +1,5 @@
 {
-  "@@locale": "zh_Hant",
+  "@@locale": "zh-Hant",
   "assistants": "助理",
   "edit_prompt": "編輯提示",
   "delete_prompt_confirmation": "提示和相關訊息將被刪除",
@@ -56,5 +56,6 @@
   "enable_stream_mode": "啟用串流模式",
   "enable_enterkey_to_send": "按下 Enter 鍵發送",
   "switch_between_openai_btp": "您可以在OpenAI和BTP服務之間切換。",
-  "paste_your_btp_key": "請粘貼您的BTP key.json"
+  "paste_your_btp_key": "請粘貼您的BTP key.json",
+  "you_are_my_world_class_assistant": "你是世界一流的私人助理"
 }

@@ -56,5 +56,6 @@
   "enable_stream_mode": "स्ट्रीम मोड सक्षम करें",
   "enable_enterkey_to_send": "भेजने के लिए एंटर कुंजी दबाएं",
   "switch_between_openai_btp": "आप ओपनएआई और बीटीपी सेवा के बीच टॉगल कर सकते हैं।",
-  "paste_your_btp_key": "अपना BTP कुंजी.json संलग्न करें"
+  "paste_your_btp_key": "अपना BTP कुंजी.json संलग्न करें",
+  "you_are_my_world_class_assistant": "आप विश्व स्तरीय निजी सहायक हैं"
 }

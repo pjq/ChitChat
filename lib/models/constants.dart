@@ -55,7 +55,7 @@ class Constants {
 
   static String cachePromptKey = "prompt_list";
 
-  static var defaultPrompt = "You are my personal Assistant";
+  static var defaultPrompt = "You are world-class personal Assistant";
 
   static var defaultAIModel = "gpt-3.5-turbo";
 
