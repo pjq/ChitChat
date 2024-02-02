@@ -59,7 +59,7 @@ class Constants {
 
   static var defaultAIModel = "gpt-3.5-turbo";
 
-  static List<String> models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-1106-preview", "gpt-4-1106-vision-preview", "gpt-4-32k"];
+  static List<String> models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-0125-preview", "gpt-4-1106-preview", "gpt-4-turbo-preview", "gpt-4-32k"];
 
   // ignore: non_constant_identifier_names
   static int MAX_MESSAGE_COUNT_FOR_CONVERSTAION = 100;
