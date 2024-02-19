@@ -121,7 +121,7 @@ class ChatService {
               role: message.isUser
                   ? OpenAIChatMessageRole.user
                   : OpenAIChatMessageRole.assistant,
-              content: message.content);
+              content: [OpenAIChatCompletionChoiceMessageContentItemModel(text: message.content, type: '')]);
         }).toList() ??
         [];
 
@@ -130,12 +130,12 @@ class ChatService {
       chatMessages.insert(
           0,
           OpenAIChatCompletionChoiceMessageModel(
-              role: OpenAIChatMessageRole.system, content: prompt));
+              role: OpenAIChatMessageRole.system, content: [OpenAIChatCompletionChoiceMessageContentItemModel(text: prompt, type: '')]));
     }
     // Add the user's message to the list of chat messages
     if (content.isNotEmpty) {
       chatMessages.add(OpenAIChatCompletionChoiceMessageModel(
-          role: OpenAIChatMessageRole.user, content: content));
+          role: OpenAIChatMessageRole.user, content:  [OpenAIChatCompletionChoiceMessageContentItemModel(text: content, type: '')]));
     }
 
     LogUtils.info("useStream:$useStream");
@@ -170,7 +170,7 @@ class ChatService {
               // The chunk message will be here
               // chatMessage.content = content;
               chatMessage = ChatMessage(
-                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!);
+                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!.last.text!);
               messageController.add(chatMessage);
             }
           }
@@ -200,7 +200,12 @@ class ChatService {
           messages: chatMessages,
         ) as OpenAIChatCompletionModel;
         //
-        return chatStream.choices[0].message.content;
+        var msg = chatStream.choices[0].message.content?.last?.text;
+        if (null == msg) {
+          return "";
+        } else {
+          return msg;
+        }
       } catch (error) {
         return error.toString();
       }
