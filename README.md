@@ -83,7 +83,7 @@ echo " git tag -d 1.1.1-mac &&  git push origin --delete 1.1.1-mac &&  git tag 1
 
 Or with one command line
 ```shell
-CURRENT_VERSION=1.1.28 && PLATFORM=mac &&  git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM && PLATFORM=android && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM
+CURRENT_VERSION=1.2.0 && PLATFORM=mac &&  git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM && PLATFORM=android && git tag $CURRENT_VERSION-$PLATFORM && git push origin $CURRENT_VERSION-$PLATFORM
 ```
 If already exists, then run can run it again. 
 ```shell
