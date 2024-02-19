@@ -121,7 +121,7 @@ class ChatService {
               role: message.isUser
                   ? OpenAIChatMessageRole.user
                   : OpenAIChatMessageRole.assistant,
-              content: [OpenAIChatCompletionChoiceMessageContentItemModel(text: message.content, type: '')]);
+              content: [OpenAIChatCompletionChoiceMessageContentItemModel.text(message.content)]);
         }).toList() ??
         [];
 
@@ -130,12 +130,12 @@ class ChatService {
       chatMessages.insert(
           0,
           OpenAIChatCompletionChoiceMessageModel(
-              role: OpenAIChatMessageRole.system, content: [OpenAIChatCompletionChoiceMessageContentItemModel(text: prompt, type: '')]));
+              role: OpenAIChatMessageRole.system, content: [OpenAIChatCompletionChoiceMessageContentItemModel.text(prompt)]));
     }
     // Add the user's message to the list of chat messages
     if (content.isNotEmpty) {
       chatMessages.add(OpenAIChatCompletionChoiceMessageModel(
-          role: OpenAIChatMessageRole.user, content:  [OpenAIChatCompletionChoiceMessageContentItemModel(text: content, type: '')]));
+          role: OpenAIChatMessageRole.user, content:  [OpenAIChatCompletionChoiceMessageContentItemModel.text(content)]));
     }
 
     LogUtils.info("useStream:$useStream");
@@ -170,7 +170,7 @@ class ChatService {
               // The chunk message will be here
               // chatMessage.content = content;
               chatMessage = ChatMessage(
-                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!.last.text!);
+                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!.first.text!);
               messageController.add(chatMessage);
             }
           }

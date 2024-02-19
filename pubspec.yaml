@@ -62,7 +62,7 @@ dependencies:
   # Add the package_info plugin
   package_info: ^2.0.0
   shared_preferences: ^2.1.0
-  dart_openai: ^4.1.4
+  dart_openai: ^5.0.0
 
 dev_dependencies:
   flutter_test:
