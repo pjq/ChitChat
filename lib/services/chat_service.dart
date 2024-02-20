@@ -194,11 +194,11 @@ class ChatService {
       }
     } else {
       try {
-        OpenAIChatCompletionModel chatStream = OpenAI.instance.chat.create(
+        OpenAIChatCompletionModel chatStream = await OpenAI.instance.chat.create(
           model: aiModel,
           temperature: temperatureValue,
           messages: chatMessages,
-        ) as OpenAIChatCompletionModel;
+        );
         //
         var msg = chatStream.choices[0].message.content?.last?.text;
         if (null == msg) {
