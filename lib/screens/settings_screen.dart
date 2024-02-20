@@ -6,7 +6,7 @@ import 'package:chitchat/models/pubspec.dart';
 import 'package:chitchat/utils/log_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/models/constants.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -45,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late LocaleName? _sttSelectedLanguage;
   late AppLocalizations loc;
 
+  late List<String> models;
   late String _selectedModel;
 
   @override
@@ -105,6 +106,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _sttSelectedLanguage = null;
     }
 
+    models = widget.prefs.getStringList('models') ?? Constants.models;
     _selectedModel = widget.prefs.getString(Constants.selectedModelKey) ??
         Constants.defaultAIModel;
     if (!Constants.models.contains(_selectedModel)) {
@@ -161,6 +163,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
     LogUtils.debug("useOpenAI: $_useOpenAI, useBTP: $_useBTP");
     widget.prefs.setBool(Constants.useOpenAI, _useOpenAI);
     widget.prefs.setBool(Constants.useBTP, _useBTP);
+  }
+
+  void _showAddModelDialog() {
+    final TextEditingController _newModelController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add New Model'),
+          content: TextField(
+            controller: _newModelController,
+            decoration: InputDecoration(hintText: "Enter model name"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Add'),
+              onPressed: () {
+                addModel(_newModelController.text);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void addModel(String newModel) {
+    setState(() {
+      models.add(newModel);
+      widget.prefs.setStringList('models', models);
+    });
   }
 
   // void _clearChatHistory() {
@@ -234,11 +275,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: loc.temperatureValue,
               ),
               const SizedBox(height: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(loc.selectModel),
-                  _buildModelDropdown(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(loc.selectModel),
+                      _buildModelDropdown(),
+                    ],
+                  ),
+                  FloatingActionButton(
+                    onPressed: _showAddModelDialog,
+                    tooltip: 'Add Model',
+                    child: Icon(Icons.add),
+                  ),
                 ],
               ),
               CheckboxListTile(
@@ -447,8 +498,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildModelDropdown() {
-    List<String> models = Constants.models;
-
     return DropdownButton<String>(
       value: _selectedModel,
       items: models.map((String value) {

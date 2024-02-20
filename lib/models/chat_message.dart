@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:chitchat/models/constants.dart';
 import 'package:chitchat/utils/log_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,11 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ChatMessage {
   // ignore: constant_identifier_names
   static const String ROLE_USER = 'user';
+
   // ignore: constant_identifier_names
   static const String ROLE_ASSISTANT = 'assistant';
   static const String ERROR = 'error';
+
   // ignore: constant_identifier_names
   static const String DONE = '[DONE]';
+
   // ignore: non_constant_identifier_names
   static String STOP = "stop";
 
@@ -26,6 +30,7 @@ class ChatMessage {
   bool get isUser => role == ROLE_USER;
 
   bool get isStop => content.contains(STOP);
+
   bool get isError => role.contains(ERROR);
 
   Map<String, dynamic> toJson() => {
@@ -35,12 +40,18 @@ class ChatMessage {
 }
 
 class ChatHistory {
-  final SharedPreferences _prefs;
-  final List<ChatMessage> _messages;
+  SharedPreferences _prefs;
+  List<ChatMessage> _messages = [];
 
-  ChatHistory({required SharedPreferences prefs})
-      : _prefs = prefs,
-        _messages = _loadHistory(prefs);
+  // ChatHistory({required SharedPreferences prefs})
+  //     : _prefs = prefs,
+  //       _messages = _loadHistory(prefs);
+
+  ChatHistory({required SharedPreferences prefs}) : _prefs = prefs {
+    _loadHistory(prefs).then((loadedMessages) {
+      _messages.addAll(loadedMessages);
+    });
+  }
 
   List<ChatMessage> get messages => _messages;
 
@@ -50,7 +61,8 @@ class ChatHistory {
     if (_messages.length < Constants.MAX_MESSAGE_COUNT_FOR_CONVERSTAION) {
       return _messages;
     } else {
-      return _messages.sublist(_messages.length - Constants.MAX_MESSAGE_COUNT_FOR_CONVERSTAION);
+      return _messages.sublist(
+          _messages.length - Constants.MAX_MESSAGE_COUNT_FOR_CONVERSTAION);
     }
   }
 
@@ -64,7 +76,7 @@ class ChatHistory {
     _saveHistory();
   }
 
-  static List<ChatMessage> _loadHistory(SharedPreferences prefs) {
+  static List<ChatMessage> _loadHistory2(SharedPreferences prefs) {
     final String? json = prefs.getString(Constants.cacheHistoryKey);
     if (json == null) {
       return [];
@@ -79,6 +91,22 @@ class ChatHistory {
 
     return newList;
     // return messages;
+  }
+
+  static Future<List<ChatMessage>> _loadHistory(SharedPreferences prefs) async {
+    final String? json = await prefs.getString(Constants.cacheHistoryKey);
+    if (json == null) {
+      return [];
+    }
+
+    final List<dynamic> data = jsonDecode(json);
+    final List<ChatMessage> messages =
+        data.map((item) => ChatMessage.fromJson(item)).toList(growable: false);
+
+    final List<ChatMessage> newList = [];
+    newList.addAll(messages);
+
+    return newList;
   }
 
   void _saveHistory() {

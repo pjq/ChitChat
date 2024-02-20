@@ -121,7 +121,7 @@ class ChatService {
               role: message.isUser
                   ? OpenAIChatMessageRole.user
                   : OpenAIChatMessageRole.assistant,
-              content: message.content);
+              content: [OpenAIChatCompletionChoiceMessageContentItemModel.text(message.content)]);
         }).toList() ??
         [];
 
@@ -130,12 +130,12 @@ class ChatService {
       chatMessages.insert(
           0,
           OpenAIChatCompletionChoiceMessageModel(
-              role: OpenAIChatMessageRole.system, content: prompt));
+              role: OpenAIChatMessageRole.system, content: [OpenAIChatCompletionChoiceMessageContentItemModel.text(prompt)]));
     }
     // Add the user's message to the list of chat messages
     if (content.isNotEmpty) {
       chatMessages.add(OpenAIChatCompletionChoiceMessageModel(
-          role: OpenAIChatMessageRole.user, content: content));
+          role: OpenAIChatMessageRole.user, content:  [OpenAIChatCompletionChoiceMessageContentItemModel.text(content)]));
     }
 
     LogUtils.info("useStream:$useStream");
@@ -170,7 +170,7 @@ class ChatService {
               // The chunk message will be here
               // chatMessage.content = content;
               chatMessage = ChatMessage(
-                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!);
+                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!.first.text!);
               messageController.add(chatMessage);
             }
           }
@@ -194,13 +194,18 @@ class ChatService {
       }
     } else {
       try {
-        OpenAIChatCompletionModel chatStream = OpenAI.instance.chat.create(
+        OpenAIChatCompletionModel chatStream = await OpenAI.instance.chat.create(
           model: aiModel,
           temperature: temperatureValue,
           messages: chatMessages,
-        ) as OpenAIChatCompletionModel;
+        );
         //
-        return chatStream.choices[0].message.content;
+        var msg = chatStream.choices[0].message.content?.last?.text;
+        if (null == msg) {
+          return "";
+        } else {
+          return msg;
+        }
       } catch (error) {
         return error.toString();
       }

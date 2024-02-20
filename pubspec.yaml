@@ -16,12 +16,12 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.2.0+29
+version: 1.2.1+30
 
 environment:
 #  sdk: '>=2.19.4 <3.0.0'
 #  sdk: '>=2.19.4'
-  sdk: '>3.0.0'
+  sdk: '>=3.3.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -39,30 +39,32 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   # Added chatGPT SDK using this link - https://pub.dev/packages/chat_gpt_sdk
-  chat_gpt_sdk: ^2.2.4
+#  chat_gpt_sdk: ^2.2.8
 
   # Added http package for Api Calls using this link - https://pub.dev/packages/http
-  http: ^1.1.0
+  http: ^1.2.0
 
   # Added velocity package to make Flutter development easier and more joyful by using this link -
   # https://pub.dev/packages/velocity_x
   velocity_x: ^4.1.0
-  flutter_markdown: ^0.6.14
+  flutter_markdown: ^0.6.19
   about: ^2.1.1
-  share_plus: ^7.0.2
+  share_plus: ^7.2.2
 #  http_proxy: ^1.2.1
   flutter_highlighter: ^0.1.1
-  google_fonts: ^4.0.3
-  flutter_keyboard_visibility: ^5.4.0
-  flutter_tts: ^3.6.3
-  speech_to_text: ^6.1.1
-  intl: ^0.18.0
-  flutter_localizations: 
+  google_fonts: ^6.1.0
+  flutter_keyboard_visibility: ^6.0.0
+  flutter_tts: ^3.8.5
+  speech_to_text: ^6.6.0
+#  intl: ^0.19.0
+  intl: any
+  flutter_localizations:
     sdk: flutter
   # Add the package_info plugin
-  package_info: ^2.0.0
-  shared_preferences: ^2.1.0
-  dart_openai: ^4.0.0
+#  package_info: ^2.0.0
+  package_info_plus: ^5.0.1
+  shared_preferences: ^2.2.2
+  dart_openai: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -73,7 +75,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
   change_app_package_name: ^1.1.0
 
 # For information on the generic Dart part of this file, see the
