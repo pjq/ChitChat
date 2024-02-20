@@ -39,7 +39,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   # Added chatGPT SDK using this link - https://pub.dev/packages/chat_gpt_sdk
-  chat_gpt_sdk: ^2.2.8
+#  chat_gpt_sdk: ^2.2.8
 
   # Added http package for Api Calls using this link - https://pub.dev/packages/http
   http: ^1.1.0
@@ -55,13 +55,15 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_keyboard_visibility: ^6.0.0
   flutter_tts: ^3.8.5
-  speech_to_text: ^6.1.1
-  intl: ^0.18.0
+  speech_to_text: ^6.6.0
+#  intl: ^0.19.0
+  intl: any
   flutter_localizations:
     sdk: flutter
   # Add the package_info plugin
-  package_info: ^2.0.0
-  shared_preferences: ^2.1.0
+#  package_info: ^2.0.0
+  package_info_plus: ^5.0.1
+  shared_preferences: ^2.2.2
   dart_openai: ^5.0.0
 
 dev_dependencies:

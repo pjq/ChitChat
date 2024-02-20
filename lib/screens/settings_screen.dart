@@ -6,7 +6,7 @@ import 'package:chitchat/models/pubspec.dart';
 import 'package:chitchat/utils/log_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/models/constants.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
