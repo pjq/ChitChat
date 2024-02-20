@@ -3,12 +3,12 @@
 import 'dart:math';
 
 import 'package:chitchat/models/colors.dart';
+import 'package:chitchat/models/constants.dart';
+import 'package:chitchat/models/prompt.dart';
 import 'package:chitchat/utils/Utils.dart';
 import 'package:flutter/material.dart';
-import 'package:chitchat/models/prompt.dart';
-import 'package:velocity_x/velocity_x.dart';
-import 'package:chitchat/models/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import '../models/chat_message.dart';
 
@@ -35,7 +35,6 @@ class _PromptListScreenState extends State<PromptListScreen> {
   void initState() {
     super.initState();
     _prompts = _prompts.addAllT(widget.promptStorage.loadPrompts());
-
   }
 
   String _generatePromptId() {
@@ -124,7 +123,7 @@ class _PromptListScreenState extends State<PromptListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.assistants),
+        title: Text(loc.assistants,style: TextStyle(fontSize: MyColors.TEXT_SIZE_TITLE)),
       ),
       body: ListView.builder(
         itemCount: _prompts.length,
@@ -134,6 +133,8 @@ class _PromptListScreenState extends State<PromptListScreen> {
               _prompts[index].title,
               maxLines: 1,
             ),
+            titleTextStyle: TextStyle(fontSize: MyColors.TEXT_SIZE_PROMPT_TITLE),
+            subtitleTextStyle: TextStyle(fontSize: MyColors.TEXT_SIZE_PROMPT_SUB_TITLE),
             isThreeLine: true,
             textColor: MyColors.text100,
             subtitle: Text(
@@ -201,7 +202,12 @@ class _PromptListScreenState extends State<PromptListScreen> {
         TextEditingController(text: currentPrompt.category);
 
     return AlertDialog(
-      title: Text(loc.edit_prompt),
+      title: Text(
+        loc.edit_prompt,
+        style: TextStyle(
+            fontSize: MyColors
+                .TEXT_SIZE_TITLE), // Change the value to adjust the size
+      ),
       contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
       content: SizedBox(
         height: Utils.isBigScreen(context)

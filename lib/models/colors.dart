@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 class MyColors {
@@ -12,4 +11,9 @@ class MyColors {
   static const bg100 = Color(0xFFF5F3F7);
   static const bg200 = Color(0xFFE9E4ED);
   static const bg300 = Color(0xFFFFFFFF);
+
+  static const TEXT_SIZE_TITLE = 18.0;
+  static const TEXT_SIZE_PROMPT_TITLE = 16.0;
+  static const TEXT_SIZE_PROMPT_SUB_TITLE = 12.0;
+  static const TEXT_SIZE_MARKDOWN = 14.0;
 }

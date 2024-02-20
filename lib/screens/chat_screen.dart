@@ -9,6 +9,7 @@ import 'package:chitchat/models/prompt.dart';
 import 'package:chitchat/screens/syntax_highlight.dart';
 import 'package:chitchat/screens/prompt_list_screen.dart';
 import 'package:chitchat/screens/settings_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chitchat/models/settings.dart';
 import 'package:chitchat/models/constants.dart';
@@ -682,7 +683,9 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                   },
                 )
               : null,
-          title: Text(appTitle),
+          title: Text(appTitle
+          ,style: TextStyle(fontSize: MyColors.TEXT_SIZE_TITLE), // Change the value to adjust the size
+          ),
           actions: [
             IconButton(
                 icon: const Icon(Icons.settings),
@@ -726,8 +729,8 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                   BottomAppBar(
                     child: Container(
                       // height: 60,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.only(
+                          left: 25, right: 0),
                       child: Row(
                         children: [
                           Expanded(
@@ -762,12 +765,13 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                 decoration: InputDecoration(
                                   hintText: AppLocalizations.of(context)!
                                       .type_a_message,
+                                  hintStyle: TextStyle(fontSize: MyColors.TEXT_SIZE_MARKDOWN),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
+                                    borderRadius: BorderRadius.circular(15),
                                     borderSide: BorderSide.none,
                                   ),
                                   filled: true,
-                                  fillColor: Colors.grey[200],
+                                  fillColor: Colors.white60,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 10,
                                     vertical: 5,
@@ -909,7 +913,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       return;
     }
 
-    Future.delayed(const Duration(milliseconds: 50), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       _chatListController.animateTo(
         _chatListController.position.maxScrollExtent,
         duration: Duration(milliseconds: Constants.scrollDuration),
@@ -933,7 +937,7 @@ class ChatMessageWidgetMarkdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final markdownStyleSheet = MarkdownStyleSheet.fromTheme(themeData).copyWith(
-      p: themeData.textTheme.bodyMedium!.copyWith(fontSize: 16),
+      p: themeData.textTheme.bodyMedium!.copyWith(fontSize: MyColors.TEXT_SIZE_MARKDOWN),
     );
 
     Widget messageIcon;

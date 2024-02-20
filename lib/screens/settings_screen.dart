@@ -1,17 +1,18 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:about/about.dart';
+import 'package:chitchat/models/constants.dart';
+import 'package:chitchat/models/global_data.dart';
 import 'package:chitchat/models/pubspec.dart';
-
 import 'package:chitchat/utils/log_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:chitchat/models/constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:chitchat/models/global_data.dart';
+
+import '../models/colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   final SharedPreferences prefs;
@@ -238,7 +239,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     loc = AppLocalizations.of(context)!; // Add this line
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.settings),
+        title: Text(
+          loc.settings,
+          style: TextStyle(
+              fontSize: MyColors
+                  .TEXT_SIZE_TITLE), // Change the value to adjust the size
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),

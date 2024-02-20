@@ -28,7 +28,7 @@ class _ChatScreenWithPromptState extends State<ChatScreenWithPrompt> {
     chatHistory = null;
     promptStorage = null;
 
-    Future.delayed(Duration.zero, () async {
+    Future.delayed(const Duration(seconds: 1), () async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         settings = Settings(prefs: prefs);
@@ -46,7 +46,7 @@ class _ChatScreenWithPromptState extends State<ChatScreenWithPrompt> {
           : Row(
         children: <Widget>[
           Container(
-            width: 250,
+            width: 270,
             child: PromptListScreen(
               promptStorage: promptStorage!,
               history: chatHistory!,
