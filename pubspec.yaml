@@ -21,7 +21,7 @@ version: 1.2.1+30
 environment:
 #  sdk: '>=2.19.4 <3.0.0'
 #  sdk: '>=2.19.4'
-  sdk: '>3.2.0'
+  sdk: '>=3.3.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -42,7 +42,7 @@ dependencies:
 #  chat_gpt_sdk: ^2.2.8
 
   # Added http package for Api Calls using this link - https://pub.dev/packages/http
-  http: ^1.1.0
+  http: ^1.2.0
 
   # Added velocity package to make Flutter development easier and more joyful by using this link -
   # https://pub.dev/packages/velocity_x
