@@ -1,3 +1,5 @@
+## Feb. 21, 2024
+- Support Add Custom LLM Models
 ## Nov. 6, 2023
 - Sort the the prompt list by id
 - Fix the duplicate history cache
