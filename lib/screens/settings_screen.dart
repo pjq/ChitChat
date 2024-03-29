@@ -111,9 +111,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     models = widget.prefs.getStringList('models') ?? Constants.models;
-    _selectedModel = widget.prefs.getString(Constants.selectedModelKey) ??
-        Constants.defaultAIModel;
-    if (!Constants.models.contains(_selectedModel)) {
+    String? savedModel = widget.prefs.getString(Constants.selectedModelKey);
+    if (savedModel != null && models.contains(savedModel)) {
+      _selectedModel = savedModel;
+    } else {
       _selectedModel = Constants.defaultAIModel;
     }
 
@@ -263,6 +264,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       models.add(newModel);
       widget.prefs.setStringList('models', models);
+      _selectedModel = newModel; // Set the newly added model as the selected one
+      widget.prefs.setString(Constants.selectedModelKey, _selectedModel); // Save the selected model to the shared preferences
     });
   }
 
