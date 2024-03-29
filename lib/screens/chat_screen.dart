@@ -525,6 +525,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void _sendMessage(String text) async {
+    LogUtils.info(tag, "sendMessage:$text");
     if (_isLoading) {
       return;
     }
@@ -567,6 +568,11 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     try {
       setState(() {
         _isLoading = true;
+        _controller.clear();
+      });
+
+      // Delay the clearing of the text input
+      Future.delayed(Duration(milliseconds: 10), () {
         _controller.clear();
       });
 
