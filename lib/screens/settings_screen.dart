@@ -11,6 +11,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../models/colors.dart';
 
@@ -164,6 +167,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
     LogUtils.debug("useOpenAI: $_useOpenAI, useBTP: $_useBTP");
     widget.prefs.setBool(Constants.useOpenAI, _useOpenAI);
     widget.prefs.setBool(Constants.useBTP, _useBTP);
+  }
+
+  void _resetApp() async {
+    // Get the cache directory
+    _resetSettings();
+    Directory cacheDir = await getTemporaryDirectory();
+
+    // Delete the contents of the cache directory
+    cacheDir.deleteSync(recursive: true);
+
+    // Exit the app
+    SystemNavigator.pop();
+  }
+
+  void _resetSettings() {
+    widget.prefs.remove(Constants.apiKeyKey);
+    widget.prefs.remove(Constants.promptStringKey);
+    widget.prefs.remove(Constants.temperatureValueKey);
+    widget.prefs.remove(Constants.continueConversationEnableKey);
+    widget.prefs.remove(Constants.localCacheEnableKey);
+    widget.prefs.remove(Constants.ttsEnableKey);
+    widget.prefs.remove(Constants.streamModeEnableKey);
+    widget.prefs.remove(Constants.enableEnterKeyToSendKey);
+    widget.prefs.remove(Constants.proxyUrlKey);
+    widget.prefs.remove(Constants.baseUrlKey);
+    widget.prefs.remove(Constants.btpKeyJson);
+    widget.prefs.remove(Constants.ttsSelectedLanguageKey);
+    widget.prefs.remove(Constants.sttSelectedLanguageKey);
+    widget.prefs.remove(Constants.useOpenAI);
+    widget.prefs.remove(Constants.useBTP);
+
+    // Reset the corresponding variables in your state class
+    _apiKeyController.text = '';
+    _promptStringController.text = '';
+    _temperatureValueController.text = '1.0';
+    _continueConversationEnable = Constants.defaultContinueConversationEnable;
+    _localCacheEnable = Constants.defaultLocalCacheEnable;
+    _ttsEnable = Constants.defaultTtsEnable;
+    _streamModeEnable = Constants.defaultStreamModeEnable;
+    _enableEnterKeyToSend = Constants.defaultEnableEnterKeyToSend;
+    _proxyUrlController.text = '';
+    _baseUrlController.text = '';
+    _btpKeyJson.text = '';
+    _ttsSelectedLanguage = null;
+    _sttSelectedLanguage = null;
+    _useOpenAI = true;
+    _useBTP = false;
+
+    // Show a snackbar to inform the user
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Settings have been reset'),
+        duration: const Duration(milliseconds: 1000),
+      ),
+    );
+
+    // Call setState to refresh the UI
+    setState(() {});
   }
 
   void _showAddModelDialog() {
@@ -437,6 +498,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _resetApp,
+                child: Text('Reset Settings'),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
