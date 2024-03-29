@@ -71,7 +71,7 @@ class Settings {
   }
 
   String get baseUrl =>
-      prefs.getString(Constants.baseUrlKey) ?? 'https://api.openai.com';
+      prefs.getString(Constants.baseUrlKey) ?? 'https://api.openai.com/v1';
 
   String get btpJsonKey => prefs.getString(Constants.btpKeyJson) ?? '';
 

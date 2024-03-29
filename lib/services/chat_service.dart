@@ -9,7 +9,10 @@ import 'dart:io';
 
 import 'package:dart_openai/dart_openai.dart';
 
+import '../models/constants.dart';
+
 class ChatService {
+  static const String tag = 'ChatService';
   late String? apiKey;
   final StreamController<ChatMessage> messageController;
   bool useBTP = false;
@@ -26,7 +29,7 @@ class ChatService {
       useOpenaiSDK = false;
     }
 
-    LogUtils.info("useBTP:$useBTP useOpenaiSDK:$useOpenaiSDK");
+    LogUtils.info(tag,"useBTP:$useBTP useOpenaiSDK:$useOpenaiSDK");
 
     if (useOpenaiSDK) {
       final response = await getCompletionRawWithOpenAISDK(
@@ -40,7 +43,7 @@ class ChatService {
         settings.streamModeEnable,
       );
 
-      LogUtils.info(response);
+      LogUtils.info(tag,response);
       return response;
     } else {
       final response = await getCompletionRaw(
@@ -54,7 +57,7 @@ class ChatService {
         settings.streamModeEnable,
       );
 
-      LogUtils.info(response);
+      LogUtils.info(tag,response);
       return response;
     }
   }
@@ -68,8 +71,7 @@ class ChatService {
       useOpenaiSDK = false;
     }
 
-    LogUtils.info("useBTP:$useBTP useOpenaiSDK:$useOpenaiSDK");
-
+    LogUtils.info(tag,"useBTP:$useBTP useOpenaiSDK:$useOpenaiSDK");
     if (useOpenaiSDK) {
       final response = await getCompletionRawWithOpenAISDK(
         content,
@@ -81,7 +83,7 @@ class ChatService {
         settings.selectedModel,
         settings.streamModeEnable,
       );
-      LogUtils.info(response);
+      LogUtils.info(tag,response);
 
       return response;
     } else {
@@ -95,7 +97,7 @@ class ChatService {
         settings.selectedModel,
         settings.streamModeEnable,
       );
-      LogUtils.info(response);
+      LogUtils.info(tag,response);
 
       return response;
     }
@@ -111,9 +113,15 @@ class ChatService {
     String aiModel,
     bool useStream,
   ) async {
-    LogUtils.info("getCompletionRawWithOpenAISDK");
+    LogUtils.info(tag,"getCompletionRawWithOpenAISDK");
     OpenAI.apiKey = apiKey!;
-    OpenAI.baseUrl = baseUrl!;
+    if (baseUrl != null && baseUrl.isNotEmpty) {
+      OpenAI.baseUrl = baseUrl;
+    } else {
+      OpenAI.baseUrl = Constants.baseUrl;
+    }
+    // OpenAI.showLogs = true;
+    // OpenAI.showResponsesLogs = true;
 
     // Build the list of chat messages to include in the request body
     final chatMessages = latestChat?.map((message) {
@@ -138,19 +146,21 @@ class ChatService {
           role: OpenAIChatMessageRole.user, content:  [OpenAIChatCompletionChoiceMessageContentItemModel.text(content)]));
     }
 
-    LogUtils.info("useStream:$useStream");
+    // print(chatMessages);
+
+    LogUtils.info(tag,"useStream:$useStream");
     if (useStream) {
       try {
+        LogUtils.info(tag,"createStream");
         Stream<OpenAIStreamChatCompletionModel> chatStream =
             OpenAI.instance.chat.createStream(
           model: aiModel,
           temperature: temperatureValue,
           messages: chatMessages,
         );
-        LogUtils.info("createStream");
-
+        LogUtils.info(tag,"createStream End");
         chatStream.listen((chatStreamEvent) {
-          LogUtils.info("listen:" + chatStreamEvent.toString()); // ...
+          LogUtils.info(tag,"listen:" + chatStreamEvent.toString()); // ...
           final finishReason = chatStreamEvent.choices.last.finishReason;
           final role = chatStreamEvent.choices.last.delta.role;
           final returnContent = chatStreamEvent.choices.last.delta.content;
@@ -164,30 +174,30 @@ class ChatService {
           }
           if (ChatMessage.ROLE_ASSISTANT == role) {
             // it's the first data.
-            // LogUtils.info("role is assistant");
+            // LogUtils.info(tag,"role is assistant");
           } else {
             if (null != content) {
               // The chunk message will be here
               // chatMessage.content = content;
               chatMessage = ChatMessage(
-                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!.first.text!);
+                  role: ChatMessage.ROLE_ASSISTANT, content: returnContent!.first!.text!);
               messageController.add(chatMessage);
             }
           }
         }, onError: (error) {
           // Handle the error here
-          LogUtils.info('An error occurred: $error');
+          LogUtils.info(tag,'An error occurred: $error');
           var chatMessage = ChatMessage(
-              role: ChatMessage.ERROR, content: error.message);
+              role: ChatMessage.ERROR, content: 'An error occurred: $error');
           messageController.add(chatMessage);
         }, onDone: () {
-          LogUtils.info('The stream is done');
+          LogUtils.info(tag,'The stream is done');
           var chatMessage = ChatMessage(
               role: ChatMessage.ROLE_ASSISTANT, content: ChatMessage.STOP);
           messageController.add(chatMessage);
         });
       } catch (error) {
-        LogUtils.info('An error occurred while creating the stream: $error');
+        LogUtils.info(tag,'An error occurred while creating the stream: $error');
         var chatMessage = ChatMessage(
             role: ChatMessage.ERROR, content: error.toString());
         messageController.add(chatMessage);
@@ -228,7 +238,7 @@ class ChatService {
           latestChat, proxy, baseUrl, aiModel, useStream);
     }
 
-    LogUtils.info("getCompletion");
+    LogUtils.info(tag,"getCompletionRaw");
 
     // Build the list of chat messages to include in the request body
     final chatMessages = latestChat?.map((message) {
@@ -259,9 +269,9 @@ class ChatService {
       "messages": chatMessages,
       "stream": useStream
     });
-    LogUtils.info(body);
+    LogUtils.info(tag,body);
 
-    LogUtils.info(proxy);
+    LogUtils.info(tag,proxy);
     final HttpClient client = HttpClient();
     if (proxy.isNotEmpty) {
       client.findProxy = (url) {
@@ -275,16 +285,17 @@ class ChatService {
         'deployment_id': aiModel.replaceAll(".", ""),
         'messages': chatMessages,
       };
-      LogUtils.info(data.toString());
+      LogUtils.info(tag,data.toString());
       BTPService service = new BTPService();
 
       return service.getCompletionRawByBTP(data);
     } else {
-      String url = "https://api.openai.com";
+      //probably this code is not used any more.
+      String url = Constants.baseUrl;
       if (baseUrl.isNotEmpty) {
         url = baseUrl;
       }
-      LogUtils.info(url);
+      LogUtils.info(tag,url);
 
       client.connectionTimeout = const Duration(seconds: 60);
       final request =
@@ -312,12 +323,12 @@ class ChatService {
   }
 
   Future<String> handleStream(HttpClientResponse response) async {
-    LogUtils.info("handleStream");
+    LogUtils.info(tag,"handleStream");
     String lastTruncatedMessage = "";
     ChatMessage chatMessage = ChatMessage(role: "assistant", content: "");
     response.transform(utf8.decoder).listen((event) {
       //{"id":"chatcmpl-6ttclp0wSdVFsT9Usl0yvuwNkvLzJ","object":"chat.completion.chunk","created":1678779879,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":" today"},"index":0,"finish_reason":null}]}
-      // LogUtils.info("${event}");
+      // LogUtils.info(tag,"${event}");
       //fix the azure openai proxy convert format error, it include: ,"usage":null
       //data: {"id":"chatcmpl-7M6BzWVFvzBP1l80lRbaysWNUfBvS","object":"chat.completion.chunk","created":1685501375,"model":"gpt-35-turbo","choices":[{"index":0,"finish_reason":null,"delta":{"content":" with"}}],"usage":null}
       event = event.replaceAll(",\"usage\":null", "");
@@ -332,7 +343,7 @@ class ChatService {
         final content = decodeEvent["choices"][0]["delta"]["content"];
         final role = decodeEvent["choices"][0]["delta"]["role"];
         final finishReason = decodeEvent["choices"][0]["finish_reason"];
-        // LogUtils.info("content: ${content}, role: ${role}");
+        // LogUtils.info(tag,"content: ${content}, role: ${role}");
         // data: {"id":"chatcmpl-6u0BWt3AaTJefyeglqZ7aYihqbZbL","object":"chat.completion.chunk","created":1678805098,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{},"index":0,"finish_reason":"stop"}]}
         if (ChatMessage.STOP == finishReason) {
           // reach the stop item
@@ -343,7 +354,7 @@ class ChatService {
         }
         if (ChatMessage.ROLE_ASSISTANT == role) {
           // it's the first data.
-          // LogUtils.info("role is assistant");
+          // LogUtils.info(tag,"role is assistant");
         } else {
           if (null != content) {
             // The chunk message will be here
@@ -356,7 +367,7 @@ class ChatService {
       });
     });
 
-    LogUtils.info("handleStream, END");
+    LogUtils.info(tag,"handleStream, END");
     return "";
   }
 }

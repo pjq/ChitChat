@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BTPService {
+  static const String tag = 'ChatService';
   final String keyPath = 'assets/key.json'; // specify the path to your key.json
 
   Future<Map<String, dynamic>> loadKey() async {
@@ -25,7 +26,7 @@ class BTPService {
   }
 
   Future<http.Response> getToken(Map<String, dynamic> svcKey) async {
-    LogUtils.info("getToken");
+    LogUtils.info(tag,"getToken");
     String uaaUrl = svcKey['uaa']['url'];
     String clientId = svcKey['uaa']['clientid'];
     String clientSecret = svcKey['uaa']['clientsecret'];
@@ -51,7 +52,7 @@ class BTPService {
   }
 
   Future<http.Response> makeRequest(Map<String, dynamic> data) async {
-    LogUtils.info("makeRequest");
+    LogUtils.info(tag,"makeRequest");
     Map<String, dynamic> mySvcKey = await loadKey();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? btp_token = prefs.getString('btp_token');
@@ -72,7 +73,7 @@ class BTPService {
     }
     String myToken = jsonDecode(btp_token!)['access_token'];
 
-    LogUtils.info("myToken: $myToken");
+    LogUtils.info(tag,"myToken: $myToken");
 
     var headers = {
       'Authorization': 'Bearer $myToken',
@@ -85,21 +86,21 @@ class BTPService {
       body: jsonEncode(data),
     );
 
-    LogUtils.info("${response.statusCode}");
-    LogUtils.info("${response.body}");
+    LogUtils.info(tag,"${response.statusCode}");
+    LogUtils.info(tag,"${response.body}");
 
     return response;
   }
 
   Future<String> getCompletionRawByBTP(Map<String, dynamic> data) async {
-    LogUtils.info("getCompletionRawByBTP");
+    LogUtils.info(tag,"getCompletionRawByBTP");
     var response = await makeRequest(data);
     if (response.statusCode == 200) {
       String responseString = response.body;
-      // LogUtils.info("getCompletionRawByBTP: $responseString");
+      // LogUtils.info(tag,"getCompletionRawByBTP: $responseString");
       final completion =
           jsonDecode(responseString)['choices'][0]['message']['content'];
-      LogUtils.info("getCompletionRawByBTP: $completion");
+      LogUtils.info(tag,"getCompletionRawByBTP: $completion");
       return completion;
     } else {
       throw Exception(response.body);

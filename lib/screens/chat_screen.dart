@@ -38,6 +38,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> implements IChatService {
+  static const String tag = 'ChatScreen';
   final TextEditingController _controller = TextEditingController();
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
@@ -80,13 +81,13 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   @override
   void initState() {
     super.initState();
-    LogUtils.info("init state");
+    LogUtils.info(tag,"init state");
     appTitle = defaultAppTitle;
 
     _streamSubscription = _messageController.stream.listen((data) {
       setState(() {
         _processData(data);
-        // LogUtils.info("recv: ${_isLoading}, ${data.content}");
+        // LogUtils.info(tag,"recv: ${_isLoading}, ${data.content}");
         //save to chat history
         // if (data.isStop) {
         //   _history?.addMessageWithPromptChannel(
@@ -134,12 +135,12 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     _chatListController.addListener(() {
       if (_chatListController.position.atEdge) {
         if (_chatListController.position.pixels == 0)
-          LogUtils.info("You are at the top of the scroll view");
+          LogUtils.info(tag,"You are at the top of the scroll view");
         else {
           setState(() {
             _autoScrollEnabled = true;
           });
-          LogUtils.info("You are at the bottom of the scroll view");
+          LogUtils.info(tag,"You are at the bottom of the scroll view");
         }
       } else {
         setState(() {
@@ -151,7 +152,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
 
   void _processData(dynamic data) {
     if (data.isStop || data.isError) {
-      LogUtils.info("_processData, isStop || isError is true, cache history");
+      LogUtils.info(tag,"_processData, isStop || isError is true, cache history");
       if (data.isStop) {
         if (!_history!.messages
             .contains(_messages.elementAt(_messages.length - 2))) {
@@ -250,23 +251,23 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
     bool available = await _speechToText.initialize(
       debugLogging: true,
       onError: (SpeechRecognitionError error) {
-        LogUtils.debug("Error: ${error.errorMsg}");
+        LogUtils.debug(tag,"Error: ${error.errorMsg}");
         setState(() {
           _isListening = false;
         });
         showToast(error.errorMsg);
       },
       onStatus: (String status) {
-        LogUtils.debug("Status: $status");
+        LogUtils.debug(tag,"Status: $status");
 
         if (status == "avalilable") {
-          //   LogUtils.debug("Speech recognition available ${_isSpeechToTextAvailable}");
+          //   LogUtils.debug(tag,"Speech recognition available ${_isSpeechToTextAvailable}");
           //
           //   if (_isSpeechToTextAvailable) {
           //     // Get the list of languages installed on the supporting platform so they
           //     // can be displayed in the UI for selection by the user.
           //     _localeNames = _speechToText.locales();
-          //     LogUtils.debug(_localeNames);
+          //     LogUtils.debug(tag,_localeNames);
           //
           //     var systemLocale = _speechToText.systemLocale();
           //     _currentLocaleId = systemLocale?.localeId ?? '';
@@ -283,26 +284,26 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       _isSpeechToTextAvailable = available;
     });
 
-    LogUtils.debug("Speech recognition available $_isSpeechToTextAvailable");
+    LogUtils.debug(tag,"Speech recognition available $_isSpeechToTextAvailable");
     // Get the list of languages installed on the supporting platform so they
     // can be displayed in the UI for selection by the user.
     if (_isSpeechToTextAvailable) {
       sttLocaleNames = await _speechToText.locales();
       // for (var element in sttLocaleNames) {
-      //    LogUtils.debug("sttLocaleNames: " + element.name + ", " + element.localeId);
+      //    LogUtils.debug(tag,"sttLocaleNames: " + element.name + ", " + element.localeId);
       // }
 
       var systemLocale = await _speechToText.systemLocale();
       _currentLocaleId = systemLocale?.localeId ?? '';
-      LogUtils.debug("_currentLocaleId: $_currentLocaleId");
+      LogUtils.debug(tag,"_currentLocaleId: $_currentLocaleId");
     }
 
     _currentLanguageCode = ui.window.locale.toString();
 
     ttsLanguages = await flutterTts.getLanguages;
-    LogUtils.debug("tts langs:");
+    LogUtils.debug(tag,"tts langs:");
     // for (var element in ttsLanguages) {
-    //    LogUtils.debug("ttsLanguages: " + element);
+    //    LogUtils.debug(tag,"ttsLanguages: " + element);
     // }
     // [nn, bg, kea, mg, mr, zu, ko, hsb, ak, kde, lv, seh, dz, mgo, ia, kkj, sd-Arab, pa-Guru, mer, pcm, sah, mni, br, sk, ml, ast, yue-Hans, cs, sv, el, pa, rn, rwk, tg, hu, ks-Arab, af, twq, bm, smn, dsb, sd-Deva, khq, ku, tr, cgg, ksf, cy, yi, fr, sq, de, agq, sa, ebu, zh-Hans, lg, sat-Olck, ff, mn, sd, teo, eu, wo, shi-Tfng, xog, so, ru, az, su-Latn, fa, kab, ms, nus, nd, ug, kk, az-Cyrl, hi, tk, hy, shi-Latn, vai, vi, dyo, mi, mt, ksb, lb, luo, mni-Beng, yav, ne, eo, kam, su, ro, ee, pl, my, ka, ur, mgh, shi, uz-Arab, kl, se, chr, doi, zh, yue-Hant, saq, az-Latn, ta, lag, luy, bo, as, bez, it, kln, uk, kw, mai, vai-Latn, mzn, ii, tt, ksh, ln, naq, pt, tzm, gl, sr-Cyrl, ff-Adlm, fur, om, to, ga, qu, et, asa, mua, jv, id, ps, sn, rof, ff-Latn, km, zgh, be, fil, gv, uz-Cyrl, dua, es, jgo, fo, gsw, hr, lt, guz, mfe, ccp, ja, lkt, ceb, is, or, si, brx, en, ca, te, ks, ha, sl, sbp, nyn, jmc, yue, fi, mk, sat, bs-Cyrl, uz, pa-Arab, sr-Latn, bs, sw, fy, nmg, rm, th, bn, ar, vai-Vaii, haw, kn, dje, bas, nnh, sg, uz-La
     // await flutterTts.isLanguageAvailable("en-US")
@@ -327,7 +328,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   }
 
   void updateTTSAndSTT() {
-    LogUtils.debug("updateTTSAndSTT");
+    LogUtils.debug(tag,"updateTTSAndSTT");
 
     if (GlobalData().ttsLanguages.isNotEmpty) {
       String ttsSelectedLanguage =
@@ -340,7 +341,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       String? savedSttSelectedLanguage =
           _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
 
-      LogUtils.debug("selected stt: $savedSttSelectedLanguage");
+      LogUtils.debug(tag,"selected stt: $savedSttSelectedLanguage");
       if (savedSttSelectedLanguage == null) {
         // if not set before, just use the current localeId.
         _settings?.prefs
@@ -353,14 +354,14 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
             orElse: () => GlobalData().sttLocaleNames[0], // Set a default value
           );
 
-      LogUtils.debug("selected stt: ${_sttSelectedLanguage!.localeId}");
+      LogUtils.debug(tag,"selected stt: ${_sttSelectedLanguage!.localeId}");
     } else {
       setState(() {
         _isSpeechToTextAvailable = false;
       });
     }
 
-    LogUtils.debug("updateTTSAndSTT end");
+    LogUtils.debug(tag,"updateTTSAndSTT end");
   }
 
   void showToast(String text) {
@@ -404,7 +405,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       String? savedSelectedLanguage =
           _settings?.prefs.getString(Constants.sttSelectedLanguageKey);
       String localeId = savedSelectedLanguage ?? _currentLocaleId;
-      LogUtils.debug("saved stt: $localeId");
+      LogUtils.debug(tag,"saved stt: $localeId");
       await _speechToText.listen(
         localeId: localeId,
         onResult: (SpeechRecognitionResult result) {
@@ -428,14 +429,14 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   // void _speak(String text) async {
   //   if (false == _settings?.ttsEnable) return;
   //
-  //   LogUtils.debug("speak start");
+  //   LogUtils.debug(tag,"speak start");
   //   await flutterTts.speak(text);
   // }
 
   Future<void> _speak(String text) async {
     if (false == _settings?.ttsEnable) return;
 
-    LogUtils.debug("speak start");
+    LogUtils.debug(tag,"speak start");
     _isSpeaking = true;
     await flutterTts.speak(text);
   }
@@ -452,7 +453,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   void didChangeDependencies() async {
     super.didChangeDependencies();
 
-    LogUtils.info("didChangeDependencies");
+    LogUtils.info(tag,"didChangeDependencies");
   }
 
   Future<String> _callAPI(
@@ -567,7 +568,6 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
       setState(() {
         _isLoading = true;
         _controller.clear();
-        // _controller.text = "";
       });
 
       final completion = await _callAPI(messageSend.content);
@@ -586,7 +586,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
 
       _listViewScrollToBottom();
     } catch (e) {
-      LogUtils.error(e.toString());
+      LogUtils.error(tag, e.toString());
       if (_settings!.streamModeEnable) {
         _messages.removeLast();
       }
@@ -610,7 +610,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
 
   List<ChatMessage>? _get5ChatHistory() {
     final recentHistory = _history?.getLatestMessages(currentPrompt.id);
-    LogUtils.info("recentHistory length: $recentHistory");
+    LogUtils.info(tag,"recentHistory length: $recentHistory");
 
     return _settings!.continueConversationEnable ? recentHistory : [];
   }
@@ -618,7 +618,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
   // Add a new method to switch to a selected prompt channel.
   void switchToPromptChannel(Prompt promptChannel) {
     currentPrompt = promptChannel;
-    LogUtils.info("currentPrompt: $currentPrompt");
+    LogUtils.info(tag,"currentPrompt: $currentPrompt");
     setState(() {
       appTitle = "$defaultAppTitle(${currentPrompt.title})";
       _messages.clear();
@@ -627,7 +627,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
             .addAll(_history!.getMessagesForPromptChannel(currentPrompt.id));
       }
       _listViewScrollToBottom();
-      LogUtils.info("history size: ${_messages.length}");
+      LogUtils.info(tag,"history size: ${_messages.length}");
     });
   }
 
@@ -670,7 +670,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                       MaterialPageRoute(
                         builder: (context) => PromptListScreen(
                           onSelectedPrompt: (prompt) {
-                            LogUtils.info("selected: $prompt");
+                            LogUtils.info(tag,"selected: $prompt");
                             setState(() {
                               switchToPromptChannel(prompt);
                             });
@@ -737,10 +737,10 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                             child: RawKeyboardListener(
                               focusNode: _focusNode,
                               onKey: (event) {
-                                final isShiftPressed = event.isShiftPressed;
+                                final isShiftPressed = HardwareKeyboard.instance.isShiftPressed;
                                 final isEnterKeyPressed = event.logicalKey ==
                                     LogicalKeyboardKey.enter;
-                                // print("isShiftPressed $isEnterKeyPressed, isEnterKeyPressed $isEnterKeyPressed event:$event");
+                                LogUtils.info(tag,"isShiftPressed $isEnterKeyPressed, isEnterKeyPressed $isEnterKeyPressed event:$event");
 
                                 if (isEnterKeyPressed && isShiftPressed) {
                                   _controller.value =
@@ -751,7 +751,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                                             _controller.value.selection.end +
                                                 1),
                                   );
-                                  print("new line");
+                                  LogUtils.info(tag,"new line");
                                 } else if (isEnterKeyPressed) {
                                   if (_settings!.enableEnterKeyToSend) {
                                     if (_controller.text.trim().isNotEmpty) {
@@ -865,7 +865,7 @@ class ChatScreenState extends State<ChatScreen> implements IChatService {
                 onTap: () {
                   String prompt = Constants.translationPrompt
                       .replaceAll("LOCALE_ID", _currentLanguageCode);
-                  LogUtils.debug(prompt);
+                  LogUtils.debug(tag,prompt);
 
                   translate(message.content, prompt).then((translatedText) {
                     setState(() {

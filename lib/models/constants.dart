@@ -11,6 +11,7 @@ class Constants {
   static const String streamModeEnableKey = 'stream_mode_enable';
   static const String useOpenAI = 'use_openai';
   static const String useBTP = 'use_BTP';
+  static const String baseUrl = 'https://api.openai.com';
 
   static const String ttsSelectedLanguageKey = 'ttsSelectedLanguage';
   static const String sttSelectedLanguageKey = 'sttSelectedLanguage';

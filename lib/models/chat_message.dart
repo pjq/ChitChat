@@ -40,6 +40,7 @@ class ChatMessage {
 }
 
 class ChatHistory {
+  static const String tag = 'ChatHistory';
   SharedPreferences _prefs;
   List<ChatMessage> _messages = [];
 
@@ -137,7 +138,7 @@ class ChatHistory {
 
   // Modify the `addMessage` method to support a specific prompt channel.
   void addMessageWithPromptChannel(ChatMessage message, String promptChannel) {
-    LogUtils.info("addMessageWithPromptChannel:$message");
+    LogUtils.info(tag,"addMessageWithPromptChannel:$message");
     _messages.add(message);
     _saveHistoryWithPromptChannel(promptChannel);
   }

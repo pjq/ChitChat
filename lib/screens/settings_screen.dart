@@ -30,6 +30,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  static const String tag = 'SettingsScreen';
   late TextEditingController _apiKeyController;
   late TextEditingController _promptStringController;
   late TextEditingController _temperatureValueController;
@@ -95,7 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     String? selected = widget.prefs.getString(Constants.ttsSelectedLanguageKey);
     _ttsSelectedLanguage =
         (selected != null && selected.isNotEmpty) ? selected : null;
-    LogUtils.debug("$_ttsSelectedLanguage");
+    LogUtils.debug(tag,"$_ttsSelectedLanguage");
 
     if (GlobalData().sttLocaleNames.isNotEmpty) {
       String? savedSttSelectedLanguage =
@@ -105,7 +106,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             orElse: () => GlobalData().sttLocaleNames[0], // Set a default value
           );
 
-      LogUtils.debug("selected: ${_sttSelectedLanguage?.localeId}");
+      LogUtils.debug(tag,"selected: ${_sttSelectedLanguage?.localeId}");
     } else {
       _sttSelectedLanguage = null;
     }
@@ -165,7 +166,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     widget.onSettingsChanged();
 
-    LogUtils.debug("useOpenAI: $_useOpenAI, useBTP: $_useBTP");
+    LogUtils.debug(tag,"useOpenAI: $_useOpenAI, useBTP: $_useBTP");
     widget.prefs.setBool(Constants.useOpenAI, _useOpenAI);
     widget.prefs.setBool(Constants.useBTP, _useBTP);
   }
@@ -563,7 +564,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _sttSelectedLanguage = newValue!;
 
           if (null != _sttSelectedLanguage) {
-            LogUtils.debug("selected stt: ${_sttSelectedLanguage!.localeId}");
+            LogUtils.debug(tag,"selected stt: ${_sttSelectedLanguage!.localeId}");
             widget.prefs.setString(Constants.sttSelectedLanguageKey,
                 _sttSelectedLanguage!.localeId);
           }
