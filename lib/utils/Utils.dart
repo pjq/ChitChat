@@ -5,7 +5,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class Utils {
   static bool isBigScreen(BuildContext context) {
     if (kIsWeb) {
-      return true;
+      var size = MediaQuery.of(context).size;
+      return size.width > 718 || size.height > 1024;
     }
 
     if (Platform.isIOS || Platform.isAndroid) {
