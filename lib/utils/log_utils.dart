@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class LogUtils {
-  static const String tag = 'OpenAIChat';
+  static const String tag = 'ChitChat';
 
   static void debug(String message) {
     _log('D', message);
