@@ -614,6 +614,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text('Changelog'),
               filename: 'assets/CHANGELOG.md',
             ),
+            MarkdownPageListTile(
+              icon: Icon(Icons.privacy_tip),
+              title: Text('Privacy Policy'),
+              filename: 'assets/privacy_policy.md',
+            ),
             LicensesPageListTile(
               icon: Icon(Icons.favorite),
             ),
